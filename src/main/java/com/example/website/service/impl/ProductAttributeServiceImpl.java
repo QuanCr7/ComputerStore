@@ -20,6 +20,7 @@ public class ProductAttributeServiceImpl implements ProductAttributeService {
     private final ProductAttributeRepository productAttributeRepository;
     private final ProductRepository productRepository;
 
+    // khong con can thiet
     @Override
     public List<ProductAttributeResponse> add(ProductAttributeRequest request) {
         ProductEntity product = productRepository.findById(request.getProductId()).orElseThrow(() -> new RuntimeException("Product not found with ID: " + request.getProductId()));

@@ -148,6 +148,7 @@ public class UserServiceImpl implements UserService {
 
     public UserResponse response(UserEntity response){
         return UserResponse.builder()
+                .userId(response.getUserId())
                 .username(response.getUsername())
                 .fullName(response.getFullName())
                 .dateOfBirth(response.getDateOfBirth())

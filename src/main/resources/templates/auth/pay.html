@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/headandfoot.css">
+    <link rel="stylesheet" href="/css/pay.css">
+    <title>BookStore - Thanh toán</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<!-- Header -->
+<div th:replace="~{guest/common/header :: header}"></div>
+
+<!-- Main Content -->
+<main class="main-content">
+    <div class="container">
+        <h1 class="checkout-title">
+            <i class="fas fa-shopping-cart"></i> Thanh toán
+        </h1>
+
+        <div class="checkout-container">
+            <!-- Left Column - Customer Info & Payment -->
+            <div class="checkout-left">
+                <!-- Customer Information -->
+                <div class="checkout-card">
+                    <h2 class="card-title">
+                        <i class="fas fa-user"></i> Thông tin khách hàng
+                    </h2>
+
+                    <div class="info-source">
+                        <label class="form-label" for="infoSource">Nguồn thông tin</label>
+                        <select id="infoSource" class="form-input">
+                            <option value="manual">Nhập thông tin mới</option>
+                            <option value="account">Sử dụng thông tin tài khoản</option>
+                        </select>
+                    </div>
+
+                    <form id="customer-form">
+                        <div class="form-group">
+                            <label class="form-label" for="name">Họ và tên *</label>
+                            <input type="text" id="name" class="form-input" placeholder="Nhập Tên" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email *</label>
+                            <input type="email" id="email" class="form-input" placeholder="Nhập email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="phone">Số điện thoại *</label>
+                            <input type="tel" id="phone" class="form-input" placeholder="Nhập số điện thoại" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="address">Địa chỉ giao hàng *</label>
+                            <textarea id="address" class="form-input" rows="3" placeholder="Nhập địa chỉ giao hàng (bao gồm thành phố, quận/huyện)" required></textarea>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="checkout-card">
+                    <h2 class="card-title">
+                        <i class="fas fa-credit-card"></i> Phương thức thanh toán
+                    </h2>
+
+                    <div class="payment-methods">
+                        <label class="payment-method">
+                            <input type="radio" name="payment-method" value="cod" checked>
+                            <i class="fas fa-money-bill-wave payment-icon"></i>
+                            <span>Thanh toán khi nhận hàng (COD)</span>
+                        </label>
+
+                        <label class="payment-method">
+                            <input type="radio" name="payment-method" value="banking">
+                            <i class="fas fa-university payment-icon"></i>
+                            <span>Chuyển khoản ngân hàng</span>
+                        </label>
+
+                        <label class="payment-method">
+                            <input type="radio" name="payment-method" value="momo">
+                            <i class="fas fa-mobile-alt payment-icon"></i>
+                            <span>Ví điện tử MoMo</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Order Summary -->
+            <div class="checkout-right">
+                <div class="checkout-card order-summary">
+                    <h2 class="card-title">
+                        <i class="fas fa-receipt"></i> Đơn hàng của bạn
+                    </h2>
+
+                    <!-- Book Items -->
+                    <div class="book-items" id="bookItemsContainer">
+                        <!-- Nội dung sẽ được thêm bằng JavaScript -->
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div class="summary">
+                        <div class="summary-item">
+                            <span>Tạm tính:</span>
+                            <span id="subtotal">0₫</span>
+                        </div>
+
+                        <div class="summary-item">
+                            <span>Phí vận chuyển:</span>
+                            <span id="shipping">20.000₫</span>
+                        </div>
+
+                        <div class="summary-item">
+                            <span>Giảm giá:</span>
+                            <span id="discount">-0₫</span>
+                        </div>
+
+                        <div class="summary-total">
+                            <span>Tổng cộng:</span>
+                            <span id="total">0₫</span>
+                        </div>
+                    </div>
+
+                    <button class="checkout-btn" id="completeOrderBtn">
+                        <i class="fas fa-lock"></i> Hoàn tất đơn hàng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<div th:replace="~{guest/common/footer :: footer}"></div>
+
+<script src="/js/user/auth.js" defer></script>
+<script src="/js/user/pay.js" defer></script>
+<script src="/js/categories.js" defer></script>
+</body>
+</html>

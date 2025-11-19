@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class Book {
+public class Product {
     @GetMapping("/")
     public String home() {
         return "guest/home";
@@ -24,18 +24,18 @@ public class Book {
 
     @GetMapping("/update")
     public String update(@RequestParam int id, Model model) {
-        model.addAttribute("bookId", id);
+        model.addAttribute("productId", id);
         return "admin/updatebook";
     }
 
     @GetMapping("/add")
     public String create() {
-        return "admin/addbook";
+        return "admin/add-product";
     }
 
     @GetMapping("/detail")
     public String detail(@RequestParam int id, Model model) {
-        model.addAttribute("bookId", id);
-        return "guest/detailbook";
+        model.addAttribute("productId", id);
+        return "guest/detail-product";
     }
 }

@@ -20,7 +20,7 @@ public class Admin {
     }
 
     @GetMapping("/book-detail")
-    public String getBookDetail(@RequestParam int id, Model model) {
+    public String getProductDetail(@RequestParam int id, Model model) {
         model.addAttribute("book", id);
         return "admin/book-detail";
     }

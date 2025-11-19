@@ -33,7 +33,7 @@ public class ProductController extends BaseController {
             description = "Trả về chi tiết một sản phẩm dựa trên ID được cung cấp",
             tags = {"Sản phẩm"}
     )
-    @GetMapping("/p/{id}")
+    @GetMapping("/p/searchId/{id}")
     public ResponseEntity<BaseResponse<ProductResponse>> getById(
             @PathVariable("id") Integer id
     ){

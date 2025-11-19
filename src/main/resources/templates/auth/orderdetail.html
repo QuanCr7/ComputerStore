@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookStore - Chi Tiết Đơn Hàng</title>
+    <link rel="stylesheet" href="/css/headandfoot.css">
+    <link rel="stylesheet" href="/css/shopping.css">
+    <link rel="stylesheet" href="/css/user/orderdetail.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icon/computer.png">
+</head>
+<body>
+<!-- Header -->
+<div th:replace="~{guest/common/header :: header}"></div>
+
+<!-- Main Content -->
+<main class="main-content">
+    <div class="container">
+        <div class="order-container">
+            <div id="loading" class="loading" style="display: flex;">
+                <div class="spinner"></div>
+                <p>Đang tải chi tiết đơn hàng...</p>
+            </div>
+
+            <div id="errorMessage" class="error-message" style="display: none;">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorText"></span>
+            </div>
+
+            <div id="orderContent" style="display: none;">
+                <a href="/me/order" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Quay lại danh sách đơn hàng
+                </a>
+
+                <h1 class="order-title">
+                    <i class="fas fa-receipt"></i> Chi Tiết Đơn Hàng #<span id="orderId"></span>
+                </h1>
+
+                <!-- Order Info Card -->
+                <div class="order-card">
+                    <h2 class="card-title">
+                        <i class="fas fa-info-circle"></i> Thông tin đơn hàng
+                    </h2>
+
+                    <div id="orderStatus" class="order-status"></div>
+
+                    <div class="order-info-grid">
+                        <div class="info-group">
+                            <div class="info-label">Mã đơn hàng</div>
+                            <div class="info-value" id="orderIdDisplay"></div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">Ngày đặt hàng</div>
+                            <div class="info-value" id="orderDate"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Info Card -->
+                <div class="order-card">
+                    <h2 class="card-title">
+                        <i class="fas fa-user"></i> Thông tin người nhận
+                    </h2>
+
+                    <div class="order-info-grid">
+                        <div class="info-group">
+                            <div class="info-label">Tên</div>
+                            <div class="info-value" id="name"></div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">Số điện thoại</div>
+                            <div class="info-value" id="phone"></div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">Email</div>
+                            <div class="info-value" id="email"></div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">Địa chỉ giao hàng</div>
+                            <div class="info-value" id="shippingAddress"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Items Card -->
+                <div class="order-card">
+                    <h2 class="card-title">
+                        <i class="fas fa-book"></i> Sản phẩm đã đặt
+                    </h2>
+
+                    <div class="order-items" id="orderItems"></div>
+
+                    <div class="order-summary">
+                        <div class="summary-item">
+                            <span>Tạm tính:</span>
+                            <span id="subtotal"></span>
+                        </div>
+
+                        <div class="summary-item">
+                            <span>Phí vận chuyển:</span>
+                            <span id="shipping"></span>
+                        </div>
+
+                        <div class="summary-item">
+                            <span>Giảm giá:</span>
+                            <span id="discount"></span>
+                        </div>
+
+                        <div class="summary-total">
+                            <span>Tổng cộng:</span>
+                            <span id="total"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="order-card">
+                    <h2 class="card-title">
+                        <i class="fas fa-tools"></i> Hành động
+                    </h2>
+
+                    <div class="action-buttons">
+                        <button class="action-btn btn-primary" id="printInvoice">
+                            <i class="fas fa-print"></i> In hóa đơn
+                        </button>
+                        <button class="action-btn btn-outline" id="reorder">
+                            <i class="fas fa-redo"></i> Đặt lại đơn hàng
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<div th:replace="~{guest/common/footer :: footer}"></div>
+
+<script src="/js/user/auth.js" defer></script>
+<script src="/js/user/orderdetail.js" defer></script>
+<script src="/js/shopping.js" defer></script>
+<script src="/js/categories.js" defer></script>
+</body>
+</html>

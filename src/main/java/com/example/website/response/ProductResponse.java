@@ -21,7 +21,7 @@ public class ProductResponse {
     private int discount;
     private LocalDate createDate;
     private List<String> images;
-    private int brand;
+    private String brand;
     private int category;
     private List<ProductAttributeResponse> attributes;
 }

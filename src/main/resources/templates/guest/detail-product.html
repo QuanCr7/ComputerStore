@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết</title>
+    <link rel="stylesheet" href="/css/headandfoot.css">
+    <link rel="stylesheet" href="/css/shopping.css">
+    <link rel="stylesheet" href="/css/product/detail-product.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icon/computer.png">
+</head>
+<body>
+<!-- Header -->
+<div th:replace="~{guest/common/header :: header}"></div>
+
+<main class="main-content">
+    <section class="detail-section">
+        <div class="container">
+            <div id="loading" class="loading">Đang tải thông tin ...</div>
+            <div id="error" class="error" style="display: none;"></div>
+
+            <div id="product-detail" style="display: none;">
+                <!-- Product Header Section -->
+                <div class="product-header">
+                    <div class="product-images">
+                        <div class="main-image-container">
+                            <img id="mainImage" class="main-image" src="" alt="Ảnh sản phẩm">
+                            <div id="discountBadge" class="discount-badge" style="display: none;"></div>
+                            <div id="stockBadge" class="stock-badge" style="display: none;"></div>
+                        </div>
+                        <div class="thumbnail-container" id="thumbnails"></div>
+                    </div>
+
+                    <div class="product-info">
+                        <h1 class="product-name" id="productName"></h1>
+                        <div class="product-subtitle" id="productSubtitle"></div>
+                        <div class="product-brand" id="productBrand"></div>
+
+                        <div class="product-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <strong>Bảo hành:</strong> <span id="warranty"></span> tháng
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <strong>Ngày thêm:</strong> <span id="createDate"></span>
+                            </div>
+                        </div>
+
+                        <div class="price-section">
+                            <div class="product-price" id="productPrice"></div>
+                            <div id="discountText" class="discount-text" style="display: none;"></div>
+                        </div>
+
+                        <div class="product-description" id="productDescription"></div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" id="addBtn">
+                                <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
+                            </button>
+                            <button class="btn btn-secondary" onclick="window.history.back()">
+                                <i class="fas fa-arrow-left"></i> Quay lại
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Specifications Section -->
+                <div class="specs-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-list-alt"></i> Thông số kỹ thuật
+                    </h2>
+                    <div class="specs-grid" id="specsGrid"></div>
+                </div>
+
+                <!-- Features Section -->
+                <div class="features-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-star"></i> Tính năng nổi bật
+                    </h2>
+                    <div class="features-grid">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>Hiệu năng đỉnh cao</h4>
+                                <p>24 nhân, 32 luồng với tốc độ turbo lên đến 6.0 GHz cho trải nghiệm gaming và đa nhiệm mượt mà</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>Công nghệ mới nhất</h4>
+                                <p>Hỗ trợ PCIe 5.0, DDR5 và nhiều công nghệ tiên tiến khác</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-gamepad"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>Tối ưu cho gaming</h4>
+                                <p>Hiệu năng gaming vượt trội với khả năng xử lý đồ họa mạnh mẽ và độ trễ thấp</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>Lý tưởng cho sáng tạo</h4>
+                                <p>Xử lý mượt mà các tác vụ render video, 3D modeling và ứng dụng chuyên nghiệp</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phần Comment Section -->
+            <div class="comment-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-comments"></i> Đánh giá & Nhận xét
+                        <span id="commentCount" class="comment-count">(0)</span>
+                    </h2>
+                </div>
+
+                <!-- Form thêm comment -->
+                <div class="comment-form-container">
+                    <form id="commentForm" class="comment-form">
+                        <div class="form-group">
+                            <label for="commentContent" class="form-label">
+                                <i class="fas fa-edit"></i> Viết đánh giá của bạn
+                            </label>
+                            <textarea
+                                    id="commentContent"
+                                    name="content"
+                                    rows="4"
+                                    placeholder="Chia sẻ cảm nhận của bạn về sản phẩm này..."
+                                    class="comment-textarea"
+                                    required
+                            ></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary" id="submitComment">
+                                <i class="fas fa-paper-plane"></i> Gửi đánh giá
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Danh sách comments -->
+                <div id="commentsList" class="comments-list">
+                    <div class="loading-comments">
+                        <i class="fas fa-spinner fa-spin"></i> Đang tải đánh giá...
+                    </div>
+                </div>
+
+                <!-- Phân trang comments -->
+                <div id="commentPagination" class="comment-pagination"></div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Footer -->
+<div th:replace="~{guest/common/footer :: footer}"></div>
+
+<script src="/js/shopping.js" defer></script>
+<script src="/js/user/auth.js" defer></script>
+<script src="/js/categories.js" defer></script>
+<script src="/js/product/detail-product.js" defer></script>
+<!--<script src="/js/product/comments.js" defer></script>-->
+</body>
+</html>

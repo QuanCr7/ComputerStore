@@ -55,7 +55,7 @@ public class ProductServiceImpl implements ProductService {
         Page<ProductResponse> responsePage = entityPage.map(this::response);
 
         return PageProductResponse.builder()
-                .currentPage(entityPage.getNumber())
+                .currentPage(pageNumber + 1)
                 .pageSize(entityPage.getSize())
                 .totalPages(entityPage.getTotalPages())
                 .totalElements(entityPage.getTotalElements())
@@ -102,25 +102,43 @@ public class ProductServiceImpl implements ProductService {
 
         productRepository.save(product);
 
-        // Thêm chi tiết product bằng cách sử dụng ProductAttributeService
-        List<ProductAttributeEntity> productAttributes = new ArrayList<>();
-        for (ProductAttributeRequest productAttributeRequest : attributes) {
-            ProductAttributeRequest attributeRequest = ProductAttributeRequest.builder()
-                    .productId(product.getProductId())
-                    .key(productAttributeRequest.getKey())
-                    .value(productAttributeRequest.getValue())
-                    .build();
-            // Gọi phương thức add từ ProductAttributeService
-            List<ProductAttributeResponse> attributeResponses = productAttributeService.add(attributeRequest);
-            ProductAttributeEntity attributeEntity = productAttributeRepository.findById(attributeResponses.getFirst().getAttributeId())
-                    .orElseThrow(() -> new RuntimeException("Failed to retrieve added product attribute"));
-
-            productAttributes.add(attributeEntity);
+        // === LƯU THUỘC TÍNH ĐỘNG TRỰC TIẾP ===
+        if (attributes != null && !attributes.isEmpty()) {
+            List<ProductAttributeEntity> attributeEntities = new ArrayList<>();
+            for (ProductAttributeRequest attrReq : attributes) {
+                ProductAttributeEntity attr = ProductAttributeEntity.builder()
+                        .product(product)
+                        .key(attrReq.getKey())
+                        .value(attrReq.getValue())
+                        .build();
+                productAttributeRepository.save(attr); // LƯU TỪNG CÁI
+                attributeEntities.add(attr);
+            }
+            product.setAttributes(attributeEntities);
+            productRepository.save(product); // CẬP NHẬT LẠI
         }
 
-        product.setAttributes(productAttributes);
-        productRepository.save(product);
         return response(product);
+
+//        // Thêm chi tiết product bằng cách sử dụng ProductAttributeService
+//        List<ProductAttributeEntity> productAttributes = new ArrayList<>();
+//        for (ProductAttributeRequest productAttributeRequest : attributes) {
+//            ProductAttributeRequest attributeRequest = ProductAttributeRequest.builder()
+//                    .productId(product.getProductId())
+//                    .key(productAttributeRequest.getKey())
+//                    .value(productAttributeRequest.getValue())
+//                    .build();
+//            // Gọi phương thức add từ ProductAttributeService
+//            List<ProductAttributeResponse> attributeResponses = productAttributeService.add(attributeRequest);
+//            ProductAttributeEntity attributeEntity = productAttributeRepository.findById(attributeResponses.getFirst().getAttributeId())
+//                    .orElseThrow(() -> new RuntimeException("Failed to retrieve added product attribute"));
+//
+//            productAttributes.add(attributeEntity);
+//        }
+//
+//        product.setAttributes(productAttributes);
+//        productRepository.save(product);
+//        return response(product);
     }
 
     @Override
@@ -169,7 +187,7 @@ public class ProductServiceImpl implements ProductService {
                 .discount(response.getDiscount())
                 .createDate(response.getCreateDate())
                 .images(response.getImages())
-                .brand(response.getBrand().getBrandId())
+                .brand(response.getBrand().getName())
                 .category(response.getCategory().getCategoryId())
                 .attributes(response.getAttributes() != null ?
                         response.getAttributes().stream()
