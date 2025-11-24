@@ -258,7 +258,7 @@ function performDeleteAccount(accountId) {
         });
 }
 
-// Hàm lấy danh sách sách từ API
+// Hàm lấy danh sách từ API
 function fetchProducts(page = 1) {
     currentPage = page;
 
@@ -295,7 +295,7 @@ function fetchProducts(page = 1) {
         });
 }
 
-// Hàm hiển thị danh sách sách
+// Hàm hiển thị danh sách
 function renderProducts(products) {
     const productsTableBody = document.getElementById('products-table-body');
     productsTableBody.innerHTML = '';
@@ -311,13 +311,13 @@ function renderProducts(products) {
                 <td>${product.categories?.map(c => c.name).join(', ') || product.category || 'N/A'}</td>
                 <td>${product.price.toLocaleString('vi-VN')}₫</td>
                 <td class="action-buttons">
-                    <button class="action-btn view" onclick="viewProductDetail(${product.id})" title="Xem chi tiết">
+                    <button class="action-btn view" onclick="viewProductDetail(${product.productId})" title="Xem chi tiết">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="action-btn edit" onclick="editProduct(${product.id})" title="Chỉnh sửa">
+                    <button class="action-btn edit" onclick="editProduct(${product.productId})" title="Chỉnh sửa">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="action-btn delete" onclick="showDeleteConfirmation(${product.id}, '${product.name.replace(/'/g, "\\'")}')" title="Xóa">
+                    <button class="action-btn delete" onclick="showDeleteConfirmation(${product.productId}, '${product.name.replace(/'/g, "\\'")}')" title="Xóa">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>
@@ -419,22 +419,22 @@ function showDeleteConfirmation(productId, productTitle) {
 
 // Thực hiện xóa sách
 function performDeleteProduct(productId) {
-    fetch(`/product/delete/${productId}`, {
+    fetch(`/deleteProduct/${productId}`, {
         method: 'DELETE'
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Xóa sách không thành công');
+                throw new Error('Xóa sản phẩm không thành công');
             }
             return response.json();
         })
         .then(data => {
-            showNotification('Xóa sách thành công', 'success');
+            showNotification('Xóa sản phẩm thành công', 'success');
             fetchProducts(currentPage);
         })
         .catch(error => {
             showNotification(error.message, 'error');
-            console.error('Lỗi khi xóa sách:', error);
+            console.error('Lỗi khi xóa :', error);
         });
 }
 
@@ -445,10 +445,8 @@ function viewProductDetail(productId) {
 
 // Hàm chứa đường dẫn sửa sách
 function editProduct(productId) {
-    window.location.href = `/update?id=${productId}`;
+    window.location.href = `/update-product?id=${productId}`;
 }
-
-// Trong file /js/admin/manage.js
 
 // Hàm lấy danh sách đơn hàng từ API
 function fetchOrders(page = 1) {
@@ -499,7 +497,6 @@ function renderOrders(orders) {
             <td>${order.id}</td>
             <td>${formatDate(order.orderDate)}</td>
             <td>${order.shippingAddress || 'N/A'}</td>
-            <td>${order.email || 'N/A'}</td>
             <td>${order.phone || 'N/A'}</td>
             <td>${formatPrice(order.totalAmount)}</td>
             <td><span class="status ${order.status.toLowerCase()}">${order.status}</span></td>
@@ -638,17 +635,6 @@ function performDeleteOrder(orderId) {
 // Hàm format giá tiền
 function formatPrice(price) {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
-}
-
-// Hàm định dạng ngày
-function formatDate(dateString) {
-    if (!dateString) return 'N/A';
-    try {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('vi-VN', { dateStyle: 'medium' });
-    } catch (e) {
-        return dateString;
-    }
 }
 
 // Hàm hiển thị thông báo

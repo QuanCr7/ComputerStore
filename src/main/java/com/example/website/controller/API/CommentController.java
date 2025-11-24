@@ -30,14 +30,14 @@ public class CommentController extends BaseController {
 
     @Operation(
             summary = "Lấy bình luận theo sách",
-            description = "Trả về tất cả bình luận của một cuốn sách cụ thể",
+            description = "Trả về tất cả bình luận theo sản phẩm",
             tags = {"Bình luận"}
     )
-    @GetMapping("/p/{name}")
+    @GetMapping("/p/{id}")
     public ResponseEntity<BaseResponse<PageCommentResponse>> getCommentByProduct(
             @RequestParam(defaultValue = "1") int page,
-            @PathVariable("name") String name) {
-        return returnSuccess(commentService.findAllByProduct(page,name));
+            @PathVariable("id") int id) {
+        return returnSuccess(commentService.findAllByProductId(page,id));
     }
 
     @Operation(

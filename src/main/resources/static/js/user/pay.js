@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Nếu chưa đăng nhập, ẩn tùy chọn "Sử dụng thông tin tài khoản"
     if (!isLoggedIn) {
-        console.log('pay.js: Chưa đăng nhập, ẩn tùy chọn sử dụng thông tin tài khoản');
         infoSourceSelect.innerHTML = `
             <option value="manual">Nhập thông tin mới</option>
         `;
@@ -74,11 +73,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                 console.log('pay.js: Profile response:', JSON.stringify(data, null, 2));
 
                 if (response.ok && data.code === 200) {
-                    const { name, email, phone, address } = data.data;
-                    fields.name.value = name || '';
-                    fields.email.value = email || '';
-                    fields.phone.value = phone || '';
-                    fields.address.value = address || '';
+                    const profile = data.data;
+
+                    fields.name.value = profile.fullName || profile.name || '';
+                    fields.phone.value = profile.phone || '';
+                    fields.address.value = profile.address || '';
                 } else {
                     showError(data.message || 'Không thể lấy thông tin tài khoản');
                     infoSourceSelect.value = 'manual';
@@ -107,23 +106,23 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 
 function renderCartItems(cartItems) {
-    const bookItemsContainer = document.getElementById('bookItemsContainer');
-    bookItemsContainer.innerHTML = ''; // Xóa nội dung mẫu
+    const productItemsContainer = document.getElementById('productItemsContainer');
+    productItemsContainer.innerHTML = ''; // Xóa nội dung mẫu
 
     cartItems.forEach(item => {
-        const bookItem = document.createElement('div');
-        bookItem.className = 'book-item';
-        bookItem.innerHTML = `
-            <img src="${item.image}" alt="${item.title}" class="book-image">
-            <div class="book-details">
-                <h3 class="book-title">${item.title}</h3>
-                <p class="book-price">${formatPrice(item.price)}</p>
-                <div class="book-quantity">
+        const productItem = document.createElement('div');
+        productItem.className = 'product-item';
+        productItem.innerHTML = `
+            <img src="${item.image}" alt="${item.title}" class="product-image">
+            <div class="product-details">
+                <h3 class="product-title">${item.title}</h3>
+                <p class="product-price">${formatPrice(item.price)}</p>
+                <div class="product-quantity">
                     <span>Số lượng: ${item.quantity}</span>
                 </div>
             </div>
         `;
-        bookItemsContainer.appendChild(bookItem);
+        productItemsContainer.appendChild(productItem);
     });
 }
 
@@ -184,7 +183,7 @@ async function completeOrder(e) {
         totalAmount: calculateOrderTotal(checkoutCart),
         orderDate: new Date().toISOString(),
         orderDetails: checkoutCart.map(item => ({
-            bookId: item.id, // Giả định item.id là bookId
+            productId: item.id, // Giả định item.id là productId
             quantity: item.quantity,
             price: item.price
         }))
@@ -207,7 +206,7 @@ async function completeOrder(e) {
 
         if (response.ok && data.code === 200) {
             // Hiển thị thông báo thành công
-            alert('Đơn hàng của bạn đã được đặt thành công! Cảm ơn bạn đã mua sắm tại BookStore.');
+            alert('Đơn hàng của bạn đã được đặt thành công! Cảm ơn bạn đã mua sắm tại ComputerStore.');
             // Xóa giỏ hàng sau khi đặt hàng thành công
             localStorage.removeItem('cart');
             sessionStorage.removeItem('checkoutCart');

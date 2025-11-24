@@ -25,4 +25,10 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Integer>
                                         @Param("name") String name,
                                         @Param("brand") String brand,
                                         @Param("category") String category);
+
+    @Query("SELECT p FROM ProductEntity p " +
+            "LEFT JOIN FETCH p.comments c " +
+            "LEFT JOIN FETCH c.user " +
+            "WHERE p.productId = :id")
+    Optional<ProductEntity> findByIdWithComments(@Param("id") int id);
 }

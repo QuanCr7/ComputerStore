@@ -1,4 +1,3 @@
-// File JavaScript độc lập cho giỏ hàng
 class ShoppingCart {
     constructor() {
         this.cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -73,41 +72,35 @@ class ShoppingCart {
     }
 
     addToCart(product) {
-        const existingItem = this.cart.find(item => item.id === product.id);
+        // Chuẩn hóa dữ liệu đầu vào
+        const item = {
+            id: product.id || product.productId,
+            title: product.title || product.name,
+            price: Number(product.price),
+            image: product.image || product.image_url || 'https://via.placeholder.com/200x280/4a6cf7/ffffff?text=Không+có+ảnh',
+            quantity: 1
+        };
 
-        let imageUrl = 'https://via.placeholder.com/200x280/4a6cf7/ffffff?text=Không+có+ảnh';
-
-        // Kiểm tra nếu có ảnh
-        if (product.images && product.images.length > 0) {
-            // Thêm timestamp để tránh cache
-            const timestamp = new Date().getTime();
-            imageUrl = `/images/product/${product.images[0]}?t=${timestamp}`;
-        } else if (product.image_url) {
-            // Nếu có image_url từ API
-            imageUrl = product.image_url;
+        // Kiểm tra hợp lệ
+        if (!item.id || !item.title || !item.price) {
+            console.error('Sản phẩm không hợp lệ:', product);
+            this.showNotification('Lỗi thêm sản phẩm!', 'error');
+            return;
         }
 
+        const existingItem = this.cart.find(i => i.id === item.id);
         if (existingItem) {
             existingItem.quantity += 1;
         } else {
-            this.cart.push({
-                id: product.id,
-                title: product.title,
-                price: product.price,
-                image: imageUrl,
-                quantity: 1
-            });
+            this.cart.push(item);
         }
 
         this.saveCart();
         this.updateCartUI();
-        this.showNotification(`Đã thêm "${product.title}" vào giỏ hàng`);
+        this.showNotification(`Đã thêm "${item.title}" vào giỏ hàng`);
 
-        // Giữ giỏ hàng mở
         const cartDropdown = document.getElementById('cartDropdown');
-        if (cartDropdown) {
-            cartDropdown.classList.add('active');
-        }
+        if (cartDropdown) cartDropdown.classList.add('active');
     }
 
     changeQuantity(productId, change, event) {

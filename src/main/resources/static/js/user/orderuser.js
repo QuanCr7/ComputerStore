@@ -122,7 +122,6 @@ function displayOrders(pageData) {
             <td>${order.id}</td>
             <td>${formatDate(order.orderDate)}</td>
             <td>${order.shippingAddress || 'N/A'}</td>
-            <td>${order.email || 'N/A'}</td>
             <td>${order.phone || 'N/A'}</td>
             <td>${formatPrice(order.totalAmount)}</td>
             <td>${order.status || 'N/A'}</td>

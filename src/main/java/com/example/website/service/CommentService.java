@@ -7,7 +7,7 @@ import com.example.website.response.PageCommentResponse;
 
 public interface CommentService {
     PageCommentResponse findAll(Integer page);
-    PageCommentResponse findAllByProduct(Integer page,String name);
+    PageCommentResponse findAllByProductId(Integer page,int id);
 
     CommentEntity get(int id);
     CommentResponse add(CommentRequest commentRequest);

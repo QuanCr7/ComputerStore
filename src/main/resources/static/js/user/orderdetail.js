@@ -108,7 +108,6 @@ function displayOrderDetail(order) {
 
     document.getElementById('name').textContent = order.name || 'N/A';
     document.getElementById('phone').textContent = order.phone || 'N/A';
-    document.getElementById('email').textContent = order.email || 'N/A';
     document.getElementById('shippingAddress').textContent = order.shippingAddress || 'N/A';
 
     const orderItems = document.getElementById('orderItems');
@@ -122,7 +121,6 @@ function displayOrderDetail(order) {
             <img src="${imageUrl}" alt="${item.title || 'N/A'}" class="item-image">
             <div class="item-details">
                 <h3 class="item-title">${item.title || 'N/A'}</h3>
-                <p class="item-author">${item.author || 'Không xác định'}</p>
                 <p class="item-price">${formatPrice(item.price)}</p>
                 <p class="item-quantity">Số lượng: ${item.quantity}</p>
             </div>

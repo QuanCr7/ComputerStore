@@ -19,7 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -49,10 +49,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public PageCommentResponse findAllByProduct(Integer page,String name) {
-        String nameProduct = getString(name);
-        ProductEntity product = productRepository.findByName(nameProduct)
-                .orElseThrow(() -> new RuntimeException("Product not found with title: " + nameProduct));
+    public PageCommentResponse findAllByProductId(Integer page,int id) {
+        ProductEntity product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
 
         int pageNumber = (page == null) ? 0 : page - 1;
         Pageable pageable = PageRequest.of(pageNumber, size);
@@ -90,7 +89,7 @@ public class CommentServiceImpl implements CommentService {
 
         CommentEntity comment = CommentEntity.builder()
                 .comment(commentRequest.getComment())
-                .createAt(LocalDate.now())
+                .createAt(LocalDateTime.now())
                 .product(product)
                 .user(user)
                 .build();
@@ -109,6 +108,7 @@ public class CommentServiceImpl implements CommentService {
                 .comment(response.getComment())
                 .productId(response.getProduct().getProductId())
                 .userId(response.getUser().getUserId())
+                .createdAt(response.getCreateAt())
                 .build();
     }
 

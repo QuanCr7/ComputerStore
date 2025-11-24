@@ -19,10 +19,10 @@
         </div>
     </div>
 
-    <!-- Thanh điều hướng đã được cải thiện -->
+    <!-- Thanh điều hướng -->
     <div class="admin-nav">
         <button class="admin-tab active" data-tab="products">
-            <i class="fas fa-product"></i> Quản lý Sách
+            <i class="fas fa-product"></i> Quản lý sản phẩm
         </button>
         <button class="admin-tab" data-tab="users">
             <i class="fas fa-users"></i> Quản lý Người dùng
@@ -35,11 +35,11 @@
     <!-- Tab Quản lý Product -->
     <div id="products-tab" class="tab-content active">
         <div class="tab-header">
-            <h2 class="tab-title"><i class="fas fa-product"></i> Quản lý Sách</h2>
+            <h2 class="tab-title"><i class="fas fa-product"></i> Quản lý sản phẩm</h2>
             <div class="search-box">
                 <input type="text" class="search-input" placeholder="Tìm kiếm sách...">
                 <button class="btn btn-primary"><i class="fas fa-search"></i> Tìm kiếm</button>
-                <button class="btn btn-success" onclick="window.location.href='/add'"><i class="fas fa-plus"></i> Thêm sách</button>
+                <button class="btn btn-success" onclick="window.location.href='/add'"><i class="fas fa-plus"></i> Thêm sản phẩm</button>
             </div>
         </div>
 
@@ -48,11 +48,11 @@
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Tên </th>
-                    <th>Hang ton</th>
-                    <th>Bao hanh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Hàng tồn</th>
+                    <th>Bảo hành</th>
                     <th>Danh muc</th>
-                    <th>Gia</th>
+                    <th>Giá gốc</th>
                     <th>Thao tác</th>
                 </tr>
                 </thead>
@@ -146,12 +146,12 @@
             <button class="modal-close" id="closeModal">&times;</button>
         </div>
         <div class="modal-body">
-            <p>Bạn có chắc chắn muốn xóa sách "<span id="productTitle"></span>" (ID: <span id="productId"></span>)?</p>
+            <p>Bạn có chắc chắn muốn xóa sản phẩm "<span id="productTitle"></span>" (ID: <span id="productId"></span>)?</p>
             <p class="warning-text"><i class="fas fa-exclamation-circle"></i> Hành động này không thể hoàn tác.</p>
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" id="cancelDelete">Hủy bỏ</button>
-            <button class="btn btn-danger" id="confirmDelete">Xóa sách</button>
+            <button class="btn btn-danger" id="confirmDelete">Xóa sản phẩm</button>
         </div>
     </div>
 </div>

@@ -48,7 +48,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 
     public OrderDetailResponse response(OrderDetailEntity response) {
         return OrderDetailResponse.builder()
-                .id(response.getProduct().getProductId())
+                .id(response.getOrder().getOrderId())
                 .price(response.getPriceAtPurchase())
                 .quantity(response.getQuantity())
                 .product(response.getProduct().getName())

@@ -11,6 +11,7 @@ import com.example.website.repository.ProductRepository;
 import com.example.website.request.ProductAttributeRequest;
 import com.example.website.request.ProductRequest;
 import com.example.website.request.StockQuantityRequest;
+import com.example.website.response.CommentResponse;
 import com.example.website.response.PageProductResponse;
 import com.example.website.response.ProductAttributeResponse;
 import com.example.website.response.ProductResponse;
@@ -37,7 +38,6 @@ import java.util.List;
 @Service
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
-    private final ProductAttributeService productAttributeService;
     private final ProductAttributeRepository productAttributeRepository;
     private final BrandRepository brandRepository;
     private final CategoryRepository categoryRepository;
@@ -52,7 +52,7 @@ public class ProductServiceImpl implements ProductService {
         Pageable pageable = PageRequest.of(pageNumber, size);
 
         Page<ProductEntity> entityPage = productRepository.findAll(pageable);
-        Page<ProductResponse> responsePage = entityPage.map(this::response);
+        Page<ProductResponse> responsePage = entityPage.map(this::responseList);
 
         return PageProductResponse.builder()
                 .currentPage(pageNumber + 1)
@@ -70,7 +70,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse get(int id) {
-        return response(productRepository.findById(id).orElseThrow(()-> new RuntimeException("Product Not Found")));
+        ProductEntity product = productRepository.findByIdWithComments(id)
+                .orElseThrow(() -> new RuntimeException("Product Not Found"));
+        return response(product);
     }
 
     @Override
@@ -176,7 +178,36 @@ public class ProductServiceImpl implements ProductService {
                 .build();
     }
 
+    public ProductResponse responseList(ProductEntity response){
+        return ProductResponse.builder()
+                .productId(response.getProductId())
+                .name(response.getName())
+                .price(response.getPrice())
+                .discount(response.getDiscount())
+                .stockQuantity(response.getStockQuantity())
+                .warranty(response.getWarranty())
+                .createDate(response.getCreateDate())
+                .images(response.getImages())
+                .brand(response.getBrand().getName())
+                .category(response.getCategory().getCategoryId())
+                .build();
+    }
+
     public ProductResponse response(ProductEntity response) {
+        List<CommentResponse> commentResponses = null;
+
+        if (response.getComments() != null && !response.getComments().isEmpty()) {
+            commentResponses = response.getComments().stream()
+                    .map(commentEntity -> CommentResponse.builder()
+                            .commentId(commentEntity.getCommentId())
+                            .comment(commentEntity.getComment())
+                            .productId(commentEntity.getProduct().getProductId())
+                            .userId(commentEntity.getUser().getUserId())
+                            .createdAt(commentEntity.getCreateAt())
+                            .build())
+                    .toList();
+        }
+
         return ProductResponse.builder()
                 .productId(response.getProductId())
                 .name(response.getName())
@@ -198,6 +229,7 @@ public class ProductServiceImpl implements ProductService {
                                         .build())
                                 .toList()
                         : null)
+                .comments(commentResponses)
                 .build();
     }
 

@@ -24,4 +24,5 @@ public class ProductResponse {
     private String brand;
     private int category;
     private List<ProductAttributeResponse> attributes;
+    private List<CommentResponse> comments;
 }

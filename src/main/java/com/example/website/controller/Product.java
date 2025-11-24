@@ -22,10 +22,10 @@ public class Product {
         return "guest/search";
     }
 
-    @GetMapping("/update")
+    @GetMapping("/update-product")
     public String update(@RequestParam int id, Model model) {
         model.addAttribute("productId", id);
-        return "admin/updatebook";
+        return "admin/update-product";
     }
 
     @GetMapping("/add")

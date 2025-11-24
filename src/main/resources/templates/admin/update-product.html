@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cập nhật sản phẩm</title>
+    <link rel="stylesheet" href="/css/product/update-product.css">
+</head>
+<body>
+<div class="container">
+    <h1>Cập nhật sản phẩm</h1>
+    <form id="updateProductForm">
+        <input type="hidden" id="productId">
+
+        <div class="form-group">
+            <label for="name">Tên sản phẩm *</label>
+            <input type="text" id="name" name="name" required>
+            <div id="nameError" class="error"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="price">Giá (VND) *</label>
+            <input type="number" id="price" name="price" min="0" step="0.01" required>
+            <div id="priceError" class="error"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="stockQuantity">Số lượng tồn kho *</label>
+            <input type="number" id="stockQuantity" name="stockQuantity" min="1" required>
+        </div>
+
+        <div class="form-group">
+            <label for="warranty">Bảo hành (tháng) *</label>
+            <input type="number" id="warranty" name="warranty" min="1" required>
+        </div>
+
+        <div class="form-group">
+            <label for="discount">Giảm giá (%)</label>
+            <input type="number" id="discount" name="discount" min="0" max="100" value="0">
+        </div>
+
+        <div class="form-group">
+            <label for="description">Mô tả</label>
+            <textarea id="description" name="description"></textarea>
+        </div>
+
+        <!-- Danh mục (checkbox - giống add) -->
+        <div class="form-group">
+            <label>Danh mục * </label>
+            <div id="categoriesContainer" class="category-container"></div>
+            <div id="categoryError" class="error"></div>
+        </div>
+
+        <!-- Nhãn hàng (radio) -->
+        <div class="form-group">
+            <label>Nhãn hàng *</label>
+            <div id="brandContainer" class="brand-container"></div>
+            <div id="brandError" class="error"></div>
+        </div>
+
+        <!-- Form chi tiết theo danh mục (động) -->
+        <div id="specificFields"></div>
+
+        <!-- Ảnh -->
+        <div class="form-group">
+            <label for="images">Hình ảnh mới (tối đa 5 ảnh)</label>
+            <input type="file" id="images" name="images" multiple accept="image/*">
+            <div class="image-preview" id="imagePreview"></div>
+            <p class="note">Ảnh hiện tại sẽ được giữ lại nếu không chọn ảnh mới</p>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn">Cập nhật sản phẩm</button>
+            <button type="button" class="btn btn-secondary" onclick="window.history.back()">Quay lại</button>
+        </div>
+    </form>
+</div>
+
+<script src="/js/product/update-product.js" defer></script>
+</body>
+</html>

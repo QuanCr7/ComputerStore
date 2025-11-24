@@ -61,7 +61,7 @@ function renderProducts(products) {
         const formattedDate = postDate.toLocaleDateString('vi-VN');
 
         // Tạo URL ảnh - sử dụng ảnh đầu tiên nếu có, nếu không dùng placeholder
-        let imageUrl = 'https://via.placeholder.com/200x280/4a6cf7/ffffff?text=Không+có+ảnh';
+        let imageUrl = '/images/product/noimage.jpg';
 
         // Kiểm tra nếu có ảnh
         if (product.images && product.images.length > 0) {
@@ -76,7 +76,7 @@ function renderProducts(products) {
         productCard.innerHTML = `
             <div class="product-image-container">
                 <img src="${imageUrl}" alt="${product.name}" class="product-image" 
-                     onerror="this.src='https://via.placeholder.com/200x280/4a6cf7/ffffff?text=Không+có+ảnh'">
+                     onerror="this.src='/images/product/noimage.jpg'">
             </div>
             <div class="product-info">
                 <h3 class="product-name">${product.name}</h3>
@@ -98,7 +98,13 @@ function renderProducts(products) {
                     <button class="action-btn view-btn" onclick="viewProductDetail(${product.productId})">
                         <i class="fas fa-eye"></i> Xem
                     </button>
-                    <button class="action-btn add-btn" onclick="shoppingCart.addToCart(${JSON.stringify(product).replace(/"/g, '&quot;')})">
+                    <button class="action-btn add-btn" 
+                            onclick="shoppingCart.addToCart({
+                                id: ${product.productId},
+                                title: '${product.name.replace(/'/g, "\\'")}',
+                                price: ${product.price * (1 - product.discount / 100)},
+                                image: '${imageUrl}'
+                            })">
                         <i class="fas fa-cart-plus"></i> Thêm
                     </button>
                 </div>
