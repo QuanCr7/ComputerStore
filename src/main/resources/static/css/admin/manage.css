@@ -440,6 +440,45 @@ tr:hover {
     color: var(--dark-color);
 }
 
+.price-cell {
+    font-weight: 600;
+    min-width: 140px;
+}
+
+.price-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    position: relative;
+}
+
+.price-original {
+    color: #999;
+    text-decoration: line-through;
+    font-size: 0.9em;
+}
+
+.price-final {
+    color: #d70018;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.price-final.discount {
+    color: #d70018;
+}
+
+.discount-badge {
+    background: #d70018;
+    color: white;
+    font-size: 0.8em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    align-self: flex-start;
+    margin-top: 2px;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }

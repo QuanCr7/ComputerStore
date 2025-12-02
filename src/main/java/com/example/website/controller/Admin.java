@@ -19,10 +19,10 @@ public class Admin {
         return "admin/account-detail";
     }
 
-    @GetMapping("/book-detail")
+    @GetMapping("/p/detail")
     public String getProductDetail(@RequestParam int id, Model model) {
-        model.addAttribute("book", id);
-        return "admin/book-detail";
+        model.addAttribute("productId", id);
+        return "admin/product-admin";
     }
 
     @GetMapping("/tet")

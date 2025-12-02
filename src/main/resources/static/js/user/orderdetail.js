@@ -116,15 +116,21 @@ function displayOrderDetail(order) {
         console.log('order-detail-product.js: Displaying item:', JSON.stringify(item, null, 2));
         const itemElement = document.createElement('div');
         itemElement.className = 'order-item';
-        const imageUrl = item.imageUrl ? `http://localhost:8080/images/book/${item.imageUrl}` : 'https://via.placeholder.com/80x100';
+
+        // SỬA TỪ ĐÂY
+        const imageUrl = item.image
+            ? `http://localhost:8080/images/product/${item.image}`  // hoặc /images/cpu/ tùy bạn lưu ở đâu
+            : 'https://via.placeholder.com/80x100';
+
         itemElement.innerHTML = `
-            <img src="${imageUrl}" alt="${item.title || 'N/A'}" class="item-image">
-            <div class="item-details">
-                <h3 class="item-title">${item.title || 'N/A'}</h3>
-                <p class="item-price">${formatPrice(item.price)}</p>
-                <p class="item-quantity">Số lượng: ${item.quantity}</p>
-            </div>
-        `;
+        <img src="${imageUrl}" alt="${item.product || 'Sản phẩm'}" class="item-image">
+        <div class="item-details">
+            <h3 class="item-title">${item.product || 'Không có tên'}</h3>
+            <p class="item-price">${formatPrice(item.price)}</p>
+            <p class="item-quantity">Số lượng: ${item.quantity}</p>
+            <p class="item-info">Thương hiệu: ${item.brand || 'N/A'} | Danh mục: ${item.category || 'N/A'}</p>
+        </div>
+    `;
         orderItems.appendChild(itemElement);
     });
 
@@ -168,11 +174,11 @@ async function reorder(orderId) {
         if (response.ok && data.code === 200) {
             const order = data.data;
             const cartItems = order.orderDetails.map(detail => ({
-                id: detail.id, // bookId
-                title: detail.title,
+                id: detail.id,
+                title: detail.product,
                 price: detail.price,
                 quantity: detail.quantity,
-                image: detail.imageUrl ? `${API_BASE_URL}/images/book/${detail.imageUrl}` : 'https://via.placeholder.com/80x100'
+                image: detail.imageUrl ? `${API_BASE_URL}/images/product/${detail.imageUrl}` : 'https://via.placeholder.com/80x100'
             }));
 
             localStorage.setItem('cart', JSON.stringify(cartItems));

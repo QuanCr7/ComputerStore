@@ -38,7 +38,7 @@ public class AuthController extends BaseController {
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(false); // Tạm thời false để test trên localhost (không HTTPS)
         refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 7 ngày
+        refreshTokenCookie.setMaxAge(24 * 60 * 60); // 7 ngày
         refreshTokenCookie.setAttribute("SameSite", "Strict");
         response.addCookie(refreshTokenCookie);
 
@@ -75,7 +75,7 @@ public class AuthController extends BaseController {
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(false); // Tạm thời false để test trên localhost
         refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 7 ngày
+        refreshTokenCookie.setMaxAge(24 * 60 * 60); // 7 ngày
         refreshTokenCookie.setAttribute("SameSite", "Strict");
         response.addCookie(refreshTokenCookie);
 

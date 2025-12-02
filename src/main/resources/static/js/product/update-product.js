@@ -429,7 +429,6 @@ const specificForms = {
     `
 };
 
-
 // Map tên danh mục → key
 function getCategoryKey(name) {
     const map = {

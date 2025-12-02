@@ -1,19 +1,14 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chi tiết</title>
-    <link rel="stylesheet" href="/css/headandfoot.css">
-    <link rel="stylesheet" href="/css/shopping.css">
+    <title>Chi tiết Sách - Hệ thống Quản lý</title>
     <link rel="stylesheet" href="/css/product/detail-product.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" sizes="32x32" href="/images/icon/computer.png">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
 </head>
 <body>
-<!-- Header -->
-<div th:replace="~{guest/common/header :: header}"></div>
 
 <main class="main-content">
     <section class="detail-section">
@@ -75,65 +70,55 @@
                     <div class="specs-grid" id="specsGrid"></div>
                 </div>
 
-            </div>
-
-            <!-- Phần Comment Section -->
-            <div class="comment-section">
-                <div class="section-header">
+                <!-- Features Section -->
+                <div class="features-section">
                     <h2 class="section-title">
-                        <i class="fas fa-comments"></i> Đánh giá & Nhận xét
-                        <span id="commentCount" class="comment-count">(0)</span>
+                        <i class="fas fa-star"></i> Tính năng nổi bật
                     </h2>
-                </div>
-
-                <!-- Form thêm comment -->
-                <div class="comment-form-container">
-                    <form id="commentForm" class="comment-form">
-                        <div class="form-group">
-                            <label for="commentContent" class="form-label">
-                                <i class="fas fa-edit"></i> Viết đánh giá của bạn
-                            </label>
-                            <textarea
-                                    id="commentContent"
-                                    name="content"
-                                    rows="4"
-                                    placeholder="Chia sẻ cảm nhận của bạn về sản phẩm này..."
-                                    class="comment-textarea"
-                                    required
-                            ></textarea>
+                    <div class="features-grid">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>Hiệu năng đỉnh cao</h4>
+                                <p>24 nhân, 32 luồng với tốc độ turbo lên đến 6.0 GHz cho trải nghiệm gaming và đa nhiệm mượt mà</p>
+                            </div>
                         </div>
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-primary" id="submitComment">
-                                <i class="fas fa-paper-plane"></i> Gửi đánh giá
-                            </button>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>Công nghệ mới nhất</h4>
+                                <p>Hỗ trợ PCIe 5.0, DDR5 và nhiều công nghệ tiên tiến khác</p>
+                            </div>
                         </div>
-                    </form>
-                </div>
-
-                <!-- Danh sách comments -->
-                <div id="commentsList" class="comments-list">
-                    <div class="loading-comments">
-                        <i class="fas fa-spinner fa-spin"></i> Đang tải đánh giá...
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-gamepad"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>Tối ưu cho gaming</h4>
+                                <p>Hiệu năng gaming vượt trội với khả năng xử lý đồ họa mạnh mẽ và độ trễ thấp</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>Lý tưởng cho sáng tạo</h4>
+                                <p>Xử lý mượt mà các tác vụ render video, 3D modeling và ứng dụng chuyên nghiệp</p>
+                            </div>
+                        </div>
                     </div>
-                </div>
-
-                <!-- Phân comment -->
-                <div id="commentPagination" class="comment-pagination" style="display: none;">
-                    <button id="loadMoreBtn" class="btn btn-outline">
-                        <i class="fas fa-arrow-down"></i> Xem thêm đánh giá
-                    </button>
                 </div>
             </div>
         </div>
     </section>
 </main>
 
-<!-- Footer -->
-<div th:replace="~{guest/common/footer :: footer}"></div>
-
-<script src="/js/shopping.js" defer></script>
-<script src="/js/user/auth.js" defer></script>
-<script src="/js/categories.js" defer></script>
-<script src="/js/product/detail-product.js" defer></script>
+<script src="/js/product/product-admin.js" defer></script>
 </body>
 </html>

@@ -42,7 +42,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Các trường nhập liệu
     const fields = {
         name: document.getElementById('name'),
-        email: document.getElementById('email'),
         phone: document.getElementById('phone'),
         address: document.getElementById('address')
     };
@@ -157,33 +156,29 @@ async function completeOrder(e) {
     // Basic form validation
     const fields = {
         name: document.getElementById('name'),
-        email: document.getElementById('email'),
         phone: document.getElementById('phone'),
         address: document.getElementById('address')
     };
 
-    if (!fields.name.value || !fields.email.value || !fields.phone.value || !fields.address.value) {
+    if (!fields.name.value || !fields.phone.value || !fields.address.value) {
         showError('Vui lòng điền đầy đủ thông tin khách hàng');
-        console.log('pay.js: completeOrder: Thiếu thông tin khách hàng');
         return;
     }
 
     if (checkoutCart.length === 0) {
         showError('Giỏ hàng của bạn đang trống');
-        console.log('pay.js: completeOrder: Giỏ hàng trống');
         return;
     }
 
     // Tạo đối tượng đơn hàng khớp với OrderRequest
     const order = {
-        shippingAddress: fields.address.value, // Gộp toàn bộ địa chỉ vào shippingAddress
+        shippingAddress: fields.address.value,
         name: fields.name.value,
-        email: fields.email.value,
         phone: fields.phone.value,
         totalAmount: calculateOrderTotal(checkoutCart),
         orderDate: new Date().toISOString(),
         orderDetails: checkoutCart.map(item => ({
-            productId: item.id, // Giả định item.id là productId
+            productId: item.id,
             quantity: item.quantity,
             price: item.price
         }))

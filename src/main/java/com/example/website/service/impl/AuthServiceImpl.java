@@ -196,15 +196,54 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
-    // AuthServiceImpl.java (chỉ cập nhật phương thức refreshToken)
+//    @Override
+//    public UserLoginResponse refreshToken(String refreshToken) {
+//        // Validate JWT signature và không hết hạn
+//        if (!jwtTokenProvider.validateToken(refreshToken) || jwtTokenProvider.isTokenExpired(refreshToken)) {
+//            throw new RuntimeException("Invalid or expired refresh token");
+//        }
+//
+//        // Kiểm tra blacklist
+//        if (isBlacklisted(refreshToken)) {
+//            throw new RuntimeException("Refresh token is blacklisted");
+//        }
+//
+//        String username = jwtTokenProvider.extractUsername(refreshToken);
+//        UserEntity user = userRepository.findByUsername(username)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        // Kiểm tra refresh token khớp với DB
+//        if (!refreshToken.equals(user.getRefreshToken())) {
+//            throw new RuntimeException("Invalid refresh token");
+//        }
+//
+//        CustomUserDetails userDetails = new CustomUserDetails(user);
+//
+//        // Generate new access và new refresh (rotation để bảo mật)
+//        String newAccessToken = jwtTokenProvider.generateAccessToken(userDetails);
+//        String newRefreshToken = jwtTokenProvider.generateRefreshToken(userDetails);
+//        Date accessTokenExpiry = jwtTokenProvider.extractExpiration(newAccessToken);
+//        Date refreshTokenExpiry = jwtTokenProvider.extractExpiration(newRefreshToken);
+//
+//        // Update new refresh vào DB và blacklist old refresh
+//        user.setRefreshToken(newRefreshToken);
+//        userRepository.save(user);
+//        addToBlacklist(refreshToken, blacklistDuration);
+//
+//        return UserLoginResponse.builder()
+//                .accessToken(newAccessToken)
+//                .refreshToken(newRefreshToken)
+//                .accessTokenExpiryDate(accessTokenExpiry)
+//                .refreshTokenExpiryDate(refreshTokenExpiry)
+//                .build();
+//    }
+
+    //cach su dung refreshToken cu ma ko tao moi
     @Override
     public UserLoginResponse refreshToken(String refreshToken) {
-        // Validate JWT signature và không hết hạn
         if (!jwtTokenProvider.validateToken(refreshToken) || jwtTokenProvider.isTokenExpired(refreshToken)) {
             throw new RuntimeException("Invalid or expired refresh token");
         }
-
-        // Kiểm tra blacklist
         if (isBlacklisted(refreshToken)) {
             throw new RuntimeException("Refresh token is blacklisted");
         }
@@ -213,29 +252,19 @@ public class AuthServiceImpl implements AuthService {
         UserEntity user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Kiểm tra refresh token khớp với DB
+        // kiểm tra token có khớp không
         if (!refreshToken.equals(user.getRefreshToken())) {
             throw new RuntimeException("Invalid refresh token");
         }
 
         CustomUserDetails userDetails = new CustomUserDetails(user);
-
-        // Generate new access và new refresh (rotation để bảo mật)
         String newAccessToken = jwtTokenProvider.generateAccessToken(userDetails);
-        String newRefreshToken = jwtTokenProvider.generateRefreshToken(userDetails);
-        Date accessTokenExpiry = jwtTokenProvider.extractExpiration(newAccessToken);
-        Date refreshTokenExpiry = jwtTokenProvider.extractExpiration(newRefreshToken);
-
-        // Update new refresh vào DB và blacklist old refresh
-        user.setRefreshToken(newRefreshToken);
-        userRepository.save(user);
-        addToBlacklist(refreshToken, blacklistDuration);
 
         return UserLoginResponse.builder()
                 .accessToken(newAccessToken)
-                .refreshToken(newRefreshToken)
-                .accessTokenExpiryDate(accessTokenExpiry)
-                .refreshTokenExpiryDate(refreshTokenExpiry)
+                .refreshToken(refreshToken)
+                .accessTokenExpiryDate(jwtTokenProvider.extractExpiration(newAccessToken))
+                .refreshTokenExpiryDate(jwtTokenProvider.extractExpiration(refreshToken))
                 .build();
     }
 
@@ -292,35 +321,7 @@ public class AuthServiceImpl implements AuthService {
     }
 }
 
-//cach su dung refreshToken cu ma ko tao moi
-//@Override
-//public UserLoginResponse refreshToken(String refreshToken) {
-//    if (!jwtTokenProvider.validateToken(refreshToken) || jwtTokenProvider.isTokenExpired(refreshToken)) {
-//        throw new RuntimeException("Invalid or expired refresh token");
-//    }
-//    if (isBlacklisted(refreshToken)) {
-//        throw new RuntimeException("Refresh token is blacklisted");
-//    }
-//
-//    String username = jwtTokenProvider.extractUsername(refreshToken);
-//    UserEntity user = userRepository.findByUsername(username)
-//            .orElseThrow(() -> new RuntimeException("User not found"));
-//    if (!refreshToken.equals(user.getRefreshToken())) {
-//        throw new RuntimeException("Invalid refresh token");
-//    }
-//
-//    CustomUserDetails userDetails = new CustomUserDetails(user);
-//    String newAccessToken = jwtTokenProvider.generateAccessToken(userDetails);
-//    Date accessTokenExpiry = jwtTokenProvider.extractExpiration(newAccessToken);
-//    Date refreshTokenExpiry = jwtTokenProvider.extractExpiration(refreshToken);
-//
-//    return UserLoginResponse.builder()
-//            .accessToken(newAccessToken)
-//            .refreshToken(refreshToken) // Giữ nguyên refreshToken cũ
-//            .accessTokenExpiryDate(accessTokenExpiry)
-//            .refreshTokenExpiryDate(refreshTokenExpiry)
-//            .build();
-//}
+
 //@PostMapping("/refresh-token")
 //public ResponseEntity<BaseResponse<UserLoginResponse>> refreshToken(
 //        HttpServletRequest request, HttpServletResponse response) {

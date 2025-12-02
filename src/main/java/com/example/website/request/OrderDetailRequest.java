@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class OrderDetailRequest {
     private int orderId;
-    private int bookId;
+    private int productId;
     private int quantity;
     private BigDecimal price;
 }

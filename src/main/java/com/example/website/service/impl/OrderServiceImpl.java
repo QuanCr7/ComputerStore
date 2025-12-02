@@ -3,9 +3,11 @@ package com.example.website.service.impl;
 import com.example.website.configuration.CustomUserDetails;
 import com.example.website.entity.OrderDetailEntity;
 import com.example.website.entity.OrderEntity;
+import com.example.website.entity.ProductEntity;
 import com.example.website.entity.UserEntity;
 import com.example.website.repository.OrderDetailRepository;
 import com.example.website.repository.OrderRepository;
+import com.example.website.repository.ProductRepository;
 import com.example.website.repository.UserRepository;
 import com.example.website.request.OrderDetailRequest;
 import com.example.website.request.OrderRequest;
@@ -14,6 +16,7 @@ import com.example.website.response.OrderResponse;
 import com.example.website.response.PageOrderResponse;
 import com.example.website.service.OrderDetailService;
 import com.example.website.service.OrderService;
+import com.example.website.service.ProductService;
 import com.example.website.utils.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +37,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final OrderDetailService orderDetailService;
+    private final ProductRepository productRepository;
     private final OrderDetailRepository orderDetailRepository;
 
     private static final int size = 15;
@@ -106,30 +110,44 @@ public class OrderServiceImpl implements OrderService {
                 .shippingAddress(request.getShippingAddress())
                 .status(OrderStatus.PENDING)
                 .user(user)
+                .orderDetails(new ArrayList<>())
                 .build();
         order = orderRepository.save(order);
 
         // Thêm chi tiết đơn hàng bằng cách sử dụng OrderDetailService
-        List<OrderDetailEntity> orderDetails = new ArrayList<>();
-        for (OrderDetailRequest detailRequest : orderDetailRequests) {
-            // Cập nhật orderId trong OrderDetailRequest để phù hợp với đơn hàng mới
-            OrderDetailRequest updatedDetailRequest = OrderDetailRequest.builder()
-                    .orderId(order.getOrderId())
-                    .bookId(detailRequest.getBookId())
-                    .quantity(detailRequest.getQuantity())
-                    .price(detailRequest.getPrice())
+//        List<OrderDetailEntity> orderDetails = new ArrayList<>();
+//        for (OrderDetailRequest detailRequest : orderDetailRequests) {
+//            // Cập nhật orderId trong OrderDetailRequest để phù hợp với đơn hàng mới
+//            OrderDetailRequest updatedDetailRequest = OrderDetailRequest.builder()
+//                    .orderId(order.getOrderId())
+//                    .productId(detailRequest.getProductId())
+//                    .quantity(detailRequest.getQuantity())
+//                    .price(detailRequest.getPrice())
+//                    .build();
+//            // Gọi phương thức add từ OrderDetailService
+//            List<OrderDetailResponse> detailResponses = orderDetailService.add(updatedDetailRequest);
+//            // Chuyển đổi phản hồi trở lại thành các thực thể để thiết lập trong OrderEntity
+//            OrderDetailEntity detailEntity = orderDetailRepository.findById(detailResponses.getFirst().getId())
+//                    .orElseThrow(() -> new RuntimeException("Failed to retrieve added order detail"));
+//            orderDetails.add(detailEntity);
+//        }
+
+        for (OrderDetailRequest detailReq : orderDetailRequests) {
+            ProductEntity product = productRepository.findById(detailReq.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Product not found with ID: " + detailReq.getProductId()));
+
+            OrderDetailEntity detail = OrderDetailEntity.builder()
+                    .order(order)
+                    .product(product)
+                    .quantity(detailReq.getQuantity())
+                    .priceAtPurchase(detailReq.getPrice() != null ? detailReq.getPrice() : product.getPrice())
                     .build();
-            // Gọi phương thức add từ OrderDetailService
-            List<OrderDetailResponse> detailResponses = orderDetailService.add(updatedDetailRequest);
-            // Chuyển đổi phản hồi trở lại thành các thực thể để thiết lập trong OrderEntity
-            OrderDetailEntity detailEntity = orderDetailRepository.findById(detailResponses.getFirst().getId())
-                    .orElseThrow(() -> new RuntimeException("Failed to retrieve added order detail"));
-            orderDetails.add(detailEntity);
+
+            order.getOrderDetails().add(detail);
         }
 
-
         // Gán orderDetails và lưu lại
-        order.setOrderDetails(orderDetails);
+//        order.setOrderDetails(orderDetails);
         orderRepository.save(order);
 
         return response(order);
@@ -151,6 +169,18 @@ public class OrderServiceImpl implements OrderService {
 //    }
 
     public OrderResponse response(OrderEntity order) {
+        List<OrderDetailResponse> detailResponses = order.getOrderDetails().stream()
+                .map(detail -> OrderDetailResponse.builder()
+                        .id(detail.getDetailId())
+                        .product(detail.getProduct().getName())
+                        .price(detail.getPriceAtPurchase())
+                        .quantity(detail.getQuantity())
+                        .brand(detail.getProduct().getBrand().getName())
+                        .category(detail.getProduct().getCategory().getName())
+                        .image(detail.getProduct().getImages().getFirst())
+                        .build())
+                .toList();
+
         return OrderResponse.builder()
                 .id(order.getOrderId())
                 .shippingAddress(order.getShippingAddress())
@@ -160,7 +190,8 @@ public class OrderServiceImpl implements OrderService {
                 .status(order.getStatus().name())
                 .totalAmount(order.getTotalAmount())
                 .userId(order.getUser().getUserId())
-                .orderDetails(orderDetailService.getOrderDetailByOrderId(order.getOrderId()))
+                .orderDetails(detailResponses)
+//                .orderDetails(orderDetailService.getOrderDetailByOrderId(order.getOrderId()))
                 .build();
     }
 }

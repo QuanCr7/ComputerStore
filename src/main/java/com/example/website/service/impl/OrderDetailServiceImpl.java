@@ -23,13 +23,14 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
 
+    // khng con dung
     @Override
     public List<OrderDetailResponse> add(OrderDetailRequest orderDetailRequest) {
         OrderEntity order = orderRepository.findById(orderDetailRequest.getOrderId())
                 .orElseThrow(() -> new RuntimeException("Order not found with ID: " + orderDetailRequest.getOrderId()));
 
-        ProductEntity product = productRepository.findById(orderDetailRequest.getBookId())
-                .orElseThrow(() -> new RuntimeException("Book not found with ID: " + orderDetailRequest.getBookId()));
+        ProductEntity product = productRepository.findById(orderDetailRequest.getProductId())
+                .orElseThrow(() -> new RuntimeException("Product not found with ID: " + orderDetailRequest.getProductId()));
 
         OrderDetailEntity orderDetail = OrderDetailEntity.builder()
                 .order(order)

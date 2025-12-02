@@ -1,9 +1,12 @@
 let currentPage = 1;
 let currentProductToDelete = null;
 let currentAccountToDelete = null;
+let categoriesMap = {};
 
 // Gọi khi trang được tải
 document.addEventListener('DOMContentLoaded', function() {
+    loadCategoriesForAdmin();
+
     // Xử lý chuyển tab
     const tabs = document.querySelectorAll('.admin-tab');
     const tabContents = document.querySelectorAll('.tab-content');
@@ -64,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Tải dữ liệu sách
+    // Tải dữ liệu
     fetchProducts();
 });
 
@@ -303,25 +306,49 @@ function renderProducts(products) {
     products.forEach(product => {
         const row = document.createElement('tr');
 
-        row.innerHTML = `
-                <td>${product.productId}</td>
-                <td>${product.name}</td>
-                <td>${product.stockQuantity}</td>
-                <td>${product.warranty}</td>
-                <td>${product.categories?.map(c => c.name).join(', ') || product.category || 'N/A'}</td>
-                <td>${product.price.toLocaleString('vi-VN')}₫</td>
-                <td class="action-buttons">
-                    <button class="action-btn view" onclick="viewProductDetail(${product.productId})" title="Xem chi tiết">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="action-btn edit" onclick="editProduct(${product.productId})" title="Chỉnh sửa">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn delete" onclick="showDeleteConfirmation(${product.productId}, '${product.name.replace(/'/g, "\\'")}')" title="Xóa">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
+        // Tính giá sau khi giảm
+        const originalPrice = Number(product.price);
+        const discount = Number(product.discount || 0);
+        const finalPrice = discount > 0
+            ? originalPrice * (1 - discount / 100)
+            : originalPrice;
+
+        // Format giá
+        const formattedOriginal = originalPrice.toLocaleString('vi-VN');
+        const formattedFinal = Math.round(finalPrice).toLocaleString('vi-VN'); // làm tròn
+
+        let priceHTML = `<span class="price-final">${formattedFinal}₫</span>`;
+
+        if (discount > 0) {
+            priceHTML = `
+                <div class="price-wrapper">
+                    <span class="price-final discount">${formattedFinal}₫</span>
+                </div>
             `;
+        }
+
+        // Lấy tên danh mục từ map
+        const categoryName = categoriesMap[product.category] || product.category || 'N/A';
+
+        row.innerHTML = `
+            <td>${product.productId}</td>
+            <td>${product.name}</td>
+            <td>${product.stockQuantity}</td>
+            <td>${product.warranty || 'N/A'}</td>
+            <td>${categoryName}</td>
+            <td class="price-cell">${priceHTML}</td>
+            <td class="action-buttons">
+                <button class="action-btn view" onclick="viewProductDetail(${product.productId})" title="Xem chi tiết">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="action-btn edit" onclick="editProduct(${product.productId})" title="Chỉnh sửa">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-btn delete" onclick="showDeleteConfirmation(${product.productId}, '${product.name.replace(/'/g, "\\'")}')" title="Xóa">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
 
         productsTableBody.appendChild(row);
     });
@@ -438,12 +465,12 @@ function performDeleteProduct(productId) {
         });
 }
 
-// Hàm chứa đường dẫn xem chi tiết sách
+// Hàm chứa đường dẫn xem chi tiết
 function viewProductDetail(productId) {
-    window.location.href = `/product-detail?id=${productId}`;
+    window.location.href = `/p/detail?id=${productId}`;
 }
 
-// Hàm chứa đường dẫn sửa sách
+// Hàm chứa đường dẫn sửa
 function editProduct(productId) {
     window.location.href = `/update-product?id=${productId}`;
 }
@@ -668,4 +695,22 @@ function showNotification(message, type) {
             notification.classList.remove('hide');
         }, 300);
     }, 3000);
+}
+
+function loadCategoriesForAdmin() {
+    fetch('/categories')
+        .then(res => res.json())
+        .then(result => {
+            const cats = result.data || [];
+            categoriesMap = {};
+            cats.forEach(cat => {
+                if (cat.categoryId && cat.name) {
+                    categoriesMap[cat.categoryId] = cat.name;
+                }
+            });
+        })
+        .catch(err => {
+            console.error('Không tải được danh mục:', err);
+            categoriesMap = {};
+        });
 }
