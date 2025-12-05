@@ -154,31 +154,110 @@ function renderSpecifications(attributes) {
     }
 
     const specLabels = {
-        'series': { label: 'Series', icon: 'fas fa-microchip' },
-        'thế_hệ': { label: 'Thế hệ', icon: 'fas fa-layer-group' },
-        'cpu': { label: 'CPU', icon: 'fas fa-microchip' },
-        'ra_mắt': { label: 'Ra mắt', icon: 'fas fa-calendar-star' },
-        'số_nhân_xử_lý': { label: 'Số nhân xử lý', icon: 'fas fa-microchip' },
-        'số_luồng_của_cpu': { label: 'Số luồng CPU', icon: 'fas fa-bolt' },
-        'tốc_độ_xử_lý': { label: 'Tốc độ xử lý', icon: 'fas fa-tachometer-alt' },
-        'tiêu_thụ_điện_năng': { label: 'Tiêu thụ điện năng', icon: 'fas fa-bolt' },
-        'nhiệt_độ_tối_đa': { label: 'Nhiệt độ tối đa', icon: 'fas fa-thermometer-full' },
-        'cache': { label: 'Cache', icon: 'fas fa-memory' },
-        'socket': { label: 'Socket', icon: 'fas fa-plug' },
-        'ram_hỗ_trợ': { label: 'RAM hỗ trợ', icon: 'fas fa-memory' },
-        'đồ_họa_tích_hợp': { label: 'Đồ họa tích hợp', icon: 'fas fa-desktop' },
-        'phiên_bản_pci_express': { label: 'Phiên bản PCI Express', icon: 'fas fa-expand-arrows-alt' }
+        // CPU
+        series: { label: 'Series', icon: 'fas fa-microchip' },
+        thế_hệ: { label: 'Thế hệ', icon: 'fas fa-layer-group' },
+        cpu: { label: 'CPU', icon: 'fas fa-microprocessor' },
+        ra_mắt: { label: 'Ra mắt', icon: 'fas fa-calendar-alt' },
+        số_nhân_xử_lý: { label: 'Số nhân xử lý', icon: 'fas fa-cubes' },
+        số_luồng_của_cpu: { label: 'Số luồng CPU', icon: 'fas fa-code-branch' },
+        tốc_độ_xử_lý: { label: 'Tốc độ xử lý', icon: 'fas fa-tachometer-alt' },
+        tiêu_thụ_điện_năng: { label: 'Tiêu thụ điện năng', icon: 'fas fa-bolt' },
+        nhiệt_độ_tối_đa: { label: 'Nhiệt độ tối đa', icon: 'fas fa-thermometer-full' },
+        cache: { label: 'Cache', icon: 'fas fa-memory' },
+        socket: { label: 'Socket', icon: 'fas fa-plug' },
+        ram_hỗ_trợ: { label: 'RAM hỗ trợ', icon: 'fas fa-memory' },
+        đồ_họa_tích_hợp: { label: 'Đồ họa tích hợp', icon: 'fas fa-desktop' },
+        phiên_bản_pci_express: { label: 'Phiên bản PCI Express', icon: 'fas fa-expand-arrows-alt' },
+
+        // GPU
+        gpu: { label: 'GPU', icon: 'fas fa-gpu' },
+        bộ_nhớ: { label: 'Bộ nhớ', icon: 'fas fa-memory' },
+        part_number: { label: 'Part-number', icon: 'fas fa-barcode' },
+        gpu_clock: { label: 'GPU Clock', icon: 'fas fa-tachometer-alt' },
+        giao_tiếp_pci: { label: 'Giao tiếp PCI', icon: 'fas fa-exchange-alt' },
+        số_lượng_đơn_vị_xử_lý: { label: 'Đơn vị xử lý', icon: 'fas fa-cogs' },
+        cổng_kết_nối: { label: 'Cổng kết nối', icon: 'fas fa-plug-circle-plus' },
+        tản_nhiệt: { label: 'Tản nhiệt', icon: 'fas fa-fan' },
+        đèn_led: { label: 'Đèn LED', icon: 'fas fa-lightbulb' },
+        đầu_cấp_nguồn: { label: 'Đầu cấp nguồn', icon: 'fas fa-plug' },
+        nguồn_đề_xuất: { label: 'Nguồn đề xuất', icon: 'fas fa-bolt' },
+        kích_thước: { label: 'Kích thước', icon: 'fas fa-ruler-combined' },
+
+        // Mainboard
+        chipset: { label: 'Chipset', icon: 'fas fa-microchip' },
+        seriesmainboard: { label: 'Series Mainboard', icon: 'fas fa-microchip' },
+        khe_ram_tối_đa: { label: 'Khe RAM tối đa', icon: 'fas fa-memory' },
+        kiểu_ram_hỗ_trợ: { label: 'Kiểu RAM hỗ trợ', icon: 'fas fa-memory' },
+        hỗ_trợ_bộ_nhớ_tối_đa: { label: 'Bộ nhớ tối đa', icon: 'fas fa-hdd' },
+        bus_ram_hỗ_trợ: { label: 'Bus RAM hỗ trợ', icon: 'fas fa-tachometer-alt' },
+        lưu_trữ: { label: 'Lưu trữ', icon: 'fas fa-hdd' },
+        kiểu_khe_m2_hỗ_trợ: { label: 'Khe M.2 hỗ trợ', icon: 'fas fa-sd-card' },
+        cổng_xuất_hình: { label: 'Cổng xuất hình', icon: 'fas fa-tv' },
+        khe_pci: { label: 'Khe PCI', icon: 'fas fa-expand-arrows-alt' },
+        số_cổng_usb: { label: 'Cổng USB', icon: 'fas fa-usb' },
+        lan: { label: 'LAN', icon: 'fas fa-network-wired' },
+        kết_nối_không_dây: { label: 'Kết nối không dây', icon: 'fas fa-wifi' },
+        âm_thanh: { label: 'Âm thanh', icon: 'fas fa-volume-up' },
+
+        // RAM
+        màu_sắc: { label: 'Màu sắc', icon: 'fas fa-palette' },
+        dung_lượng: { label: 'Dung lượng', icon: 'fas fa-hdd' },
+        bus: { label: 'Bus', icon: 'fas fa-tachometer-alt' },
+        timing: { label: 'Timing', icon: 'fas fa-stopwatch' },
+        voltage: { label: 'Voltage', icon: 'fas fa-bolt' },
+
+        // SSD
+        kiểu_ổ_cứng: { label: 'Kiểu ổ cứng', icon: 'fas fa-hdd' },
+        màu_sắc_của_ổ_cứng: { label: 'Màu sắc', icon: 'fas fa-palette' },
+        kết_nối: { label: 'Kết nối', icon: 'fas fa-plug' },
+        bộ_nhớ_nand: { label: 'Bộ nhớ NAND', icon: 'fas fa-microchip' },
+        tốc_độ_đọc: { label: 'Tốc độ đọc', icon: 'fas fa-arrow-down' },
+        tốc_độ_ghi: { label: 'Tốc độ ghi', icon: 'fas fa-arrow-up' },
+
+        // Case
+        chất_liệu: { label: 'Chất liệu', icon: 'fas fa-cube' },
+        chất_liệu_nắp_hông: { label: 'Chất liệu nắp hông', icon: 'fas fa-window-maximize' },
+        loại_case: { label: 'Loại case', icon: 'fas fa-box' },
+        hỗ_trợ_mainboard: { label: 'Hỗ trợ mainboard', icon: 'fas fa-microchip' },
+        số_lượng_ổ_đĩa_hỗ_trợ: { label: 'Ổ đĩa hỗ trợ', icon: 'fas fa-hdd' },
+        kích_thước_radiator_tối_đa: { label: 'Radiator tối đa', icon: 'fas fa-fan' },
+        số_slot_pci: { label: 'Số slot PCI', icon: 'fas fa-expand-arrows-alt' },
+
+        // Tản nhiệt
+        dạng_tản_nhiệt: { label: 'Dạng tản nhiệt', icon: 'fas fa-fan' },
+        kích_thước_quạt_mm: { label: 'Kích thước quạt', icon: 'fas fa-ruler' },
+        socket_được_hỗ_trợ: { label: 'Socket hỗ trợ', icon: 'fas fa-plug' },
+        chất_liệu_tản_nhiệt: { label: 'Chất liệu', icon: 'fas fa-cube' },
+        kích_thước_radiator_cm: { label: 'Kích thước Radiator', icon: 'fas fa-ruler-combined' },
+        số_vòng_quay_của_bơm_rpm: { label: 'Tốc độ bơm', icon: 'fas fa-water' },
+        số_vòng_quay_của_quạt_rpm: { label: 'Tốc độ quạt', icon: 'fas fa-fan' },
+        lưu_lượng_không_khí_cfm: { label: 'Lưu lượng khí', icon: 'fas fa-wind' },
+        độ_ồn_dba: { label: 'Độ ồn', icon: 'fas fa-volume-down' },
+        khối_lượng_kg: { label: 'Khối lượng', icon: 'fas fa-weight' },
+
+        // Nguồn
+        công_suất_tối_đa: { label: 'Công suất', icon: 'fas fa-bolt' },
+        hiệu_suất: { label: 'Hiệu suất', icon: 'fas fa-certificate' },
+        số_cổng_cắm: { label: 'Cổng cắm', icon: 'fas fa-plug' },
+        quạt_làm_mát: { label: 'Quạt làm mát', icon: 'fas fa-fan' },
+        nguồn_đầu_vào: { label: 'Nguồn đầu vào', icon: 'fas fa-plug-circle-bolt' }
     };
 
-    const highlight = ['series', 'thế_hệ', 'số_nhân_xử_lý', 'số_luồng_của_cpu', 'tốc_độ_xử_lý', 'cache'];
-
     attributes.forEach(attr => {
-        const info = specLabels[attr.key] || { label: attr.key.replace(/_/g, ' ').trim(), icon: 'fas fa-cog' };
+        const key = attr.key.trim();
+        const info = specLabels[key] || {
+            label: key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+            icon: 'fas fa-cog'
+        };
+
         const item = document.createElement('div');
-        item.className = 'spec-item' + (highlight.includes(attr.key) ? ' highlight-spec' : '');
+        item.className = 'spec-item';   // Đã bỏ class "highlight-spec"
         item.innerHTML = `
-            <div class="spec-label"><i class="${info.icon}"></i> ${info.label}</div>
-            <div class="spec-value">${attr.value}</div>
+            <div class="spec-label">
+                <i class="${info.icon}"></i> ${info.label}
+            </div>
+            <div class="spec-value">${escapeHtml(attr.value)}</div>
         `;
         grid.appendChild(item);
     });

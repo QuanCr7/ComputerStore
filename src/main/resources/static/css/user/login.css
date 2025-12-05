@@ -129,64 +129,6 @@
     box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
 }
 
-/* Divider */
-.divider {
-    display: flex;
-    align-items: center;
-    margin: 20px 0;
-    color: var(--gray-color);
-}
-
-.divider::before,
-.divider::after {
-    content: "";
-    flex: 1;
-    border-bottom: 1px solid #dee2e6;
-}
-
-.divider::before {
-    margin-right: 10px;
-}
-
-.divider::after {
-    margin-left: 10px;
-}
-
-/* Social Login */
-.social-login {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 20px;
-}
-
-.social-button {
-    padding: 12px;
-    border-radius: var(--border-radius);
-    font-weight: 500;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    border: 1px solid #dee2e6;
-    background-color: white;
-}
-
-.social-button.google {
-    color: #DB4437;
-    border-color: #DB4437;
-}
-
-.social-button.facebook {
-    color: #4267B2;
-    border-color: #4267B2;
-}
-
-.social-button:hover {
-    transform: translateY(-2px);
-}
-
 /* Register Link */
 .register-link {
     text-align: center;

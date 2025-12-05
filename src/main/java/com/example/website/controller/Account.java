@@ -25,4 +25,14 @@ public class Account {
         model.addAttribute("orderId", id);
         return "auth/orderdetail";
     }
+
+    @GetMapping("/update")
+    public String updateProfile() {
+        return "auth/update-user";
+    }
+
+    @GetMapping("/change-password")
+    public String changePasswordPage() {
+        return "auth/change-password";
+    }
 }

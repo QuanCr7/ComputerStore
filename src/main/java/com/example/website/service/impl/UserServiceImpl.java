@@ -1,7 +1,9 @@
 package com.example.website.service.impl;
 
+import com.example.website.configuration.CustomUserDetails;
 import com.example.website.entity.UserEntity;
 import com.example.website.repository.UserRepository;
+import com.example.website.request.ChangePasswordRequest;
 import com.example.website.request.UserRegisterRequest;
 import com.example.website.response.PageUserResponse;
 import com.example.website.response.UserResponse;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +30,7 @@ import java.util.*;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     private final Path rootLocation = Paths.get("src/main/resources/static/images/user");
 
@@ -93,7 +97,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse update(int id, UserRegisterRequest request) {
         UserEntity user = getByid(id);
 
-        user.setUsername(request.getUsername());
+//        user.setUsername(request.getUsername());
 //        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setFullName(request.getFullName());
         user.setDateOfBirth(request.getDateOfBirth());
@@ -112,6 +116,47 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(int id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public UserResponse changePassword(ChangePasswordRequest request) {
+        // Lấy thông tin user đã được lưu sẵn trong SecurityContext (không cần query DB bằng username)
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Kiểm tra xem có phải user đã đăng nhập không
+        if (authentication == null || !(authentication.getPrincipal() instanceof CustomUserDetails)) {
+            throw new RuntimeException("Người dùng chưa đăng nhập!");
+        }
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Integer userId = userDetails.getId();
+
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new RuntimeException("Mật khẩu cũ không chính xác!");
+        }
+
+        // Kiểm tra mật khẩu mới và xác nhận có khớp không
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new RuntimeException("Mật khẩu mới và xác nhận không khớp!");
+        }
+
+        // Kiểm tra độ dài mật khẩu (tùy bạn, ví dụ >= 6)
+        if (request.getNewPassword().length() < 6) {
+            throw new RuntimeException("Mật khẩu mới phải có ít nhất 6 ký tự!");
+        }
+
+        // Không cho phép mật khẩu mới trùng mật khẩu cũ
+        if (request.getOldPassword().equals(request.getNewPassword())) {
+            throw new RuntimeException("Mật khẩu mới không được trùng với mật khẩu cũ!");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        return response(user);
     }
 
     public List<String> saveImages(MultipartFile[] imageFiles) {

@@ -1,6 +1,6 @@
 // /js/user/profile.js
+const API_BASE_URL = 'http://localhost:8080';
 document.addEventListener('DOMContentLoaded', async function() {
-    const API_BASE_URL = 'http://localhost:8080';
 
     const isLoggedIn = await checkLoginStatus();
     const loadingElement = document.getElementById('loading');
@@ -108,7 +108,7 @@ function displayUserProfile(userData) {
     if (userData.imageUrl) {
         avatarImg.src = `${API_BASE_URL}/images/user/${userData.imageUrl}`;
     } else {
-        avatarImg.src = '/images/user/default-avatar.jpg';
+        avatarImg.src = '/images/user/default.jpg';
     }
 
     const userNameElement = document.getElementById('userDisplayName');
@@ -119,7 +119,6 @@ function displayUserProfile(userData) {
     updateField('email', userData.email);
     updateField('phone', userData.phone);
     updateField('address', userData.address);
-    updateField('description', userData.description);
 
     const dobElement = document.getElementById('dateOfBirth');
     if (userData.dateOfBirth) {

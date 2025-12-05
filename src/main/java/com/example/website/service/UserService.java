@@ -1,6 +1,7 @@
 package com.example.website.service;
 
 import com.example.website.entity.UserEntity;
+import com.example.website.request.ChangePasswordRequest;
 import com.example.website.request.UserRegisterRequest;
 import com.example.website.response.PageUserResponse;
 import com.example.website.response.UserResponse;
@@ -17,6 +18,8 @@ public interface UserService {
 
     UserResponse update(int id,UserRegisterRequest request);
     void delete(int id);
+
+    UserResponse changePassword(ChangePasswordRequest request);
 
 //    List<String> saveImages(MultipartFile[] imageFiles);
 //    String saveImage(MultipartFile imageFile);

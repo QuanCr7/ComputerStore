@@ -1,5 +1,6 @@
 package com.example.website.controller.API;
 
+import com.example.website.request.ChangePasswordRequest;
 import com.example.website.request.UserRegisterRequest;
 import com.example.website.response.BaseResponse;
 import com.example.website.response.PageUserResponse;
@@ -56,7 +57,7 @@ public class AccountController extends BaseController {
     @PutMapping("/editUser/{id}")
     public ResponseEntity<BaseResponse<UserResponse>> update(
             @PathVariable("id") int id,
-            @RequestBody UserRegisterRequest request) {
+            @ModelAttribute UserRegisterRequest request) {
         return returnSuccess(userService.update(id, request));
     }
 
@@ -84,5 +85,13 @@ public class AccountController extends BaseController {
             @RequestParam String phone,
             @RequestParam(defaultValue = "1") int page) {
         return returnSuccess(userService.getByCondition(page,name,email,id,phone));
+    }
+
+    @Operation(summary = "Đổi mật khẩu", description = "Người dùng đổi mật khẩu của chính mình")
+    @PostMapping("/change-password")
+    public ResponseEntity<BaseResponse<String>> changePassword(
+            @RequestBody ChangePasswordRequest request) {
+        userService.changePassword(request);
+        return returnSuccess("Đổi mật khẩu thành công!");
     }
 }
