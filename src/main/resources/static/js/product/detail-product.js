@@ -312,7 +312,9 @@ function loadComments(productId, page = 1, append = false) {
                     <div class="comment-avatar"><div class="avatar-placeholder"><i class="fas fa-user"></i></div></div>
                     <div class="comment-content">
                         <div class="comment-header">
-                            <strong class="comment-author">Khách hàng #${c.userId.username}</strong>
+                            <strong class="comment-author">
+                                ${c.username ? c.username : 'Khách hàng #' + c.userId}
+                            </strong>
                             <span class="comment-date">${dateStr}</span>
                         </div>
                         <div class="comment-text">${escapeHtml(c.comment)}</div>
@@ -363,19 +365,23 @@ function initComments(productId) {
     }
 }
 
-document.getElementById('commentForm')?.addEventListener('submit', function (e) {
+document.getElementById('commentForm').addEventListener('submit', async function (e) {
     e.preventDefault();
     const content = this.querySelector('#commentContent').value.trim();
-    if (!content) {
-        showToast('Vui lòng nhập nội dung!');
+    if (!content || !currentProduct) return;
+
+    const isLoggedIn = await checkLoginStatus();
+    if (!isLoggedIn) {
+        showToast('Vui lòng đăng nhập để bình luận!');
         return;
     }
-    if (!currentProduct) return;
 
     fetch('/comment/addComment', {
         method: 'POST',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getAccessToken()}`,
             'X-Requested-With': 'XMLHttpRequest'
         },
         body: JSON.stringify({
@@ -385,9 +391,10 @@ document.getElementById('commentForm')?.addEventListener('submit', function (e) 
     })
         .then(res => {
             if (!res.ok) {
-                if (res.status === 401) throw new Error('Vui lòng đăng nhập!');
-                if (res.status === 403) throw new Error('Không có quyền!');
-                return res.json().then(err => { throw new Error(err.message) });
+                if (res.status === 403 || res.status === 401) {
+                    throw new Error('Bạn không có quyền hoặc chưa đăng nhập!');
+                }
+                return res.json().then(err => { throw new Error(err.message || 'Lỗi server'); });
             }
             return res.json();
         })
@@ -396,14 +403,12 @@ document.getElementById('commentForm')?.addEventListener('submit', function (e) 
                 showToast('Gửi đánh giá thành công!');
                 this.reset();
                 currentCommentPage = 1;
-                hasMoreComments = true;
                 loadComments(currentProduct.productId, 1, false);
             }
         })
-        .catch(err => showToast(err.message || 'Gửi thất bại'));
+        .catch(err => showToast(err.message));
 });
 
-// ==================== UTILS ====================
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;

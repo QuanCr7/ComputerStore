@@ -11,11 +11,14 @@ import com.example.website.request.CommentRequest;
 import com.example.website.response.CommentResponse;
 import com.example.website.response.PageCommentResponse;
 import com.example.website.service.CommentService;
+import com.example.website.utils.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -54,7 +57,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
 
         int pageNumber = (page == null) ? 0 : page - 1;
-        Pageable pageable = PageRequest.of(pageNumber, size);
+        Pageable pageable = PageRequest.of(pageNumber, size, Sort.by("createAt").descending());
 
         Page<CommentEntity> entityPage = commentRepository.findAllByProduct(product, pageable);
         Page<CommentResponse> responsePage = entityPage.map(this::response);
@@ -75,11 +78,17 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentResponse add(CommentRequest commentRequest) {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
 
-        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (auth == null || !(auth.getPrincipal() instanceof CustomUserDetails userDetails)) {
+            throw new org.springframework.security.authentication.AuthenticationCredentialsNotFoundException(
+                    "Vui lòng đăng nhập để bình luận!"
+            );
+        }
+
         Integer userId = userDetails.getId();
         if (userId == null) {
-            throw new RuntimeException("User not authenticated");
+            throw new RuntimeException("Không thể lấy ID người dùng");
         }
 
         ProductEntity product = productRepository.findById(commentRequest.getProductId())
@@ -99,6 +108,22 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void delete(int id) {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Integer currentUserId = userDetails.getId();
+        Role currentUserRole = userDetails.getUserEntity().getRole();
+
+        if (currentUserId == null) {
+            throw new RuntimeException("User not authenticated");
+        }
+
+        CommentEntity comment = commentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Comment not found with id: " + id));
+
+        // chỉ cho phép xoá nếu là chính chủ hoặc Admin
+        if (!currentUserId.equals(comment.getUser().getUserId()) && currentUserRole != Role.ADMIN) {
+            throw new AccessDeniedException("Bạn không có quyền xoá bình luận này");
+        }
+
         commentRepository.deleteById(id);
     }
 
@@ -108,6 +133,7 @@ public class CommentServiceImpl implements CommentService {
                 .comment(response.getComment())
                 .productId(response.getProduct().getProductId())
                 .userId(response.getUser().getUserId())
+                .username(response.getUser().getUsername())
                 .createdAt(response.getCreateAt())
                 .build();
     }

@@ -14,5 +14,6 @@ public class CommentResponse {
     private String comment;
     private int productId;
     private int userId;
+    private String username;
     private LocalDateTime createdAt;
 }

@@ -1,5 +1,4 @@
 // /js/user/update-account.js
-const API_BASE_URL = 'http://localhost:8080';
 document.addEventListener('DOMContentLoaded', async function () {
 
     const loadingElement = document.getElementById('loading');
@@ -152,7 +151,6 @@ async function handleFormSubmit(e) {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${getAccessToken()}`
-                // Không set Content-Type → để browser tự set multipart/form-data + boundary
             },
             body: formData,
             credentials: 'include'
