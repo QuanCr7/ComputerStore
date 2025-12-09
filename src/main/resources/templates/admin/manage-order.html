@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Đơn hàng</title>
+    <link rel="stylesheet" href="/css/admin/common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="admin-wrapper">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-cogs"></i> Admin Panel</h2>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="/manage/p" class="menu-item">
+                <i class="fas fa-box"></i><span>Quản lý Sản phẩm</span>
+            </a>
+            <a href="/manage/u" class="menu-item">
+                <i class="fas fa-users"></i><span>Quản lý Người dùng</span>
+            </a>
+            <a href="/manage/o" class="menu-item active">
+                <i class="fas fa-shopping-cart"></i><span>Quản lý Đơn hàng</span>
+            </a>
+            <hr class="menu-divider">
+            <a href="/" class="menu-item logout">
+                <i class="fas fa-sign-out-alt"></i><span>Đăng xuất</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <h1>Quản lý Đơn hàng</h1>
+            <div class="user-info">
+                <span>Xin chào, <strong>Admin</strong></span>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            <div class="toolbar">
+                <div class="search-box">
+                    <input type="text" id="searchOrder" placeholder="Tìm mã đơn, tên khách, SĐT...">
+                    <button onclick="searchOrders()"><i class="fas fa-search"></i></button>
+                </div>
+                <select id="statusFilter" onchange="fetchOrders(1)">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="PENDING">Chờ xử lý</option>
+                    <option value="PROCESSING">Đang giao</option>
+                    <option value="COMPLETED">Hoàn thành</option>
+                    <option value="CANCELLED">Đã hủy</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table id="orders-table">
+                    <thead>
+                    <tr>
+                        <th>Mã đơn</th>
+                        <th>Ngày đặt</th>
+                        <th>Khách hàng</th>
+                        <th>SĐT</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody id="orders-table-body"></tbody>
+                </table>
+            </div>
+            <div id="pagination-orders" class="pagination"></div>
+        </div>
+    </main>
+</div>
+
+<div class="notification" id="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notification-message"></span>
+</div>
+
+<script src="/js/admin/common.js" defer></script>
+<script src="/js/admin/manage-order.js" defer></script>
+</body>
+</html>

@@ -3,164 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống Quản lý</title>
-    <link rel="stylesheet" href="/css/admin/manage.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>">
-</head>
-
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/admin/common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <body>
-<div class="admin-container">
-    <div class="admin-header">
-        <h1 class="admin-title"><i class="fas fa-cogs"></i> Hệ thống Quản lý</h1>
-        <div class="user-info">
-            <span>Xin chào, Admin</span>
-            <button class="btn btn-danger" onclick="window.location.href='/'"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
+
+<div class="admin-wrapper">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-cogs"></i> Admin Panel</h2>
         </div>
-    </div>
+        <nav class="sidebar-menu">
+            <a href="/manage/p" class="menu-item">
+                <i class="fas fa-box"></i>
+                <span>Quản lý Sản phẩm</span>
+            </a>
+            <a href="/manage/u" class="menu-item">
+                <i class="fas fa-users"></i>
+                <span>Quản lý Người dùng</span>
+            </a>
+            <a href="/manage/o" class="menu-item">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Quản lý Đơn hàng</span>
+            </a>
+            <a href="/" class="menu-item logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Đăng xuất</span>
+            </a>
+        </nav>
+    </aside>
 
-    <!-- Thanh điều hướng -->
-    <div class="admin-nav">
-        <button class="admin-tab active" data-tab="products">
-            <i class="fas fa-product"></i> Quản lý sản phẩm
-        </button>
-        <button class="admin-tab" data-tab="users">
-            <i class="fas fa-users"></i> Quản lý Người dùng
-        </button>
-        <button class="admin-tab" data-tab="orders">
-            <i class="fas fa-shopping-cart"></i> Quản lý Đơn hàng
-        </button>
-    </div>
+    <!-- Nội dung chính -->
+    <main class="main-content">
+        <header class="topbar">
+            <h1>Chào mừng đến với Admin Panel</h1>
+            <div class="user-info">
+                <span>Xin chào, <strong>Admin</strong></span>
+            </div>
+        </header>
 
-    <!-- Tab Quản lý Product -->
-    <div id="products-tab" class="tab-content active">
-        <div class="tab-header">
-            <h2 class="tab-title"><i class="fas fa-product"></i> Quản lý sản phẩm</h2>
-            <div class="search-box">
-                <input type="text" class="search-input" placeholder="Tìm kiếm sách...">
-                <button class="btn btn-primary"><i class="fas fa-search"></i> Tìm kiếm</button>
-                <button class="btn btn-success" onclick="window.location.href='/add'"><i class="fas fa-plus"></i> Thêm sản phẩm</button>
+        <div class="content-wrapper">
+            <div class="welcome-card">
+                <h2>Chọn một mục từ menu bên trái để bắt đầu</h2>
+                <p>Giao diện quản trị mới – hiện đại, gọn gàng, dễ mở rộng</p>
             </div>
         </div>
-
-        <div class="table-container">
-            <table id="products-table">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Tên sản phẩm</th>
-                    <th>Hàng tồn</th>
-                    <th>Bảo hành</th>
-                    <th>Danh mục</th>
-                    <th>Giá bán</th>
-                    <th>Thao tác</th>
-                </tr>
-                </thead>
-                <tbody id="products-table-body">
-                <!-- Dữ liệu sách sẽ được thêm bằng JavaScript -->
-                </tbody>
-            </table>
-        </div>
-
-        <div id="pagination" class="pagination">
-            <!-- Phân trang sẽ được thêm bằng JavaScript -->
-        </div>
-    </div>
-
-    <!-- Tab Quản lý Người dùng -->
-    <div id="users-tab" class="tab-content">
-        <div class="tab-header">
-            <h2 class="tab-title"><i class="fas fa-users"></i> Quản lý Người dùng</h2>
-            <div class="search-box">
-                <input type="text" class="search-input" placeholder="Tìm kiếm người dùng...">
-                <button class="btn btn-primary"><i class="fas fa-search"></i> Tìm kiếm</button>
-            </div>
-        </div>
-
-        <div class="table-container">
-            <table>
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Tên Đăng Nhập</th>
-                    <th>Họ tên</th>
-                    <th>Email</th>
-                    <th>Số điện thoại</th>
-                    <th>Địa chỉ</th>
-                    <th>Ngày đăng ký</th>
-                    <th>Thao tác</th>
-                </tr>
-                </thead>
-                <tbody id="accounts-table-body">
-                <!-- Dữ liệu người dùng sẽ được thêm ở đây -->
-                </tbody>
-            </table>
-        </div>
-
-        <div id="pagination-accounts" class="pagination">
-            <!-- Phân trang cho account sẽ được thêm bằng JavaScript -->
-        </div>
-    </div>
-
-    <!-- Tab Quản lý Đơn hàng -->
-    <div id="orders-tab" class="tab-content">
-        <div class="tab-header">
-            <h2 class="tab-title"><i class="fas fa-shopping-cart"></i> Quản lý Đơn hàng</h2>
-            <div class="search-box">
-                <input type="text" class="search-input" placeholder="Tìm kiếm đơn hàng...">
-                <button class="btn btn-primary"><i class="fas fa-search"></i> Tìm kiếm</button>
-            </div>
-        </div>
-
-        <div class="table-container">
-            <table>
-                <thead>
-                <tr>
-                    <th>Mã đơn hàng</th>
-                    <th>Ngày đặt</th>
-                    <th>Địa chỉ giao hàng</th>
-                    <th>Số điện thoại</th>
-                    <th>Tổng tiền</th>
-                    <th>Trạng thái</th>
-                    <th>Thao tác</th>
-                </tr>
-                </thead>
-                <tbody id="orders-table-body">
-                <!-- Dữ liệu đơn hàng sẽ được thêm ở đây -->
-                </tbody>
-            </table>
-        </div>
-
-        <div id="pagination-orders" class="pagination">
-            <!-- Phân trang sẽ được thêm bằng JavaScript -->
-        </div>
-    </div>
+    </main>
 </div>
 
-<!-- Modal xác nhận xóa -->
-<div class="modal-overlay" id="deleteModal">
-    <div class="modal">
-        <div class="modal-header">
-            <h3 class="modal-title"><i class="fas fa-exclamation-triangle"></i> Xác nhận xóa</h3>
-            <button class="modal-close" id="closeModal">&times;</button>
-        </div>
-        <div class="modal-body">
-            <p>Bạn có chắc chắn muốn xóa sản phẩm "<span id="productTitle"></span>" (ID: <span id="productId"></span>)?</p>
-            <p class="warning-text"><i class="fas fa-exclamation-circle"></i> Hành động này không thể hoàn tác.</p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" id="cancelDelete">Hủy bỏ</button>
-            <button class="btn btn-danger" id="confirmDelete">Xóa sản phẩm</button>
-        </div>
-    </div>
-</div>
-
-<!-- Thông báo -->
+<!-- Notification -->
 <div class="notification" id="notification">
     <i class="fas fa-check-circle"></i>
     <span id="notification-message"></span>
 </div>
 
-<script src="/js/admin/manage.js" defer></script>
+<script src="/js/admin/common.js" defer></script>
+<script src="/js/user/auth.js" defer></script>
+
 </body>
 </html>

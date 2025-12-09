@@ -34,10 +34,13 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandler accessDeniedHandler;
 
     private static final String[] ADMIN_ONLY_URLS = {
-//            "/account/**",
-//            "/book/delete/**",
-//            "/book/update/**",
-//            "/book/add/**"
+//            "/tet",
+//            "/manage/admin",
+//            "/manage/u",
+//            "/manage/p",
+//            "/manage/o",
+//            "/detail-user",
+//            "/p/detail",
     };
 
     @Lazy

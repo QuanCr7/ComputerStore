@@ -17,11 +17,6 @@ public class Auth {
         return "/auth/register";
     }
 
-    @GetMapping("/admin")
-    public String admin(){
-        return "/admin/manage";
-    }
-
     @GetMapping("/pay")
     public String pay(){
         return "/auth/pay";
