@@ -61,7 +61,23 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse getById(int id) {
-        return response(orderRepository.findById(id).orElseThrow(()-> new RuntimeException("Order Not Found")));
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        Integer currentUserId = userDetails.getId();
+
+        OrderEntity order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Đơn hàng không tồn tại"));
+
+        UserEntity orderUser = order.getUser();
+        boolean isOwner = orderUser.getUserId() == currentUserId;
+        boolean isAdmin = userDetails.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isOwner && !isAdmin) {
+            throw new RuntimeException("Bạn không có quyền truy cập đơn hàng này");
+        }
+
+        return response(order);
     }
 
     @Override
@@ -90,7 +106,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse create(OrderRequest request, List<OrderDetailRequest> orderDetailRequests) {
-
         // Lấy userId từ SecurityContext
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Integer userId = userDetails.getId();
@@ -114,24 +129,6 @@ public class OrderServiceImpl implements OrderService {
                 .build();
         order = orderRepository.save(order);
 
-        // Thêm chi tiết đơn hàng bằng cách sử dụng OrderDetailService
-//        List<OrderDetailEntity> orderDetails = new ArrayList<>();
-//        for (OrderDetailRequest detailRequest : orderDetailRequests) {
-//            // Cập nhật orderId trong OrderDetailRequest để phù hợp với đơn hàng mới
-//            OrderDetailRequest updatedDetailRequest = OrderDetailRequest.builder()
-//                    .orderId(order.getOrderId())
-//                    .productId(detailRequest.getProductId())
-//                    .quantity(detailRequest.getQuantity())
-//                    .price(detailRequest.getPrice())
-//                    .build();
-//            // Gọi phương thức add từ OrderDetailService
-//            List<OrderDetailResponse> detailResponses = orderDetailService.add(updatedDetailRequest);
-//            // Chuyển đổi phản hồi trở lại thành các thực thể để thiết lập trong OrderEntity
-//            OrderDetailEntity detailEntity = orderDetailRepository.findById(detailResponses.getFirst().getId())
-//                    .orElseThrow(() -> new RuntimeException("Failed to retrieve added order detail"));
-//            orderDetails.add(detailEntity);
-//        }
-
         for (OrderDetailRequest detailReq : orderDetailRequests) {
             ProductEntity product = productRepository.findById(detailReq.getProductId())
                     .orElseThrow(() -> new RuntimeException("Product not found with ID: " + detailReq.getProductId()));
@@ -153,20 +150,45 @@ public class OrderServiceImpl implements OrderService {
         return response(order);
     }
 
-//    @Override
-//    public OrderEntity process(int id) {
-//        OrderEntity order = getById(id);
-////        order.setStatus("PROCESSING");
-//        order.setStatus(OrderStatus.PROCESSING);
-//        return orderRepository.save(order);
-//    }
-//
-//    @Override
-//    public OrderEntity cancel(int id) {
-//        OrderEntity order = getById(id);
-//        order.setStatus(OrderStatus.CANCELLED);
-//        return orderRepository.save(order);
-//    }
+    @Override
+    public OrderResponse updateStatus(int orderId, String newStatus) {
+        OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found with ID: " + orderId));
+
+        OrderStatus status = OrderStatus.valueOf(newStatus.toUpperCase());
+        order.setStatus(status);
+
+        return response(orderRepository.save(order));
+    }
+
+    @Override
+    public OrderResponse cancelOrder(int orderId) {
+        // Lấy thông tin user hiện tại
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        Integer currentUserId = userDetails.getId();
+
+        OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Đơn hàng không tồn tại"));
+
+        // Kiểm tra đơn hàng có thuộc về user đang đăng nhập không
+        if (order.getUser().getUserId() != currentUserId) {
+            throw new RuntimeException("Bạn không có quyền hủy đơn hàng này");
+        }
+
+        // Chỉ cho phép hủy khi đang ở trạng thái PENDING hoặc PROCESSING (tùy bạn điều chỉnh)
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            throw new RuntimeException("Đơn hàng đã được hủy trước đó");
+        }
+        if (order.getStatus() == OrderStatus.SHIPPING || order.getStatus() == OrderStatus.COMPLETED) {
+            throw new RuntimeException("Không thể hủy đơn hàng đã giao hoặc đang giao");
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepository.save(order);
+
+        return response(order);
+    }
 
     public OrderResponse response(OrderEntity order) {
         List<OrderDetailResponse> detailResponses = order.getOrderDetails().stream()

@@ -243,6 +243,20 @@
     height: 30px;
     animation: spin 1s linear infinite;
 }
+.status-cancelled {
+    background-color: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.btn-danger {
+    background-color: #dc2626;
+    color: white;
+}
+.btn-danger:hover {
+    background-color: #b91c1c;
+}
+
 
 .error-message {
     display: flex;

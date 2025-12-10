@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chi tiết</title>
+    <title>Trang chi tiết sản phẩm</title>
     <link rel="stylesheet" href="/css/headandfoot.css">
     <link rel="stylesheet" href="/css/shopping.css">
     <link rel="stylesheet" href="/css/product/detail-product.css">
@@ -81,46 +81,34 @@
             <div class="comment-section">
                 <div class="section-header">
                     <h2 class="section-title">
-                        <i class="fas fa-comments"></i> Đánh giá & Nhận xét
+                        Đánh giá & Nhận xét
                         <span id="commentCount" class="comment-count">(0)</span>
                     </h2>
                 </div>
 
                 <!-- Form thêm comment -->
-                <div class="comment-form-container">
+                <div class="comment-form-container" id="commentFormContainer">
                     <form id="commentForm" class="comment-form">
-                        <div class="form-group">
-                            <label for="commentContent" class="form-label">
-                                <i class="fas fa-edit"></i> Viết đánh giá của bạn
-                            </label>
-                            <textarea
-                                    id="commentContent"
-                                    name="content"
-                                    rows="4"
-                                    placeholder="Chia sẻ cảm nhận của bạn về sản phẩm này..."
-                                    class="comment-textarea"
-                                    required
-                            ></textarea>
-                        </div>
+            <textarea
+                    id="commentContent"
+                    placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."
+                    required
+            ></textarea>
                         <div class="form-actions">
-                            <button type="submit" class="btn btn-primary" id="submitComment">
-                                <i class="fas fa-paper-plane"></i> Gửi đánh giá
+                            <button type="submit" class="btn btn-primary">
+                                Gửi đánh giá
                             </button>
                         </div>
                     </form>
                 </div>
 
-                <!-- Danh sách comments -->
-                <div id="commentsList" class="comments-list">
-                    <div class="loading-comments">
-                        <i class="fas fa-spinner fa-spin"></i> Đang tải đánh giá...
-                    </div>
-                </div>
+                <!-- Danh sách comment -->
+                <div id="commentsList" class="comments-list"></div>
 
-                <!-- Phân comment -->
+                <!-- Load more -->
                 <div id="commentPagination" class="comment-pagination" style="display: none;">
                     <button id="loadMoreBtn" class="btn btn-outline">
-                        <i class="fas fa-arrow-down"></i> Xem thêm đánh giá
+                        Xem thêm đánh giá
                     </button>
                 </div>
             </div>

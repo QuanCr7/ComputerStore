@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Đơn hàng</title>
+    <link rel="stylesheet" href="/css/admin/common.css">
+    <link rel="stylesheet" href="/css/admin/orderdetail-admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="admin-wrapper">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-cogs"></i> Admin Panel</h2>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="/manage/p" class="menu-item">
+                <i class="fas fa-box"></i>
+                <span>Quản lý Sản phẩm</span>
+            </a>
+            <a href="/manage/u" class="menu-item">
+                <i class="fas fa-users"></i>
+                <span>Quản lý Người dùng</span>
+            </a>
+            <a href="/manage/o" class="menu-item">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Quản lý Đơn hàng</span>
+            </a>
+            <a href="/manage/statistics" class="menu-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Thống kê Doanh thu</span>
+            </a>
+            <a href="/" class="menu-item logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Đăng xuất</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <h1>Quản lý Đơn hàng</h1>
+            <div class="user-info">
+                <span>Xin chào, <strong>Admin</strong></span>
+            </div>
+        </header>
+        <div class="container">
+            <div class="order-container">
+                <div id="loading" class="loading" style="display: flex;">
+                    <div class="spinner"></div>
+                    <p>Đang tải chi tiết đơn hàng...</p>
+                </div>
+
+                <div id="errorMessage" class="error-message" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="errorText"></span>
+                </div>
+
+                <div id="orderContent" style="display: none;">
+                    <a href="/manage/o" class="back-link">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+
+                    <h1 class="order-title">
+                        <i class="fas fa-receipt"></i> Chi Tiết Đơn Hàng #<span id="orderId"></span>
+                    </h1>
+
+                    <!-- Order Info Card -->
+                    <div class="order-card">
+                        <h2 class="card-title">
+                            <i class="fas fa-info-circle"></i> Thông tin đơn hàng
+                        </h2>
+
+                        <!-- Thay thế div#orderStatus cũ -->
+                        <div class="order-status-wrapper">
+                            <div id="orderStatusDisplay" class="order-status">
+                                <!-- Nội dung trạng thái sẽ được JS fill -->
+                            </div>
+
+                            <!-- Dropdown chỉ hiện với Admin -->
+                            <div id="statusActions" class="status-actions" style="display: none; margin-top: 15px;">
+                                <label for="statusSelect" class="status-label">Cập nhật trạng thái:</label>
+                                <select id="statusSelect" class="status-select">
+                                    <option value="PENDING">Đang chờ xử lý</option>
+                                    <option value="PROCESSING">Đang xử lý</option>
+                                    <option value="SHIPPED">Đang vận chuyển</option>
+                                    <option value="COMPLETED">Hoàn thành</option>
+                                    <option value="CANCELLED">Đã hủy</option>
+                                </select>
+                                <button id="updateStatusBtn" class="action-btn btn-primary">
+                                    <i class="fas fa-save"></i> Cập nhật
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="order-info-grid">
+                            <div class="info-group">
+                                <div class="info-label">Mã đơn hàng</div>
+                                <div class="info-value" id="orderIdDisplay"></div>
+                            </div>
+
+                            <div class="info-group">
+                                <div class="info-label">Ngày đặt hàng</div>
+                                <div class="info-value" id="orderDate"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer Info Card -->
+                    <div class="order-card">
+                        <h2 class="card-title">
+                            <i class="fas fa-user"></i> Thông tin người nhận
+                        </h2>
+
+                        <div class="order-info-grid">
+                            <div class="info-group">
+                                <div class="info-label">Tên</div>
+                                <div class="info-value" id="name"></div>
+                            </div>
+
+                            <div class="info-group">
+                                <div class="info-label">Số điện thoại</div>
+                                <div class="info-value" id="phone"></div>
+                            </div>
+
+                            <div class="info-group">
+                                <div class="info-label">Địa chỉ giao hàng</div>
+                                <div class="info-value" id="shippingAddress"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Items Card -->
+                    <div class="order-card">
+                        <h2 class="card-title">
+                            <i class="fas fa-book"></i> Sản phẩm đã đặt
+                        </h2>
+
+                        <div class="order-items" id="orderItems"></div>
+
+                        <div class="order-summary">
+                            <div class="summary-item">
+                                <span>Tạm tính:</span>
+                                <span id="subtotal"></span>
+                            </div>
+
+                            <div class="summary-item">
+                                <span>Phí vận chuyển:</span>
+                                <span id="shipping"></span>
+                            </div>
+
+                            <div class="summary-item">
+                                <span>Giảm giá:</span>
+                                <span id="discount"></span>
+                            </div>
+
+                            <div class="summary-total">
+                                <span>Tổng cộng:</span>
+                                <span id="total" class="total"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="order-card">
+                        <h2 class="card-title">
+                            <i class="fas fa-tools"></i> Hành động
+                        </h2>
+
+                        <div class="action-buttons">
+                            <button class="action-btn btn-danger" id="cancelOrder" style="display: none;">
+                                <i class="fas fa-times-circle"></i> Hủy đơn hàng
+                            </button>
+                            <button class="action-btn btn-outline" id="reorder">
+                                <i class="fas fa-redo"></i> Đặt lại đơn hàng
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div class="notification" id="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notification-message"></span>
+</div>
+
+<script src="/js/admin/common.js" defer></script>
+<script src="/js/user/auth.js" defer></script>
+<script src="/js/admin/orderdetail-admin.js" defer></script>
+<script src="/js/categories.js" defer></script>
+</body>
+</html>

@@ -239,6 +239,52 @@ tr:hover { background: #f8f9ff; }
     border-top: 1px solid #eee;
 }
 
+.user-dropdown {
+    position: relative;
+    display: inline-block;
+}
+.user-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.user-btn:hover {
+    background: rgba(255,255,255,0.1);
+}
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #fff;
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    border-radius: 4px;
+    z-index: 1000;
+    overflow: hidden;
+}
+.dropdown-content a {
+    color: #333;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.2s;
+}
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+.user-dropdown:hover .dropdown-content {
+    display: block;
+}
+
 /* Notification */
 .notification {
     position: fixed;

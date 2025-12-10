@@ -30,10 +30,7 @@ function fetchOrders(page = 1, keyword = '') {
     tbody.innerHTML = `<tr><td colspan="7" class="loading">Đang tải...</td></tr>`;
     if (pagination) pagination.innerHTML = '';
 
-    let url = `/order/all?page=${page}`;
-    if (keyword) url += `&keyword=${encodeURIComponent(keyword)}`;
-    const status = document.getElementById('statusFilter')?.value;
-    if (status) url += `${keyword ? '&' : '?'}status=${status}`;
+    let url = `/order/all`;
 
     fetch(url)
         .then(res => {
@@ -79,7 +76,8 @@ function renderOrders(orders) {
 function getStatusText(status) {
     const map = {
         PENDING: 'Chờ xử lý',
-        PROCESSING: 'Đang giao',
+        PROCESSING: 'Đang xử lý',
+        SHIPPING: 'Đang vận chuyển',
         COMPLETED: 'Hoàn thành',
         CANCELLED: 'Đã hủy'
     };
@@ -87,5 +85,5 @@ function getStatusText(status) {
 }
 
 function viewOrder(id) {
-    location.href = `/order/detail?id=${id}`;
+    location.href = `/manage/o/detail?id=${id}`;
 }

@@ -3,12 +3,9 @@ const API_BASE_URL = 'http://localhost:8080';
 let accessToken = null;
 
 async function checkLoginStatus() {
-    console.log('auth.js: checkLoginStatus: Bắt đầu kiểm tra trạng thái đăng nhập');
     const username = localStorage.getItem('username');
-    console.log('auth.js: checkLoginStatus: username từ localStorage:', username);
 
     if (username) {
-        console.log('auth.js: checkLoginStatus: Có username, thử làm mới token');
         try {
             const response = await fetch(`${API_BASE_URL}/auth/refresh-token`, {
                 method: 'POST',
@@ -19,29 +16,23 @@ async function checkLoginStatus() {
             });
 
             const data = await response.json();
-            console.log('auth.js: checkLoginStatus: Response từ /auth/refresh-token:', JSON.stringify(data, null, 2));
-
             if (response.ok && data.data?.accessToken) {
                 accessToken = data.data.accessToken;
-                console.log('auth.js: checkLoginStatus: Đã lấy accessToken mới:', accessToken);
                 updateHeaderAfterLogin(username);
                 return true;
             } else {
-                console.warn('auth.js: checkLoginStatus: Làm mới token thất bại:', data.message || 'Không có accessToken');
                 showError(data.message || 'Phiên đăng nhập hết hạn, vui lòng đăng nhập lại');
                 clearAuthData();
                 resetHeaderAfterLogout();
                 return false;
             }
         } catch (error) {
-            console.error('auth.js: checkLoginStatus: Lỗi khi làm mới token:', error);
             showError('Lỗi kết nối khi làm mới phiên đăng nhập, vui lòng thử lại');
             clearAuthData();
             resetHeaderAfterLogout();
             return false;
         }
     } else {
-        console.log('auth.js: checkLoginStatus: Không có username, reset header');
         resetHeaderAfterLogout();
         return false;
     }
@@ -50,10 +41,8 @@ async function checkLoginStatus() {
 function updateHeaderAfterLogin(username) {
     const authSection = document.querySelector('.auth-section');
     if (!authSection) {
-        console.error('auth.js: updateHeaderAfterLogin: Không tìm thấy .auth-section trong DOM');
         return false;
     }
-    console.log('auth.js: updateHeaderAfterLogin: Cập nhật header cho username:', username);
     authSection.innerHTML = `
         <div class="user-dropdown">
             <button class="user-btn">
@@ -63,7 +52,6 @@ function updateHeaderAfterLogin(username) {
             </button>
             <div class="dropdown-content">
                 <a href="/me"><i class="fas fa-user"></i> Trang cá nhân</a>
-                <a href="/settings"><i class="fas fa-cog"></i> Cài đặt</a>
                 <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
             </div>
         </div>
@@ -73,7 +61,6 @@ function updateHeaderAfterLogin(username) {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log('auth.js: logoutBtn: Đã nhấn nút đăng xuất');
             logout();
         });
         return true;
@@ -89,7 +76,6 @@ function resetHeaderAfterLogout() {
         console.error('auth.js: resetHeaderAfterLogout: Không tìm thấy .auth-section');
         return false;
     }
-    console.log('auth.js: resetHeaderAfterLogout: Reset header về trạng thái chưa đăng nhập');
     authSection.innerHTML = `
         <a href="/auth/login" class="auth-btn login-btn"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a>
         <a href="/auth/register" class="auth-btn register-btn"><i class="fas fa-user-plus"></i> Đăng ký</a>
@@ -98,15 +84,12 @@ function resetHeaderAfterLogout() {
 }
 
 function clearAuthData() {
-    console.log('auth.js: clearAuthData: Xóa dữ liệu xác thực');
     accessToken = null;
     localStorage.removeItem('username');
-    localStorage.removeItem('rememberMe');
     localStorage.removeItem('userData');
 }
 
 async function logout() {
-    console.log('auth.js: logout: Bắt đầu đăng xuất');
     if (!accessToken) {
         clearAuthData();
         resetHeaderAfterLogout();
@@ -124,11 +107,6 @@ async function logout() {
             credentials: 'include'
         });
 
-        if (response.ok) {
-            console.log('auth.js: logout: Đăng xuất thành công');
-        } else {
-            console.warn('auth.js: logout: API logout trả về lỗi:', response.status);
-        }
     } catch (error) {
         console.error('auth.js: Lỗi khi đăng xuất:', error);
     } finally {
@@ -139,7 +117,6 @@ async function logout() {
 }
 
 function setAccessToken(token) {
-    console.log('auth.js: setAccessToken: Đặt accessToken:', token);
     accessToken = token;
 }
 
@@ -199,8 +176,55 @@ function showSuccess(message) {
     }, 5000);
 }
 
+// Lấy thông tin user hiện tại từ backend (có role, fullName, v.v.)
+async function fetchCurrentUser() {
+    if (!getAccessToken()) return null;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/account/profile`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${getAccessToken()}`,
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch user');
+
+        const result = await response.json();
+        if (result.code === 200 && result.data) {
+            const user = result.data;
+            // Lưu tạm vào localStorage để lần sau nhanh hơn (chỉ lưu những gì cần)
+            localStorage.setItem('currentUser', JSON.stringify({
+                username: user.username,
+                fullName: user.fullName || user.username,
+                role: user.role,        // ← Đây là thứ chúng ta cần nhất!
+                userId: user.userId
+            }));
+            return user;
+        }
+    } catch (err) {
+        console.warn('Không lấy được thông tin user:', err);
+        localStorage.removeItem('currentUser');
+    }
+    return null;
+}
+
+// Override lại hàm cũ để hỗ trợ role
+function getCurrentUser() {
+    const cached = localStorage.getItem('currentUser');
+    if (cached) {
+        try {
+            return JSON.parse(cached);
+        } catch {
+            return { username: localStorage.getItem('username') };
+        }
+    }
+    return { username: localStorage.getItem('username') };
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('auth.js: DOM loaded, chạy checkLoginStatus');
     checkLoginStatus();
 
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');

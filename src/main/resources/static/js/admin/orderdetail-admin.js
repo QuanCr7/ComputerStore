@@ -1,4 +1,4 @@
-// /js/user/orderdetail.js
+// /js/user/orderdetail-admin.js
 document.addEventListener('DOMContentLoaded', async function() {
     const urlParams = new URLSearchParams(window.location.search);
     let orderId = urlParams.get('id');
@@ -98,79 +98,49 @@ function displayOrderDetail(order) {
     document.getElementById('orderIdDisplay').textContent = `#${order.id}`;
     document.getElementById('orderDate').textContent = formatDate(order.orderDate);
 
-    const statusElement = document.getElementById('orderStatus');
-    statusElement.textContent = getStatusText(order.status);
-    statusElement.className = `order-status status-${order.status.toLowerCase()}`;
-    statusElement.innerHTML = `<i class="fas fa-check-circle"></i> ${getStatusText(order.status)}`;
+    const statusDisplay = document.getElementById('orderStatusDisplay');
+    const statusActions = document.getElementById('statusActions');
+    const statusSelect = document.getElementById('statusSelect');
 
-    document.getElementById('name').textContent = order.name || 'N/A';
-    document.getElementById('phone').textContent = order.phone || 'N/A';
-    document.getElementById('shippingAddress').textContent = order.shippingAddress || 'N/A';
+    // Cập nhật trạng thái hiện tại
+    const currentStatus = order.status;
+    statusDisplay.textContent = getStatusText(currentStatus);
+    statusDisplay.className = `order-status status-${currentStatus.toLowerCase()}`;
+    statusDisplay.innerHTML = `<i class="fas fa-circle"></i> ${getStatusText(currentStatus)}`;
 
-    const orderItems = document.getElementById('orderItems');
-    orderItems.innerHTML = '';
-    order.orderDetails.forEach(item => {
-        console.log('order-detail-product.js: Displaying item:', JSON.stringify(item, null, 2));
-        const itemElement = document.createElement('div');
-        itemElement.className = 'order-item';
+    const isAdmin = window.location.pathname.includes('/manage/');
 
-        // SỬA TỪ ĐÂY
-        const imageUrl = item.image
-            ? `http://localhost:8080/images/product/${item.image}`  // hoặc /images/cpu/ tùy bạn lưu ở đâu
-            : 'https://via.placeholder.com/80x100';
-
-        itemElement.innerHTML = `
-        <img src="${imageUrl}" alt="${item.product || 'Sản phẩm'}" class="item-image">
-        <div class="item-details">
-            <h3 class="item-title">${item.product || 'Không có tên'}</h3>
-            <p class="item-price">${formatPrice(item.price)}</p>
-            <p class="item-quantity">Số lượng: ${item.quantity}</p>
-            <p class="item-info">Thương hiệu: ${item.brand || 'N/A'} | Danh mục: ${item.category || 'N/A'}</p>
-        </div>
-    `;
-        orderItems.appendChild(itemElement);
-    });
-
-    const subtotal = order.orderDetails.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const shipping = 20000;
-    const discount = subtotal > 100000 ? 10000 : 0;
-    const total = subtotal + shipping - discount;
-
-    document.getElementById('subtotal').textContent = formatPrice(subtotal);
-    document.getElementById('shipping').textContent = formatPrice(shipping);
-    document.getElementById('discount').textContent = `-${formatPrice(discount)}`;
-    document.getElementById('total').textContent = formatPrice(total);
-
-    // ========== PHẦN XỬ LÝ NÚT HỦY - THÊM VÀO ĐÂY ==========
-    const API_BASE_URL = 'http://localhost:8080';  // Định nghĩa lại để tránh lỗi scope
-    const cancelButton = document.getElementById('cancelOrder');
-
-    // Kiểm tra và hiển thị nút hủy dựa trên trạng thái
-    if (order.status === 'PENDING' || order.status === 'PROCESSING') {
-        if (cancelButton) {
-            cancelButton.style.display = 'inline-flex';
-            console.log('Hiển thị nút hủy - Trạng thái:', order.status);  // Debug log
-        }
+    // === CHỈ HIỂN THỊ PHẦN CẬP NHẬT NẾU:
+    // - Là Admin
+    // - Và trạng thái KHÔNG PHẢI là CANCELLED hoặc COMPLETED
+    if (isAdmin && !['CANCELLED', 'COMPLETED'].includes(currentStatus)) {
+        statusActions.style.display = 'flex';
+        statusSelect.value = currentStatus;
     } else {
-        if (cancelButton) {
-            cancelButton.style.display = 'none';
-            console.log('Ẩn nút hủy - Trạng thái không cho phép:', order.status);  // Debug log
-        }
+        statusActions.style.display = 'none'; // Ẩn hoàn toàn nếu đã hủy hoặc hoàn thành
     }
 
-    // Xử lý sự kiện click nút Hủy đơn hàng (chỉ attach nếu nút tồn tại)
-    if (cancelButton) {
-        cancelButton.addEventListener('click', async function () {
-            // Lấy orderId từ URL (vì orderId có thể không global, dùng cách này an toàn)
-            const urlParams = new URLSearchParams(window.location.search);
-            const currentOrderId = urlParams.get('id');
+    // Xử lý nút cập nhật (chỉ gắn sự kiện nếu đang hiển thị)
+    const updateBtn = document.getElementById('updateStatusBtn');
+    if (updateBtn && isAdmin && !['CANCELLED', 'COMPLETED'].includes(currentStatus)) {
+        // Xóa listener cũ nếu có (tránh attach nhiều lần)
+        updateBtn.replaceWith(updateBtn.cloneNode(true));
+        const newUpdateBtn = document.getElementById('updateStatusBtn');
 
-            if (!confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?\nHành động này không thể hoàn tác.')) {
+        newUpdateBtn.addEventListener('click', async () => {
+            const newStatus = statusSelect.value;
+
+            if (newStatus === currentStatus) {
+                showNotification('Trạng thái không thay đổi', 'warning');
+                return;
+            }
+
+            if (!confirm(`Chuyển trạng thái thành "${getStatusText(newStatus)}"?`)) {
                 return;
             }
 
             try {
-                const response = await fetch(`${API_BASE_URL}/order/cancel/${currentOrderId}`, {
+                const response = await fetch(`http://localhost:8080/order/status/${order.id}?status=${newStatus}`, {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${getAccessToken()}`,
@@ -180,32 +150,64 @@ function displayOrderDetail(order) {
                 });
 
                 const data = await response.json();
-                console.log('Response hủy đơn:', data);  // Debug log
 
                 if (response.ok && data.code === 200) {
-                    alert('Đơn hàng đã được hủy thành công!');
+                    // Cập nhật lại giao diện
+                    statusDisplay.textContent = getStatusText(newStatus);
+                    statusDisplay.className = `order-status status-${newStatus.toLowerCase()}`;
+                    statusDisplay.innerHTML = `<i class="fas fa-circle"></i> ${getStatusText(newStatus)}`;
 
-                    // Cập nhật giao diện ngay lập tức
-                    const statusElement = document.getElementById('orderStatus');
-                    if (statusElement) {
-                        statusElement.textContent = 'Đã hủy';
-                        statusElement.className = 'order-status status-cancelled';
-                        statusElement.innerHTML = '<i class="fas fa-times-circle"></i> Đã hủy';
+                    showNotification('Cập nhật trạng thái thành công!', 'success');
+
+                    // === TỰ ĐỘNG ẨN PHẦN CẬP NHẬT NẾU CHUYỂN SANG CANCELLED HOẶC COMPLETED ===
+                    if (newStatus === 'CANCELLED' || newStatus === 'COMPLETED') {
+                        statusActions.style.display = 'none';
                     }
-
-                    // Ẩn nút hủy sau khi thành công
-                    cancelButton.style.display = 'none';
                 } else {
-                    alert(data.message || 'Không thể hủy đơn hàng. Vui lòng thử lại sau.');
+                    alert(data.message || 'Cập nhật thất bại');
                 }
-            } catch (error) {
-                alert('Có lỗi xảy ra khi hủy đơn hàng. Vui lòng kiểm tra kết nối và thử lại.');
+            } catch (err) {
+                console.error(err);
+                alert('Lỗi kết nối khi cập nhật trạng thái');
             }
         });
-    } else {
-        console.error('Không tìm thấy nút cancelOrder trong DOM');
     }
-    // ========== KẾT THÚC PHẦN XỬ LÝ NÚT HỦY ==========
+
+    const orderItems = document.getElementById('orderItems');
+    orderItems.innerHTML = '';
+    order.orderDetails.forEach(item => {
+        const imageUrl = item.image
+            ? `http://localhost:8080/images/product/${item.image}`
+            : 'https://via.placeholder.com/80x100';
+
+        const itemElement = document.createElement('div');
+        itemElement.className = 'order-item';
+        itemElement.innerHTML = `
+            <img src="${imageUrl}" alt="${item.product}" class="item-image">
+            <div class="item-details">
+                <h3 class="item-title">${item.product}</h3>
+                <p class="item-price">${formatPrice(item.price)}</p>
+                <p class="item-quantity">Số lượng: ${item.quantity}</p>
+                <p class="item-info">Thương hiệu: ${item.brand} | Danh mục: ${item.category}</p>
+            </div>
+        `;
+        orderItems.appendChild(itemElement);
+    });
+
+    // Tính tiền (có thể lấy từ backend tốt hơn)
+    const subtotal = order.totalAmount || order.orderDetails.reduce((s, i) => s + i.price * i.quantity, 0);
+    document.getElementById('subtotal').textContent = formatPrice(subtotal);
+    document.getElementById('shipping').textContent = formatPrice(30000);
+    document.getElementById('discount').textContent = '-0 ₫';
+    document.getElementById('total').textContent = formatPrice(subtotal + 30000);
+
+    // Nút hủy đơn (chỉ user)
+    const cancelButton = document.getElementById('cancelOrder');
+    if (!isAdmin && (currentStatus === 'PENDING' || currentStatus === 'PROCESSING')) {
+        if (cancelButton) cancelButton.style.display = 'inline-flex';
+    } else if (cancelButton) {
+        cancelButton.style.display = 'none';
+    }
 }
 
 function getStatusText(status) {

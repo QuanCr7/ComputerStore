@@ -67,4 +67,22 @@ public class OrderController extends BaseController {
         }
         return returnSuccess(orderServiceImpl.create(request, request.getOrderDetails()));
     }
+
+    @Operation(
+            summary = "Hủy đơn hàng",
+            description = "Người dùng hủy đơn hàng của chính mình (chỉ khi đang ở trạng thái PENDING hoặc PROCESSING)",
+            tags = {"Đơn hàng"}
+    )
+    @PutMapping("/cancel/{orderId}")
+    public ResponseEntity<BaseResponse<OrderResponse>> cancelOrder(@PathVariable("orderId") Integer orderId) {
+        return returnSuccess(orderServiceImpl.cancelOrder(orderId));
+    }
+
+    @Operation(summary = "Admin cập nhật trạng thái đơn hàng")
+    @PutMapping("/status/{orderId}")
+    public ResponseEntity<BaseResponse<OrderResponse>> updateStatus(
+            @PathVariable("orderId") Integer orderId,
+            @RequestParam("status") String status) {
+        return returnSuccess(orderServiceImpl.updateStatus(orderId, status));
+    }
 }

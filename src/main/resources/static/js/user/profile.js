@@ -105,7 +105,7 @@ function displayUserProfile(userData) {
 
     const avatarImg = document.getElementById('userAvatar');
     if (userData.imageUrl) {
-        avatarImg.src = `${API_BASE_URL}/images/user/${userData.imageUrl}`;
+        avatarImg.src = `/images/user/${userData.imageUrl}?t=${Date.now()}`;
     } else {
         avatarImg.src = '/images/user/default.jpg';
     }

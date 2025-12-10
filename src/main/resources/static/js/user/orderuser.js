@@ -1,6 +1,5 @@
 // /js/user/orderuser.js
 document.addEventListener('DOMContentLoaded', async function() {
-    const API_BASE_URL = 'http://localhost:8080';
     let currentPage = 1;
 
     const isLoggedIn = await checkLoginStatus();
@@ -80,7 +79,6 @@ async function loadOrders(page, updateUrlFlag = true) {
         });
 
         const data = await response.json();
-        console.log('orderuser.js: Orders response:', JSON.stringify(data, null, 2));
 
         if (response.ok && data.code === 200) {
             if (updateUrlFlag) {

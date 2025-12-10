@@ -1,7 +1,6 @@
 package com.example.website.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
 public class Admin {
 
     @GetMapping("/detail-user")
@@ -22,6 +20,12 @@ public class Admin {
     public String getProductDetail(@RequestParam int id, Model model) {
         model.addAttribute("productId", id);
         return "admin/product-admin";
+    }
+
+    @GetMapping("/order/detail")
+    public String getUserOrderDetail(@RequestParam int id, Model model) {
+        model.addAttribute("orderId", id);
+        return "auth/orderdetail";
     }
 
     @GetMapping("/manage/admin")
@@ -42,6 +46,12 @@ public class Admin {
     @GetMapping("/manage/o")
     public String manageOrder(){
         return "admin/manage-order";
+    }
+
+    @GetMapping("/manage/o/detail")
+    public String getOrderDetail(@RequestParam int id, Model model) {
+        model.addAttribute("orderId", id);
+        return "admin/orderdetail-admin";
     }
 
     @GetMapping("/tet")

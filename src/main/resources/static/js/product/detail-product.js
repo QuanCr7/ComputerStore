@@ -269,87 +269,111 @@ function loadComments(productId, page = 1, append = false) {
 
     const list = document.getElementById('commentsList');
     const btn = document.getElementById('loadMoreBtn');
-    const pagination = document.getElementById('commentPagination');
 
     if (!append) {
-        list.innerHTML = '<div class="loading-comments"><i class="fas fa-spinner fa-spin"></i> Đang tải đánh giá...</div>';
-    } else {
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tải...';
-        btn.disabled = true;
+        list.innerHTML = '<div class="loading-comments">Đang tải đánh giá...</div>';
     }
 
     fetch(`/comment/p/${productId}?page=${page}`)
-        .then(res => {
-            if (!res.ok) throw new Error('Không thể tải đánh giá');
-            return res.json();
-        })
+        .then(res => res.ok ? res.json() : Promise.reject('Không tải được bình luận'))
         .then(result => {
-            if (result.code !== 200) throw new Error(result.message || 'Lỗi server');
-            const data = result.data;
-            const comments = data.comments || [];
+            if (result.code !== 200) throw new Error(result.message);
 
+            const data = result.data;
             document.getElementById('commentCount').textContent = `(${data.totalElements})`;
 
-            if (comments.length === 0 && page === 1) {
-                list.innerHTML = `
-                    <div class="no-comments">
-                        <i class="fas fa-comment-slash" style="font-size:48px;color:#ccc;margin-bottom:16px;"></i>
-                        <p>Chưa có đánh giá nào.</p>
-                    </div>`;
-                pagination.style.display = 'none';
-                isLoadingComments = false;
-                return;
-            }
-
+            const comments = data.comments || [];
             const fragment = document.createDocumentFragment();
 
             comments.forEach(c => {
-                const d = new Date(c.createdAt);
-                const dateStr = d.toLocaleDateString('vi-VN') + ' lúc ' + d.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
+                const date = new Date(c.createdAt);
+                const dateStr = date.toLocaleDateString('vi-VN') + ' lúc ' +
+                    date.toLocaleTimeString('vi-VN', {hour: '2-digit', minute: '2-digit'});
+
                 const div = document.createElement('div');
                 div.className = 'comment-item';
+                div.dataset.commentId = c.commentId;
+
+                // Kiểm tra có phải người đăng hoặc Admin không
+                const currentUser = getCurrentUser(); // bạn đã có hàm này trong auth.js
+                const isOwner = currentUser && (currentUser.id === c.userId);
+                const isAdmin = currentUser && currentUser.role === 'ADMIN';
+
+                const deleteBtn = (isOwner || isAdmin) ? `
+                    <button class="btn-delete-comment" title="Xóa bình luận" onclick="deleteComment(${c.commentId}, this)">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                ` : '';
+
                 div.innerHTML = `
-                    <div class="comment-avatar"><div class="avatar-placeholder"><i class="fas fa-user"></i></div></div>
+                    <div class="comment-avatar">
+                        <div class="avatar-placeholder">${(c.username?.[0] || 'K').toUpperCase()}</div>
+                    </div>
                     <div class="comment-content">
                         <div class="comment-header">
-                            <strong class="comment-author">
-                                ${c.username ? c.username : 'Khách hàng #' + c.userId}
-                            </strong>
-                            <span class="comment-date">${dateStr}</span>
+                            <div class="comment-author">${escapeHtml(c.username || 'Khách')}</div>
+                            <div class="comment-date">${dateStr}</div>
                         </div>
                         <div class="comment-text">${escapeHtml(c.comment)}</div>
                     </div>
+                    <div class="comment-actions">${deleteBtn}</div>
                 `;
                 fragment.appendChild(div);
             });
 
-            if (append) {
-                list.appendChild(fragment);
-            } else {
-                list.innerHTML = '';
-                list.appendChild(fragment);
-            }
+            if (append) list.appendChild(fragment);
+            else list.innerHTML = '', list.appendChild(fragment);
 
-            if (page >= data.totalPages) {
-                hasMoreComments = false;
-                pagination.style.display = 'none';
-            } else {
-                hasMoreComments = true;
-                pagination.style.display = 'block';
-                btn.innerHTML = '<i class="fas fa-arrow-down"></i> Xem thêm đánh giá';
-                btn.disabled = false;
-            }
+            hasMoreComments = page < data.totalPages;
+            document.getElementById('commentPagination').style.display = hasMoreComments ? 'block' : 'none';
+            if (hasMoreComments) btn.textContent = 'Xem thêm đánh giá';
 
             isLoadingComments = false;
         })
         .catch(err => {
-            console.error(err);
-            if (!append) {
-                list.innerHTML = `<div class="error">Lỗi: ${err.message}</div>`;
-            }
-            pagination.style.display = 'none';
+            list.innerHTML = `<div class="error">Lỗi: ${err}</div>`;
             isLoadingComments = false;
         });
+}
+
+// Hàm xóa comment
+async function deleteComment(commentId, button) {
+    if (!confirm('Bạn có chắc chắn muốn xóa bình luận này?')) return;
+
+    try {
+        const res = await fetch(`/comment/deleteComment/${commentId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${getAccessToken()}`,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'include'
+        });
+
+        const data = await res.json();
+        if (res.ok && data.code === 200) {
+            button.closest('.comment-item').style.animation = 'fadeOut 0.4s ease';
+            setTimeout(() => {
+                button.closest('.comment-item').remove();
+                showToast('Đã xóa bình luận!');
+                // Cập nhật lại số lượng
+                const count = parseInt(document.getElementById('commentCount').textContent.match(/\d+/)?.[0] || '0');
+                document.getElementById('commentCount').textContent = `(${count - 1})`;
+            }, 400);
+        } else {
+            showToast(data.message || 'Không thể xóa bình luận');
+        }
+    } catch (err) {
+        showToast('Lỗi kết nối');
+    }
+}
+
+// Thêm animation fadeOut
+if (!document.getElementById('fade-anim')) {
+    const style = document.createElement('style');
+    style.id = 'fade-anim';
+    style.textContent = `@keyframes fadeOut { from {opacity:1;transform:translateY(0)} to {opacity:0;transform:translateY(-20px)} }`;
+    document.head.appendChild(style);
 }
 
 function initComments(productId) {

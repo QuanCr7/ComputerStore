@@ -8,11 +8,12 @@ function formatDate(dateString) {
     try { return new Date(dateString).toLocaleDateString('vi-VN'); }
     catch { return dateString; }
 }
+
 function formatPrice(price) {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
 }
 
-// Notification (chỉ 1 lần duy nhất)
+// Notification
 function showNotification(msg, type = 'success') {
     const n = document.getElementById('notification');
     const m = document.getElementById('notification-message');
@@ -34,7 +35,32 @@ function loadCategories() {
         .catch(() => {});
 }
 
-// Phân trang chung (đẹp như bản mới)
+function updateAdminHeader() {
+    const usernameEl = document.getElementById('admin-username');
+    const logoutBtn = document.getElementById('admin-logout-btn');
+
+    if (!usernameEl) return;
+
+    const user = getCurrentUser(); // từ auth.js
+
+    if (user && user.username) {
+        usernameEl.textContent = user.username;
+
+        // Gán sự kiện logout cho cả 2 nút (sidebar + topbar)
+        const logoutLinks = document.querySelectorAll('#admin-logout-btn, .sidebar-menu a.logout');
+        logoutLinks.forEach(link => {
+            link.onclick = (e) => {
+                e.preventDefault();
+                logout(); // hàm từ auth.js
+            };
+        });
+    } else {
+        // Không có user → chuyển về login
+        usernameEl.textContent = 'Khách';
+    }
+}
+
+// Phân trang
 function renderPagination(currentPage, totalPages, fetchFunction, keyword = '') {
     const container = document.getElementById('pagination') || document.querySelector('.pagination');
     if (!container) return;
@@ -70,10 +96,47 @@ function renderPagination(currentPage, totalPages, fetchFunction, keyword = '') 
     if (currentPage < totalPages) createBtn('>>', currentPage + 1);
 }
 
-// Modal chung
+// Modal xóa
 document.addEventListener('DOMContentLoaded', () => {
     loadCategories();
 
+    const loadingScreen = document.getElementById('loadingScreen');
+    const adminContent = document.getElementById('adminContent');
+
+    (async () => {
+        try {
+            const isLoggedIn = await checkLoginStatus();
+            if (!isLoggedIn) throw new Error('Not logged in');
+
+            const user = await fetchCurrentUser();
+            if (!user || user.role !== 'ADMIN') throw new Error('Not admin');
+
+            // === THÀNH CÔNG: HIỆN GIAO DIỆN ADMIN ===
+            const loadingScreen = document.getElementById('loadingScreen');
+            const adminContent = document.getElementById('adminContent');
+
+            if (loadingScreen) loadingScreen.remove();
+
+            if (adminContent) {
+                adminContent.style.display = 'block'; // hoặc 'flex' nếu dùng flexbox
+            }
+            document.body.classList.add('authenticated');
+
+            // Hiển thị tên admin
+            const usernameEl = document.getElementById('admin-username');
+            if (usernameEl) {
+                usernameEl.textContent = user.fullName || user.username || 'Admin';
+            }
+
+        } catch (err) {
+            console.error('Admin auth failed:', err);
+            document.body.innerHTML = '';
+            showNotification('Truy cập bị từ chối!', 'error');
+            setTimeout(() => window.location.replace('/auth/login'), 800);
+        }
+    })();
+
+    // Modal xóa (giữ nguyên)
     const modal = document.getElementById('deleteModal');
     const closeBtn = document.getElementById('closeModal');
     const cancelBtn = document.getElementById('cancelDelete');
@@ -83,11 +146,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cancelBtn) cancelBtn.onclick = () => modal?.classList.remove('active');
     if (modal) modal.onclick = e => { if (e.target === modal) modal.classList.remove('active'); };
 
-    // Quan trọng: gán sự kiện xác nhận xóa ở đây 1 lần duy nhất
     if (confirmBtn) {
         confirmBtn.onclick = () => {
             if (currentDeleteId !== null) {
-                window.performDelete(currentDeleteId); // hàm này sẽ do từng trang định nghĩa
+                window.performDelete(currentDeleteId);
                 currentDeleteId = null;
             }
             modal?.classList.remove('active');

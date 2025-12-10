@@ -5,11 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý Đơn hàng</title>
     <link rel="stylesheet" href="/css/admin/common.css">
+    <link rel="stylesheet" href="/css/admin/hide.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
+<div class="loading-screen" id="loadingScreen">
+    <div class="spinner"></div>
+    <div>Đang xác thực quyền truy cập...</div>
+</div>
 
-<div class="admin-wrapper">
+<div class="admin-wrapper" id="adminContent">
     <aside class="sidebar">
         <div class="sidebar-header">
             <h2><i class="fas fa-cogs"></i> Admin Panel</h2>
@@ -35,7 +40,10 @@
         <header class="topbar">
             <h1>Quản lý Đơn hàng</h1>
             <div class="user-info">
-                <span>Xin chào, <strong>Admin</strong></span>
+                <span>Xin chào, <strong id="admin-username"></strong></span>
+                <button id="admin-logout-btn" class="logout-small">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </button>
             </div>
         </header>
 
@@ -45,10 +53,11 @@
                     <input type="text" id="searchOrder" placeholder="Tìm mã đơn, tên khách, SĐT...">
                     <button onclick="searchOrders()"><i class="fas fa-search"></i></button>
                 </div>
-                <select id="statusFilter" onchange="fetchOrders(1)">
-                    <option value="">Tất cả trạng thái</option>
+                <select id="statusFilter" class="form-control">
+                    <option value="ALL" selected>Tất cả trạng thái</option>
                     <option value="PENDING">Chờ xử lý</option>
-                    <option value="PROCESSING">Đang giao</option>
+                    <option value="PROCESSING">Đang xử lý</option>
+                    <option value="SHIPPING">Đang vận chuyển</option>
                     <option value="COMPLETED">Hoàn thành</option>
                     <option value="CANCELLED">Đã hủy</option>
                 </select>
@@ -60,7 +69,7 @@
                     <tr>
                         <th>Mã đơn</th>
                         <th>Ngày đặt</th>
-                        <th>Khách hàng</th>
+                        <th>Điaj chỉ</th>
                         <th>SĐT</th>
                         <th>Tổng tiền</th>
                         <th>Trạng thái</th>
@@ -81,6 +90,7 @@
 </div>
 
 <script src="/js/admin/common.js" defer></script>
+<script src="/js/user/auth.js" defer></script>
 <script src="/js/admin/manage-order.js" defer></script>
 </body>
 </html>

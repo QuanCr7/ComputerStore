@@ -96,9 +96,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse update(int id, UserRegisterRequest request) {
         UserEntity user = getByid(id);
-
-//        user.setUsername(request.getUsername());
-//        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setFullName(request.getFullName());
         user.setDateOfBirth(request.getDateOfBirth());
         String image = saveImage(request.getImage());
@@ -202,6 +199,7 @@ public class UserServiceImpl implements UserService {
                 .email(response.getEmail())
                 .phone(response.getPhone())
                 .address(response.getAddress())
+                .role(response.getRole().name())
                 .build();
     }
 

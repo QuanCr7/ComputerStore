@@ -5,11 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý Sản phẩm</title>
     <link rel="stylesheet" href="/css/admin/common.css">
+    <link rel="stylesheet" href="/css/admin/hide.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
+<div class="loading-screen" id="loadingScreen">
+    <div class="spinner"></div>
+    <div>Đang xác thực quyền truy cập...</div>
+</div>
 
-<div class="admin-wrapper">
+<div class="admin-wrapper" id="adminContent">
     <aside class="sidebar">
         <div class="sidebar-header">
             <h2>Admin Panel</h2>
@@ -36,7 +41,10 @@
         <header class="topbar">
             <h1>Quản lý Sản phẩm</h1>
             <div class="user-info">
-                <span>Xin chào, <strong>Admin</strong></span>
+                <span>Xin chào, <strong id="admin-username"></strong></span>
+                <button id="admin-logout-btn" class="logout-small">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </button>
             </div>
         </header>
 
@@ -98,6 +106,7 @@
 </div>
 
 <script src="/js/admin/common.js" defer></script>
+<script src="/js/user/auth.js" defer></script>
 <script src="/js/admin/manage-product.js" defer></script>
 </body>
 </html>
