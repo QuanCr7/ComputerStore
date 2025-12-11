@@ -151,8 +151,7 @@ function loadBrandsForSearch() {
                         <label for="brand-${brand.brandId}">
                             <img src="${imageUrl}" 
                                  alt="${brand.name}" 
-                                 class="category-image"
-                                 onerror="this.src='/images/brand/no-brand.png'">
+                                 class="category-image">
                             <div class="category-name">${brand.name}</div>
                         </label>
                     `;
@@ -429,7 +428,6 @@ function renderProducts(products) {
             <div class="product-info">
                 <h3 class="product-name">${product.name}</h3>
 
-                <!-- PHẦN GIÁ SIÊU ĐẸP NHƯ TRANG HOME -->
                 <div class="product-price-display">
                     ${product.discount > 0 ? `
                         <div class="price-with-discount">

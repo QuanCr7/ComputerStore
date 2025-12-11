@@ -22,7 +22,7 @@ public class ProductResponse {
     private LocalDate createDate;
     private List<String> images;
     private String brand;
-    private int category;
+    private String category;
     private List<ProductAttributeResponse> attributes;
     private List<CommentResponse> comments;
 }

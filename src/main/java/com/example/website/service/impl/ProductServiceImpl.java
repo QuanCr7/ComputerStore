@@ -189,7 +189,7 @@ public class ProductServiceImpl implements ProductService {
                 .createDate(response.getCreateDate())
                 .images(response.getImages())
                 .brand(response.getBrand().getName())
-                .category(response.getCategory().getCategoryId())
+                .category(response.getCategory().getName())
                 .build();
     }
 
@@ -219,7 +219,7 @@ public class ProductServiceImpl implements ProductService {
                 .createDate(response.getCreateDate())
                 .images(response.getImages())
                 .brand(response.getBrand().getName())
-                .category(response.getCategory().getCategoryId())
+                .category(response.getCategory().getName())
                 .attributes(response.getAttributes() != null ?
                         response.getAttributes().stream()
                                 .map(attr -> ProductAttributeResponse.builder()

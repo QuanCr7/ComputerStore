@@ -1,4 +1,4 @@
-// === 1. Danh sách form riêng cho từng danh mục ===
+//add-product.js
 const specificForms = {
     // ------------------- CPU -------------------
     cpu: `

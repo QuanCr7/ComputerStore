@@ -111,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const user = await fetchCurrentUser();
             if (!user || user.role !== 'ADMIN') throw new Error('Not admin');
 
-            // === THÀNH CÔNG: HIỆN GIAO DIỆN ADMIN ===
             const loadingScreen = document.getElementById('loadingScreen');
             const adminContent = document.getElementById('adminContent');
 

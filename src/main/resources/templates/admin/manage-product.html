@@ -49,28 +49,79 @@
         </header>
 
         <div class="content-wrapper">
-            <div class="toolbar">
-                <div class="search-box">
-                    <input type="text" id="searchInput" class="search-input" placeholder="Tìm kiếm tên sản phẩm, mã...">
-                    <button onclick="searchProducts()">
-                        Tìm kiếm
-                    </button>
+            <div class="toolbar advanced-search-toolbar">
+                <div class="search-section-admin">
+                    <h3>Bộ lọc sản phẩm</h3>
+
+                    <div class="filter-row">
+                        <div class="filter-group full-width">
+                            <label for="adminSearchName">Tên sản phẩm</label>
+                            <input type="text" id="adminSearchName" placeholder="Nhập tên sản phẩm">
+                        </div>
+
+                        <!-- Dropdown Danh mục -->
+                        <div class="filter-group">
+                            <label>Danh mục</label>
+                            <div class="custom-select-wrapper">
+                                <div class="custom-select" id="adminCategorySelect">
+                                    <div class="selected-option">
+                                        <span class="placeholder">Tất cả danh mục</span>
+                                        <i class="fas fa-chevron-down arrow"></i>
+                                    </div>
+                                    <div class="options-container">
+                                        <div class="option" data-value="">Tất cả danh mục</div>
+                                        <div class="options-list" id="adminCategoryOptions">
+                                            <div class="loading-mini">Đang tải...</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dropdown Thương hiệu -->
+                        <div class="filter-group">
+                            <label>Thương hiệu</label>
+                            <div class="custom-select-wrapper">
+                                <div class="custom-select" id="adminBrandSelect">
+                                    <div class="selected-option">
+                                        <span class="placeholder">Tất cả thương hiệu</span>
+                                        <i class="fas fa-chevron-down arrow"></i>
+                                    </div>
+                                    <div class="options-container">
+                                        <div class="option" data-value="">Tất cả thương hiệu</div>
+                                        <div class="options-list" id="adminBrandOptions">
+                                            <div class="loading-mini">Đang tải...</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button class="btn btn-primary" onclick="adminApplyFilters()">
+                            Áp dụng bộ lọc
+                        </button>
+                        <button class="btn btn-secondary" onclick="adminResetFilters()">
+                            Đặt lại
+                        </button>
+                        <button class="btn btn-success" onclick="location.href='/add'">
+                            Thêm sản phẩm mới
+                        </button>
+                    </div>
                 </div>
-                <button class="btn btn-success" onclick="location.href='/add'">
-                    Thêm sản phẩm mới
-                </button>
             </div>
 
             <div class="table-container">
                 <table id="products-table">
                     <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Tên sản phẩm</th>
-                        <th>Tồn kho</th>
-                        <th>Danh mục</th>
-                        <th>Giá bán</th>
-                        <th>Thao tác</th>
+                        <th class="center">ID</th>
+                        <th class="center">Tên sản phẩm</th>
+                        <th class="center">Tồn kho</th>
+                        <th class="center">Danh mục</th>
+                        <th class="center">Giá bán</th>
+                        <th class="center">Thao tác</th>
                     </tr>
                     </thead>
                     <tbody id="products-table-body"></tbody>
