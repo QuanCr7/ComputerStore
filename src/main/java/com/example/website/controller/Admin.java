@@ -54,6 +54,11 @@ public class Admin {
         return "admin/orderdetail-admin";
     }
 
+    @GetMapping("manage/statistics")
+    public String manageMoney(){
+        return "admin/statistics";
+    }
+
     @GetMapping("/tet")
     public String tet(){
         return "guest/tet";

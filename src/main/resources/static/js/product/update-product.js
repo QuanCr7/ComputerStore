@@ -1,28 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('id');
-
-    if (!productId) {
-        alert('Không tìm thấy ID sản phẩm');
-        window.location.href = '/';
-        return;
-    }
-
-    document.getElementById('productId').value = productId;
-
-    // Load dữ liệu
-    loadProductData(productId);
-    loadCategories();
-    loadBrands();
-
-    // Preview ảnh mới
-    document.getElementById('images').addEventListener('change', previewImages);
-    document.getElementById('updateProductForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        updateProduct();
-    });
-});
-
+// update-product.js
 const specificForms = {
     // ------------------- CPU -------------------
     cpu: `
@@ -429,277 +405,225 @@ const specificForms = {
     `
 };
 
-// Map tên danh mục → key
-function getCategoryKey(name) {
-    const map = {
-        'CPU': 'cpu',
-        'Card đồ hoạ': 'gpu',
-        'Mainboard': 'mainboard',
-        'Ram': 'ram',
-        'Ổ cứng': 'ssd',
-        'Case': 'case',
-        'Tản nhiệt PC': 'heatsink',
-        'Nguồn máy tính': 'psu'
-    };
-    return map[name.trim()] || null;
-}
+const categoryKeyMap = {
+    'CPU': 'cpu', 'Card đồ hoạ': 'gpu', 'Mainboard': 'mainboard',
+    'Ram': 'ram', 'Ổ cứng': 'ssd', 'Case': 'case',
+    'Tản nhiệt PC': 'heatsink', 'Nguồn máy tính': 'psu'
+};
 
-// =============== LOAD DỮ LIỆU ===============
 let currentProduct = null;
-let categories = [];
-let brands = [];
 
-function loadProductData(id) {
-    fetch(`/p/searchId/${id}`)
+document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+    if (!productId) return alert('Không có ID sản phẩm'), history.back();
+
+    document.getElementById('productId').value = productId;
+    document.getElementById('productIdDisplay').textContent = productId;
+
+    loadProduct(productId).then(() => {
+        loadCategories();
+        loadBrands();
+    });
+
+    document.getElementById('images').addEventListener('change', previewNewImages);
+    document.getElementById('updateProductForm').addEventListener('submit', handleSubmit);
+});
+
+function loadProduct(id) {
+    return fetch(`/p/searchId/${id}`)
         .then(r => r.ok ? r.json() : Promise.reject('Không tải được sản phẩm'))
         .then(res => {
             currentProduct = res.data;
             fillForm(currentProduct);
             renderCurrentImages(currentProduct.images || []);
-            showSpecificFormForCurrentCategory();
         })
         .catch(err => {
-            alert(err);
-            window.location.href = '/';
+            alert('Lỗi: ' + err);
+            history.back();
         });
 }
 
-function loadCategories() {
-    fetch('/categories')
-        .then(r => r.json())
-        .then(res => {
-            categories = (res.data || []).map(c => ({ id: c.categoryId, name: c.name }));
-            renderCategories();
-        });
-}
-
-function loadBrands() {
-    fetch('/brands')
-        .then(r => r.json())
-        .then(res => {
-            brands = (res.data || []).map(b => ({ id: b.brandId, name: b.name }));
-            renderBrands();
-        });
-}
-
-// =============== HIỂN THỊ ===============
-function fillForm(product) {
-    document.getElementById('name').value = product.name || '';
-    document.getElementById('price').value = product.price || '';
-    document.getElementById('stockQuantity').value = product.stockQuantity || 1;
-    document.getElementById('warranty').value = product.warranty || 12;
-    document.getElementById('discount').value = product.discount || 0;
-    document.getElementById('description').value = product.description || '';
+function fillForm(p) {
+    document.getElementById('name').value = p.name || '';
+    document.getElementById('price').value = p.price || '';
+    document.getElementById('description').value = p.description || '';
+    document.getElementById('stockQuantity').value = p.stockQuantity || 1;
+    document.getElementById('warranty').value = p.warranty || 12;
+    document.getElementById('discount').value = p.discount || 0;
 }
 
 function renderCurrentImages(images) {
-    const preview = document.getElementById('imagePreview');
-    preview.innerHTML = '<div class="current-images-title">Ảnh hiện tại:</div>';
-    if (images.length === 0) {
-        preview.innerHTML += '<p>Chưa có ảnh</p>';
-        return;
-    }
-    images.forEach(img => {
-        const div = document.createElement('div');
-        div.className = 'current-image';
-        div.innerHTML = `<img src="/images/product/${img}" alt="Current">`;
-        preview.appendChild(div);
-    });
+    const container = document.getElementById('currentImages');
+    container.innerHTML = images.length === 0
+        ? '<p>Chưa có ảnh</p>'
+        : images.map(img => `
+            <div class="current-image-item">
+                <img src="/images/product/${img}" alt="current">
+            </div>
+        `).join('');
 }
 
-function renderCategories() {
-    const container = document.getElementById('categoriesContainer');
-    container.innerHTML = '';
+function loadCategories() {
+    fetch('/categories').then(r => r.json()).then(res => {
+        const container = document.getElementById('categoryRadioContainer');
+        container.innerHTML = '';
+        (res.data || []).forEach(cat => {
+            const key = categoryKeyMap[cat.name];
+            if (!key || !specificForms[key]) return;
 
-    categories.forEach(cat => {
-        const key = getCategoryKey(cat.name);
-        if (!key || !specificForms[key]) return;
+            const div = document.createElement('div');
+            div.className = 'radio-item';
+            div.innerHTML = `
+                <input type="radio" name="categoryId" value="${cat.categoryId}" id="cat_${cat.categoryId}">
+                <label for="cat_${cat.categoryId}">${cat.name}</label>
+            `;
+            div.querySelector('input').addEventListener('change', () => showSpecificForm(key));
+            container.appendChild(div);
+        });
 
-        const div = document.createElement('div');
-        div.className = 'category-item';
-
-        div.innerHTML = `
-            <input type="radio" id="cat_${cat.id}" name="categories" value="${cat.id}">
-            <label for="cat_${cat.id}">${cat.name}</label>
-        `;
-
-        // Khi chọn danh mục → hiển thị form chi tiết
-        div.querySelector('input').addEventListener('change', function () {
-            if (this.checked) {
-                showSpecificForm(key);
-                validateCategories();
+        // Sau khi load xong → chọn lại danh mục cũ
+        if (currentProduct && currentProduct.category) {
+            const oldCatId = currentProduct.category.categoryId;
+            const radio = container.querySelector(`input[value="${oldCatId}"]`);
+            if (radio) {
+                radio.checked = true;
+                const key = categoryKeyMap[currentProduct.category.name];
+                if (key) showSpecificForm(key);
             }
-        });
-
-        container.appendChild(div);
-    });
-
-    // Nếu đang sửa sản phẩm → tự động chọn danh mục cũ
-    if (currentProduct && currentProduct.categories && currentProduct.categories.length > 0) {
-        const oldCatId = currentProduct.categories[0].categoryId;
-        const radio = container.querySelector(`input[value="${oldCatId}"]`);
-        if (radio) {
-            radio.checked = true;
-            const key = getCategoryKey(currentProduct.categories[0].name);
-            if (key) showSpecificForm(key);
         }
-    }
+    });
 }
 
-function renderBrands() {
-    const container = document.getElementById('brandContainer');
-    container.innerHTML = '';
-
-    brands.forEach((brand, i) => {
-        const div = document.createElement('div');
-        div.className = 'brand-item';
-        div.innerHTML = `
-            <input type="radio" id="brand_${brand.id}" name="brand" value="${brand.id}" ${i === 0 ? 'checked' : ''}>
-            <label for="brand_${brand.id}">${brand.name}</label>
-        `;
-        div.addEventListener('click', () => {
-            document.querySelectorAll('.brand-item').forEach(b => b.classList.remove('selected'));
-            div.classList.add('selected');
+function loadBrands() {
+    fetch('/brands').then(r => r.json()).then(res => {
+        const container = document.getElementById('brandRadioContainer');
+        container.innerHTML = '';
+        (res.data || []).forEach(b => {
+            const div = document.createElement('div');
+            div.className = 'radio-item';
+            div.innerHTML = `
+                <input type="radio" name="brandId" value="${b.brandId}" id="brand_${b.brandId}">
+                <label for="brand_${b.brandId}">${b.name}</label>
+            `;
+            container.appendChild(div);
         });
-        if (i === 0) div.classList.add('selected');
-        container.appendChild(div);
-    });
 
-    // Nếu có dữ liệu cũ → chọn đúng brand
-    if (currentProduct && currentProduct.brandId) {
-        const radio = document.querySelector(`input[value="${currentProduct.brandId}"]`);
-        if (radio) {
-            radio.checked = true;
-            radio.parentElement.classList.add('selected');
+        if (currentProduct && currentProduct.brand) {
+            const radio = container.querySelector(`input[value="${currentProduct.brand.brandId}"]`);
+            if (radio) radio.checked = true;
         }
-    }
+    });
 }
 
-// Hiển thị form chi tiết khi chọn danh mục
 function showSpecificForm(key) {
     const container = document.getElementById('specificFields');
-    container.innerHTML = specificForms[key] || '<p>Không có thông số riêng cho danh mục này</p>';
+    container.innerHTML = specificForms[key] || '<p>Không có thông số chi tiết</p>';
 
-    // Điền dữ liệu cũ nếu có
+    // Điền lại thuộc tính cũ
     if (currentProduct && currentProduct.attributes) {
         currentProduct.attributes.forEach(attr => {
-            const input = container.querySelector(`[name="${attr.key}"]`);
-            if (input) input.value = attr.value;
+            const el = container.querySelector(`[name="${attr.key}"]`);
+            if (el) el.value = attr.value;
         });
     }
 }
 
-function showSpecificFormForCurrentCategory() {
-    if (!currentProduct || !currentProduct.categories || currentProduct.categories.length === 0) return;
-
-    const catName = currentProduct.categories[0].name;
-    const key = getCategoryKey(catName);
-    if (key) {
-        // Check checkbox tương ứng
-        const checkbox = document.querySelector(`input[value="${currentProduct.categories[0].categoryId}"]`);
-        if (checkbox) {
-            checkbox.checked = true;
-            checkbox.parentElement.classList.add('selected');
-        }
-        showSpecificForm(key);
-    }
-}
-
-// =============== PREVIEW ẢNH MỚI ===============
-function previewImages(e) {
+function previewNewImages(e) {
     const files = e.target.files;
     const preview = document.getElementById('imagePreview');
-    const currentTitle = preview.querySelector('.current-images-title');
-    if (currentTitle) currentTitle.remove();
-
-    if (files.length > 0) {
-        preview.innerHTML += '<div class="new-images-title">Ảnh mới sẽ thay thế:</div>';
-        Array.from(files).forEach(file => {
-            const reader = new FileReader();
-            reader.onload = ev => {
-                const div = document.createElement('div');
-                div.className = 'new-image';
-                div.innerHTML = `<img src="${ev.target.result}" alt="New">`;
-                preview.appendChild(div);
-            };
-            reader.readAsDataURL(file);
-        });
-    }
+    preview.innerHTML = '<div class="new-images-title">Ảnh mới sẽ thêm:</div>';
+    Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = ev => {
+            preview.innerHTML += `<div class="new-image-item"><img src="${ev.target.result}"></div>`;
+        };
+        reader.readAsDataURL(file);
+    });
 }
 
-// =============== VALIDATE ===============
-function validateCategories() {
-    const checked = document.querySelector('input[name="categories"]:checked');
-    const err = document.getElementById('categoryError');
-    if (!checked) {
-        err.textContent = 'Vui lòng chọn 1 danh mục';
-        return false;
-    }
-    err.textContent = '';
-    return true;
-}
-
-function validateBrand() {
-    const checked = document.querySelector('input[name="brand"]:checked');
-    const err = document.getElementById('brandError');
-    if (!checked) {
-        err.textContent = 'Vui lòng chọn nhãn hàng';
-        return false;
-    }
-    err.textContent = '';
-    return true;
-}
-
-// =============== CẬP NHẬT ===============
-function updateProduct() {
-    if (!validateCategories() || !validateBrand()) return;
+function handleSubmit(e) {
+    e.preventDefault();
 
     const formData = new FormData();
     const id = document.getElementById('productId').value;
 
-    formData.append('name', document.getElementById('name').value.trim());
-    formData.append('price', document.getElementById('price').value);
-    formData.append('stockQuantity', document.getElementById('stockQuantity').value);
-    formData.append('warranty', document.getElementById('warranty').value);
-    formData.append('discount', document.getElementById('discount').value);
-    formData.append('description', document.getElementById('description').value);
+    // Trường cơ bản
+    ['name','price','description','stockQuantity','warranty','discount'].forEach(field => {
+        formData.append(field, document.getElementById(field).value.trim());
+    });
 
-    // Danh mục (chỉ hỗ trợ 1 như hiện tại)
-    const catChecked = document.querySelector('input[name="categories"]:checked');
-    formData.append('categoryId', catChecked.value);
-
-    // Nhãn hàng
-    const brandChecked = document.querySelector('input[name="brand"]:checked');
-    formData.append('brandId', brandChecked.value);
+    // Danh mục & thương hiệu
+    const cat = document.querySelector('input[name="categoryId"]:checked');
+    const brand = document.querySelector('input[name="brandId"]:checked');
+    if (!cat || !brand) {
+        showToast('Vui lòng chọn danh mục và nhãn hàng', 'error');
+        return;
+    }
+    formData.append('categoryId', cat.value);
+    formData.append('brandId', brand.value);
 
     // Thuộc tính động
-    const attributes = [];
+    const attrs = [];
     document.querySelectorAll('#specificFields input, #specificFields textarea').forEach(el => {
         if (el.value.trim()) {
-            attributes.push({key: el.name, value: el.value.trim()});
+            attrs.push({ key: el.name, value: el.value.trim() });
         }
     });
-    attributes.forEach((a, i) => {
+    attrs.forEach((a, i) => {
         formData.append(`attributes[${i}].key`, a.key);
         formData.append(`attributes[${i}].value`, a.value);
     });
 
-    // Ảnh mới (nếu có)
+    // Ảnh mới
     const newImages = document.getElementById('images').files;
-    for (let file of newImages) {
-        formData.append('images', file);
-    }
+    for (let file of newImages) formData.append('images', file);
 
+    // Ẩn loading cũ nếu có
+    const oldLoading = document.getElementById('loading');
+    if (oldLoading) oldLoading.style.display = 'none';
+
+    // Gửi request
     fetch(`/product/update/${id}`, {
         method: 'PUT',
         body: formData
     })
-        .then(r => r.ok ? r.json() : r.json().then(err => Promise.reject(err.message || 'Cập nhật thất bại')))
+        .then(r => {
+            if (!r.ok) {
+                return r.json().then(err => Promise.reject(err.message || 'Cập nhật thất bại'));
+            }
+            return r.json();
+        })
         .then(() => {
-            alert('Cập nhật sản phẩm thành công!');
-            window.history.back();
+            showToast('Cập nhật sản phẩm thành công!', 'success');
+            setTimeout(() => {
+                window.location.href = '/manage/p';
+            }, 1500);
         })
         .catch(err => {
-            alert('Lỗi: ' + err);
+            console.error('Lỗi cập nhật:', err);
+            showToast(err || 'Cập nhật thất bại!', 'error');
         });
+}
+
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('notificationToast');
+    const msgEl = document.getElementById('toastMessage');
+
+    msgEl.textContent = message;
+    toast.className = `notification-toast ${type}`;
+
+    // Force reflow + show
+    toast.classList.remove('show');
+    void toast.offsetWidth;
+    toast.classList.add('show');
+
+    // Tự ẩn sau 4 giây
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 4000);
+}
+
+function closeToast() {
+    document.getElementById('notificationToast').classList.remove('show');
 }

@@ -176,7 +176,6 @@ function showSuccess(message) {
     }, 5000);
 }
 
-// Lấy thông tin user hiện tại từ backend (có role, fullName, v.v.)
 async function fetchCurrentUser() {
     if (!getAccessToken()) return null;
 
@@ -195,11 +194,10 @@ async function fetchCurrentUser() {
         const result = await response.json();
         if (result.code === 200 && result.data) {
             const user = result.data;
-            // Lưu tạm vào localStorage để lần sau nhanh hơn (chỉ lưu những gì cần)
             localStorage.setItem('currentUser', JSON.stringify({
                 username: user.username,
                 fullName: user.fullName || user.username,
-                role: user.role,        // ← Đây là thứ chúng ta cần nhất!
+                role: user.role,
                 userId: user.userId
             }));
             return user;
@@ -211,7 +209,6 @@ async function fetchCurrentUser() {
     return null;
 }
 
-// Override lại hàm cũ để hỗ trợ role
 function getCurrentUser() {
     const cached = localStorage.getItem('currentUser');
     if (cached) {

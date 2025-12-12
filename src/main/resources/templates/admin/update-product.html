@@ -4,78 +4,138 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cập nhật sản phẩm</title>
+    <link rel="stylesheet" href="/css/admin/common.css">
+    <link rel="stylesheet" href="/css/admin/hide.css">
     <link rel="stylesheet" href="/css/product/update-product.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body>
-<div class="container">
-    <h1>Cập nhật sản phẩm</h1>
-    <form id="updateProductForm">
-        <input type="hidden" id="productId">
 
-        <div class="form-group">
-            <label for="name">Tên sản phẩm *</label>
-            <input type="text" id="name" name="name" required>
-            <div id="nameError" class="error"></div>
-        </div>
-
-        <div class="form-group">
-            <label for="price">Giá (VND) *</label>
-            <input type="number" id="price" name="price" min="0" step="0.01" required>
-            <div id="priceError" class="error"></div>
-        </div>
-
-        <div class="form-group">
-            <label for="stockQuantity">Số lượng tồn kho *</label>
-            <input type="number" id="stockQuantity" name="stockQuantity" min="1" required>
-        </div>
-
-        <div class="form-group">
-            <label for="warranty">Bảo hành (tháng) *</label>
-            <input type="number" id="warranty" name="warranty" min="1" required>
-        </div>
-
-        <div class="form-group">
-            <label for="discount">Giảm giá (%)</label>
-            <input type="number" id="discount" name="discount" min="0" max="100" value="0">
-        </div>
-
-        <div class="form-group">
-            <label for="description">Mô tả</label>
-            <textarea id="description" name="description"></textarea>
-        </div>
-
-        <!-- Danh mục (checkbox - giống add) -->
-        <div class="form-group">
-            <label>Danh mục * </label>
-            <div id="categoriesContainer" class="category-container"></div>
-            <div id="categoryError" class="error"></div>
-        </div>
-
-        <!-- Nhãn hàng (radio) -->
-        <div class="form-group">
-            <label>Nhãn hàng *</label>
-            <div id="brandContainer" class="brand-container"></div>
-            <div id="brandError" class="error"></div>
-        </div>
-
-        <!-- Form chi tiết theo danh mục (động) -->
-        <div id="specificFields"></div>
-
-        <!-- Ảnh -->
-        <div class="form-group">
-            <label for="images">Hình ảnh mới (tối đa 5 ảnh)</label>
-            <input type="file" id="images" name="images" multiple accept="image/*">
-            <div class="image-preview" id="imagePreview"></div>
-            <p class="note">Ảnh hiện tại sẽ được giữ lại nếu không chọn ảnh mới</p>
-        </div>
-
-        <div class="form-group">
-            <button type="submit" class="btn">Cập nhật sản phẩm</button>
-            <button type="button" class="btn btn-secondary" onclick="window.history.back()">Quay lại</button>
-        </div>
-    </form>
+<div class="loading-screen" id="loading">
+    <div style="text-align:center;">
+        <i class="fas fa-spinner fa-spin fa-3x"></i><br><br>
+        Đang xử lý...
+    </div>
 </div>
 
+<div class="admin-wrapper">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-cogs"></i> Admin Panel</h2>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="/manage/p" class="menu-item"><i class="fas fa-box"></i> Quản lý Sản phẩm</a>
+            <a href="/manage/u" class="menu-item"><i class="fas fa-users"></i> Quản lý Người dùng</a>
+            <a href="/manage/o" class="menu-item"><i class="fas fa-shopping-cart"></i> Quản lý Đơn hàng</a>
+            <a href="/manage/statistics" class="menu-item"><i class="fas fa-chart-line"></i> Thống kê Doanh thu</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <h1>Cập nhật sản phẩm #<span id="productIdDisplay"></span></h1>
+            <div class="user-info">
+                <span>Xin chào, <strong id="admin-username">Admin</strong></span>
+                <button id="admin-logout-btn" class="logout-small">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </button>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            <div id="error"></div>
+
+            <form id="updateProductForm" enctype="multipart/form-data">
+                <input type="hidden" id="productId">
+
+                <!-- Các trường giống hệt add-product -->
+                <div class="form-group">
+                    <label for="name"><i class="fas fa-tag"></i> Tên sản phẩm <span class="required">*</span></label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="price"><i class="fas fa-coins"></i> Giá (VNĐ) <span class="required">*</span></label>
+                    <input type="number" id="price" name="price" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description"><i class="fas fa-align-left"></i> Mô tả</label>
+                    <textarea id="description" name="description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="stockQuantity"><i class="bi bi-box"></i> Hàng tồn <span class="required">*</span></label>
+                    <input type="number" id="stockQuantity" name="stockQuantity" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="warranty"><i class="bi bi-tools"></i> Bảo hành (tháng) <span class="required">*</span></label>
+                    <input type="number" id="warranty" name="warranty" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="discount"><i class="fas fa-percent"></i> Giảm giá (%)</label>
+                    <input type="number" id="discount" name="discount" min="0" max="100" value="0">
+                </div>
+
+                <!-- Danh mục -->
+                <div class="form-group">
+                    <label><i class="fas fa-layer-group"></i> Danh mục <span class="required">*</span></label>
+                    <div id="categoryRadioContainer" class="radio-container">
+                        <div class="loading-text"><i class="fas fa-spinner fa-spin"></i> Đang tải danh mục...</div>
+                    </div>
+                </div>
+
+                <!-- Nhãn hàng -->
+                <div class="form-group">
+                    <label><i class="fas fa-copyright"></i> Nhãn hàng <span class="required">*</span></label>
+                    <div id="brandRadioContainer" class="radio-container">
+                        <div class="loading-text"><i class="fas fa-spinner fa-spin"></i> Đang tải nhãn hàng...</div>
+                    </div>
+                </div>
+
+                <!-- Form chi tiết theo danh mục -->
+                <div id="specificFields" class="specific-fields"></div>
+
+                <!-- Ảnh hiện tại + ảnh mới -->
+                <div class="form-group">
+                    <label><i class="fas fa-images"></i> Ảnh hiện tại</label>
+                    <div id="currentImages" class="image-preview"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="images"><i class="fas fa-plus-circle"></i> Thêm ảnh mới (tối đa 5)</label>
+                    <input type="file" id="images" name="images" multiple accept="image/*">
+                    <div class="image-preview" id="imagePreview"></div>
+                    <small>Ảnh mới sẽ được thêm vào, không thay thế ảnh cũ</small>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" id="submitBtn" class="btn btn-success">
+                        <i class="fas fa-save"></i> Cập nhật sản phẩm
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="history.back()">
+                        <i class="fas fa-times"></i> Hủy bỏ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+<!-- Notification Toast - Góc phải trên -->
+<div class="notification-toast" id="notificationToast">
+    <div class="toast-icon">
+        <i class="fas fa-check-circle"></i>
+    </div>
+    <div class="toast-message" id="toastMessage">Cập nhật sản phẩm thành công!</div>
+    <button class="toast-close" onclick="closeToast()">&times;</button>
+</div>
+
+<script src="/js/admin/common.js" defer></script>
+<script src="/js/user/auth.js" defer></script>
 <script src="/js/product/update-product.js" defer></script>
 </body>
 </html>

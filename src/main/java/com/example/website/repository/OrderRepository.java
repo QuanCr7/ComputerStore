@@ -1,12 +1,16 @@
 package com.example.website.repository;
 
 import com.example.website.entity.OrderEntity;
+import com.example.website.utils.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -15,4 +19,22 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
 
     @Query("SELECT o FROM OrderEntity o WHERE o.user.userId = :userId")
     Page<OrderEntity> findByUserId(Integer userId, Pageable pageable);
+
+    List<OrderEntity> findByOrderDateBetweenAndStatus(
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            OrderStatus status
+    );
+
+    List<OrderEntity> findByOrderDateBetween(
+            LocalDateTime startDate,
+            LocalDateTime endDate
+    );
+
+    @Query("SELECT o FROM OrderEntity o WHERE o.user.userId = :userId AND o.orderDate BETWEEN :startDate AND :endDate")
+    List<OrderEntity> findByUserIdAndOrderDateBetween(
+            @Param("userId") Integer userId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate
+    );
 }

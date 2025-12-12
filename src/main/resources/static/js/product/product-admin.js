@@ -5,159 +5,126 @@ document.addEventListener('DOMContentLoaded', function () {
     const productId = urlParams.get('id');
 
     if (!productId) {
-        showError('Không tìm thấy ID sản phẩm');
+        showToast('Không tìm thấy ID sản phẩm', 'error');
+        setTimeout(() => history.back(), 2000);
         return;
     }
 
+    document.getElementById('productIdDisplay').textContent = productId;
     loadProductDetail(productId);
 });
 
-// Đổi ảnh khi click thumbnail
-document.addEventListener('click', function (e) {
-    if (e.target.classList.contains('thumbnail')) {
-        const mainImage = document.getElementById('mainImage');
-        mainImage.src = e.target.src;
-
-        document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
-        e.target.classList.add('active');
-    }
-});
-
-// LOAD CHI TIẾT SẢN PHẨM
-function loadProductDetail(productId) {
-    const loading = document.getElementById('loading');
-    const error = document.getElementById('error');
-    const detail = document.getElementById('product-detail');
-
-    loading.style.display = 'block';
-    error.style.display = 'none';
-    detail.style.display = 'none';
-
-    fetch(`/p/searchId/${productId}`)
+function loadProductDetail(id) {
+    fetch(`/p/searchId/${id}`)
+        .then(r => r.ok ? r.json() : Promise.reject('Không tìm thấy sản phẩm'))
         .then(res => {
-            if (!res.ok) throw new Error('Không tìm thấy sản phẩm');
-            return res.json();
-        })
-        .then(result => {
-            if (!result.data) throw new Error('Dữ liệu sản phẩm trống');
-
-            currentProduct = result.data;
+            currentProduct = res.data;
             renderProductDetail(currentProduct);
-
-            loading.style.display = 'none';
-            detail.style.display = 'block';
+            document.getElementById('loadingScreen').style.display = 'none';
         })
         .catch(err => {
-            loading.style.display = 'none';
-            error.textContent = 'Lỗi: ' + err.message;
-            error.style.display = 'block';
-            console.error('Lỗi tải sản phẩm:', err);
+            showToast(err.message || 'Lỗi tải sản phẩm', 'error');
+            document.getElementById('loadingScreen').style.display = 'none';
         });
 }
 
-// HIỂN THỊ CHI TIẾT SẢN PHẨM
-function renderProductDetail(product) {
-    document.getElementById('productName').textContent = product.name || 'Chưa đặt tên';
-    document.getElementById('productSubtitle').textContent =
-        product.description?.split('.')[0] ? product.description.split('.')[0] + '.' : 'Không có mô tả ngắn';
+function renderProductDetail(p) {
+    const container = document.getElementById('product-detail-container');
+    const price = Number(p.price);
+    const discount = Number(p.discount || 0);
+    const finalPrice = discount > 0 ? Math.round(price * (1 - discount/100)) : price;
 
-    document.getElementById('productBrand').textContent = product.brand || 'Chưa xác định';
-    document.getElementById('warranty').textContent = product.warranty || 0;
-    document.getElementById('productDescription').textContent = product.description || 'Không có mô tả chi tiết';
+    const imagesHtml = p.images?.length > 0
+        ? `<img src="/images/product/${p.images[0]}" class="main-image" alt="${p.name}">
+           <div class="thumbnails">
+             ${p.images.map((img, i) => `<img src="/images/product/${img}" 
+                  class="${i===0?'active':''}" onclick="changeMainImage(this)">`).join('')}
+           </div>`
+        : `<img src="https://placehold.co/600x600/eee/999?text=No+Image" class="main-image" alt="No image">`;
 
-    // Tính và hiển thị giá sau giảm
-    const price = Number(product.price);
-    const discount = Number(product.discount || 0);
-    const finalPrice = discount > 0 ? price * (1 - discount / 100) : price;
-    const priceEl = document.getElementById('productPrice');
+    const specsHtml = (p.attributes || [])
+        .map(attr => `
+            <tr>
+                <td>${formatKey(attr.key)}</td>
+                <td>${attr.value || '—'}</td>
+            </tr>
+        `).join('') || '<tr><td colspan="2">Không có thông số</td></tr>';
 
-    if (discount > 0) {
-        priceEl.innerHTML = `
-            <span class="original-price">${price.toLocaleString('vi-VN')}đ</span>
-            <span class="final-price">${Math.round(finalPrice).toLocaleString('vi-VN')}đ</span>
-        `;
-        document.getElementById('discountBadge').textContent = `-${discount}%`;
-        document.getElementById('discountBadge').style.display = 'block';
-        document.getElementById('discountText').textContent = `Tiết kiệm ${(price - finalPrice).toLocaleString('vi-VN')}đ`;
-        document.getElementById('discountText').style.display = 'block';
-    } else {
-        priceEl.innerHTML = `<span class="final-price">${price.toLocaleString('vi-VN')}đ</span>`;
-        document.getElementById('discountBadge').style.display = 'none';
-        document.getElementById('discountText').style.display = 'none';
-    }
+    container.innerHTML = `
+        <div class="product-detail-header">
+            <h1>${p.name}</h1>
+            <p>Thương hiệu: <strong>${p.brand}</strong> | Danh mục: <strong>${p.category}</strong></p>
+        </div>
+        <div class="product-detail-body">
+            <div class="product-grid">
+                <div class="product-images">
+                    ${imagesHtml}
+                </div>
+                <div class="product-info-section">
+                    <div class="info-block price-block">
+                        <h3>Giá bán</h3>
+                        ${discount > 0 ? `
+                            <div style="font-size:1.5rem;color:#dc3545;font-weight:700;">
+                                ${finalPrice.toLocaleString('vi-VN')}đ
+                            </div>
+                            <del style="color:#999;">${price.toLocaleString('vi-VN')}đ</del>
+                            <span style="background:#dc3545;color:white;padding:4px 8px;border-radius:4px;margin-left:10px;">
+                                -${discount}%
+                            </span>
+                        ` : `<div style="font-size:2rem;font-weight:700;color:#28a745;">
+                                ${price.toLocaleString('vi-VN')}đ
+                              </div>`}
+                        <p>Tồn kho: <strong>${p.stockQuantity}</strong> sản phẩm</p>
+                        <p>Bảo hành: <strong>${p.warranty} tháng</strong></p>
+                    </div>
 
-    // Ngày thêm sản phẩm
-    document.getElementById('createDate').textContent =
-        new Date(product.createDate).toLocaleDateString('vi-VN');
+                    <div class="info-block">
+                        <h3>Mô tả sản phẩm</h3>
+                        <p style="line-height:1.8;color:#444;">${p.description || 'Chưa có mô tả'}</p>
+                    </div>
 
-    // Xử lý ảnh
-    const mainImg = document.getElementById('mainImage');
-    const thumbsContainer = document.getElementById('thumbnails');
-    thumbsContainer.innerHTML = '';
-    const ts = Date.now();
+                    <div class="info-block">
+                        <h3>Thông số kỹ thuật</h3>
+                        <table class="specs-table">${specsHtml}</table>
+                    </div>
 
-    if (product.images && product.images.length > 0) {
-        mainImg.src = `/images/product/${product.images[0]}?t=${ts}`;
-        mainImg.alt = product.name;
-
-        product.images.forEach((img, i) => {
-            const thumb = document.createElement('img');
-            thumb.className = 'thumbnail' + (i === 0 ? ' active' : '');
-            thumb.src = `/images/product/${img}?t=${ts}`;
-            thumb.alt = `Ảnh ${i + 1}`;
-            thumbsContainer.appendChild(thumb);
-        });
-    } else {
-        mainImg.src = 'https://placehold.co/600x800/eee/999/png?text=Chưa+có+ảnh&font=roboto';
-        mainImg.alt = 'Không có ảnh sản phẩm';
-    }
-
-    // Hiển thị thông số kỹ thuật
-    renderSpecifications(product.attributes || []);
+                    <div class="action-bar">
+                        <a href="/update-product?id=${p.productId}" class="btn btn-primary btn-large">
+                            <i class="fas fa-edit"></i> Chỉnh sửa sản phẩm
+                        </a>
+                        <button onclick="history.back()" class="btn btn-secondary btn-large">
+                            <i class="fas fa-arrow-left"></i> Quay lại
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
-// HIỂN THỊ THÔNG SỐ KỸ THUẬT
-function renderSpecifications(attributes) {
-    const grid = document.getElementById('specsGrid');
-    grid.innerHTML = '';
+function changeMainImage(thumb) {
+    const main = thumb.closest('.product-images').querySelector('.main-image');
+    main.src = thumb.src;
+    thumb.closest('.thumbnails').querySelectorAll('img').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+}
 
-    if (!attributes || attributes.length === 0) {
-        grid.innerHTML = '<div class="spec-item">Không có thông số kỹ thuật nào.</div>';
-        return;
-    }
-
-    const labels = {
-        'series': 'Series',
-        'thế_hệ': 'Thế hệ CPU',
-        'cpu': 'CPU',
-        'số_nhân_xử_lý': 'Số nhân',
-        'số_luồng_của_cpu': 'Số luồng',
-        'tốc_độ_xử_lý': 'Tốc độ xử lý',
-        'cache': 'Cache',
-        'socket': 'Socket',
-        'ram_hỗ_trợ': 'RAM hỗ trợ',
-        'đồ_họa_tích_hợp': 'Đồ họa tích hợp'
+function formatKey(key) {
+    const map = {
+        'cpu': 'CPU', 'gpu': 'Card đồ họa', 'series': 'Series', 'socket': 'Socket',
+        'ram_hỗ_trợ': 'RAM hỗ trợ', 'cache': 'Cache', 'tốc_độ_xử_lý': 'Tốc độ xử lý'
     };
-
-    attributes.forEach(attr => {
-        const label = labels[attr.key] || attr.key
-            .replace(/_/g, ' ')
-            .replace(/\b\w/g, c => c.toUpperCase());
-
-        const item = document.createElement('div');
-        item.className = 'spec-item';
-        item.innerHTML = `
-            <div class="spec-label">${label}</div>
-            <div class="spec-value">${attr.value || '—'}</div>
-        `;
-        grid.appendChild(item);
-    });
+    return map[key] || key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
-// HIỂN THỊ LỖI
-function showError(msg) {
-    const el = document.getElementById('error');
-    el.textContent = msg;
-    el.style.display = 'block';
-    document.getElementById('loading').style.display = 'none';
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('notificationToast');
+    const msg = document.getElementById('toastMessage');
+    msg.textContent = message;
+    toast.className = `notification-toast ${type} show`;
+    setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+function closeToast() {
+    document.getElementById('notificationToast').classList.remove('show');
 }

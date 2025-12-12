@@ -1,0 +1,141 @@
+/* Dùng chung với update-product.css + thêm một số phần đặc biệt */
+.content-wrapper {
+    padding: 30px;
+}
+
+#product-detail-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
+    overflow: hidden;
+}
+
+.product-detail-header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.product-detail-header h1 {
+    font-size: 2.2rem;
+    margin: 0;
+}
+
+.product-detail-body {
+    padding: 40px;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 40px;
+    align-items: start;
+}
+
+.product-images {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+}
+
+.main-image {
+    width: 100%;
+    max-height: 500px;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.thumbnails {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.thumbnails img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 3px solid #e2e8f0;
+    transition: all 0.3s;
+}
+
+.thumbnails img:hover, .thumbnails img.active {
+    border-color: #667eea;
+    transform: scale(1.1);
+}
+
+.product-info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.info-block {
+    background: #f8fafc;
+    padding: 24px;
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+}
+
+.info-block h3 {
+    margin: 0 0 16px 0;
+    color: #667eea;
+    font-size: 1.3rem;
+}
+
+.price-block {
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    border-left-color: #10b981;
+}
+
+.specs-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.specs-table td {
+    padding: 12px 0;
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.specs-table td:first-child {
+    width: 40%;
+    font-weight: 600;
+    color: #374151;
+}
+
+.specs-table td:last-child {
+    color: #1f2937;
+}
+
+.action-bar {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.btn-large {
+    padding: 16px 32px;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+    .product-images {
+        order: 2;
+    }
+}

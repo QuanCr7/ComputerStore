@@ -231,7 +231,7 @@ function fetchFilteredProducts() {
         .catch((error) => {
             console.error('Lỗi fetch products:', error);
             tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">Lỗi tải dữ liệu: ${error.message}</td></tr>`;
-            showNotification('Không thể tải danh sách sản phẩm', 'error');
+            showToast('Không thể tải danh sách sản phẩm', 'error');
         });
 }
 
@@ -408,12 +408,12 @@ function performDelete(id) {
             }
         })
         .then(() => {
-            showNotification('Xóa sản phẩm thành công!', 'success');
+            showToast('Xóa sản phẩm thành công!', 'success');
             fetchFilteredProducts(); // Load lại danh sách
         })
         .catch(err => {
             console.error('Lỗi xóa sản phẩm:', err);
-            showNotification(err.message || 'Lỗi xóa sản phẩm', 'error');
+            showToast(err.message || 'Lỗi xóa sản phẩm', 'error');
         });
 }
 
@@ -424,33 +424,36 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Hàm hiển thị thông báo - ĐÃ SỬA
-function showNotification(message, type = 'info') {
-    const notification = document.getElementById('notification');
-    const messageEl = document.getElementById('notification-message');
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('notificationToast');
+    const msgEl = document.getElementById('toastMessage');
+    const icon = toast.querySelector('.toast-icon i');
 
-    if (!notification || !messageEl) {
-        console.warn('Không tìm thấy phần tử notification');
-        return;
+    // Cập nhật nội dung
+    msgEl.textContent = message;
+
+    // Đổi icon theo loại
+    if (type === 'error') {
+        icon.className = 'fas fa-exclamation-circle';
+    } else {
+        icon.className = 'fas fa-check-circle';
     }
 
-    // Reset trạng thái notification
-    notification.classList.remove('show');
-    notification.offsetHeight; // Trigger reflow
+    // Reset class
+    toast.className = 'notification-toast';
+    void toast.offsetWidth; // Trigger reflow
 
-    // Đặt nội dung và class
-    messageEl.textContent = message;
-    notification.className = `notification ${type}`;
+    // Hiển thị
+    toast.classList.add('show', type);
 
-    // Hiển thị với animation
+    // Tự ẩn sau 4 giây
     setTimeout(() => {
-        notification.classList.add('show');
-    }, 10);
+        toast.classList.remove('show');
+    }, 4000);
+}
 
-    // Tự động ẩn sau 3 giây
-    setTimeout(() => {
-        notification.classList.remove('show');
-    }, 3000);
+function closeToast() {
+    document.getElementById('notificationToast').classList.remove('show');
 }
 
 // Xử lý click ngoài để đóng dropdown

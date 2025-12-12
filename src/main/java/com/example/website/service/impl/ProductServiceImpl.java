@@ -146,9 +146,59 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponse update(int id,ProductRequest request,List<ProductAttributeRequest> attributes) {
         ProductEntity product = productRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Product Not Found"));
-        
-        return null;
+                .orElseThrow(() -> new RuntimeException("Product Not Found"));
+
+        if (!product.getName().equals(request.getName())
+                && productRepository.existsByName(request.getName())) {
+            throw new RuntimeException("Tên sản phẩm đã tồn tại");
+        }
+
+        BrandEntity brand = brandRepository.findById(request.getBrandId())
+                .orElseThrow(() -> new IllegalArgumentException("Brand not found"));
+
+        CategoryEntity category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+
+        // Cập nhật các trường cơ bản
+        product.setName(request.getName());
+        product.setPrice(request.getPrice());
+        product.setDescription(request.getDescription());
+        product.setStockQuantity(request.getStockQuantity());
+        product.setWarranty(request.getWarranty());
+        product.setDiscount(request.getDiscount());
+        product.setBrand(brand);
+        product.setCategory(category);
+
+        // Xử lý ảnh mới (nếu có)
+        if (request.getImages() != null && request.getImages().length > 0) {
+            List<String> newImages = saveImages(request.getImages());
+            // Giữ ảnh cũ + thêm ảnh mới (hoặc thay thế toàn bộ nếu muốn)
+            List<String> allImages = new ArrayList<>(product.getImages());
+            allImages.addAll(newImages);
+            product.setImages(allImages);
+        }
+
+        // XÓA THUỘC TÍNH CŨ
+        productAttributeRepository.deleteAll(product.getAttributes());
+        product.getAttributes().clear();
+
+        // THÊM THUỘC TÍNH MỚI
+        if (attributes != null && !attributes.isEmpty()) {
+            List<ProductAttributeEntity> newAttrs = new ArrayList<>();
+            for (ProductAttributeRequest attrReq : attributes) {
+                ProductAttributeEntity attr = ProductAttributeEntity.builder()
+                        .product(product)
+                        .key(attrReq.getKey())
+                        .value(attrReq.getValue())
+                        .build();
+                productAttributeRepository.save(attr);
+                newAttrs.add(attr);
+            }
+            product.setAttributes(newAttrs);
+        }
+
+        productRepository.save(product);
+        return response(product);
     }
 
     @Override

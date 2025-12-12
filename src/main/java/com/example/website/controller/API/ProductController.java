@@ -1,5 +1,6 @@
 package com.example.website.controller.API;
 
+import com.example.website.request.ProductAttributeRequest;
 import com.example.website.request.ProductRequest;
 import com.example.website.response.BaseResponse;
 import com.example.website.response.PageProductResponse;
@@ -9,6 +10,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -84,5 +87,16 @@ public class ProductController extends BaseController {
             @RequestParam(defaultValue = "1") int page
     ){
         return returnSuccess(productService.getByCondition(page,name,brand,category));
+    }
+
+    @Operation(summary = "Cập nhật sản phẩm", tags = {"Sản phẩm"})
+    @PutMapping("/product/update/{id}")
+    public ResponseEntity<BaseResponse<ProductResponse>> update(
+            @PathVariable("id") Integer id,
+            @ModelAttribute ProductRequest request
+    ) {
+        List<ProductAttributeRequest> attributes = request.getAttributes();
+        ProductResponse response = productService.update(id, request, attributes);
+        return returnSuccess(response);
     }
 }

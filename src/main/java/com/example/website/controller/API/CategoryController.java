@@ -22,7 +22,7 @@ public class CategoryController extends BaseController {
             description = "Trả về danh sách tất cả thể loại sách trong hệ thống",
             tags = {"Thể loại"}
     )
-    @GetMapping("categories")
+    @GetMapping("/categories")
     public ResponseEntity<BaseResponse<List<CategoryResponse>>> index() {
         return returnSuccess(categoryService.findAll());
     }
