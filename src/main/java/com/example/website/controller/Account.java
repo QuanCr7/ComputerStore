@@ -35,4 +35,16 @@ public class Account {
     public String changePasswordPage() {
         return "auth/change-password";
     }
+
+    @GetMapping("/forgot-password")
+    public String showForgotPasswordPage() {
+        return "guest/forgotpassword";
+    }
+
+    @GetMapping("/reset-password")
+    public String showResetPasswordPage(@RequestParam String token, Model model) {
+        model.addAttribute("token", token);
+        return "auth/resetpassword";
+    }
+
 }

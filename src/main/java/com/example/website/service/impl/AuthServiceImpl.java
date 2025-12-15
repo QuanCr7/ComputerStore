@@ -100,16 +100,9 @@ public class AuthServiceImpl implements AuthService {
             Date accessTokenExpiry = jwtTokenProvider.extractExpiration(accessToken);
             Date refreshTokenExpiry = jwtTokenProvider.extractExpiration(refreshToken);
 
-            UserEntity user = userDetails.getUserEntity(); // Hoặc findByUsername nếu cần
+            UserEntity user = userDetails.getUserEntity();
             user.setRefreshToken(refreshToken);
             userRepository.save(user);
-
-            // Lấy thông tin user đầy đủ
-//            UserEntity user = userRepository.findByUsername(request.getUsername())
-//                    .orElseThrow(() -> new RuntimeException("User not found"));
-
-            // Chuyển đổi sang UserResponse
-//            UserResponse userInfo = response(user);
 
             return UserLoginResponse.builder()
                     .accessToken(accessToken)
@@ -124,8 +117,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void initiatePasswordReset(String email) {
-        UserEntity user = userRepository.findByEmail(email);
+    public void initiatePasswordReset(String username) {
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         if (user != null) {
             String token = UUID.randomUUID().toString();
             user.setPasswordToken(token);
@@ -134,10 +129,10 @@ public class AuthServiceImpl implements AuthService {
             long time = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(15);
             tokenExpiryMap.put(token, time);
 
-            String resetLink = "http://localhost:8080/auth/reset-password?token="+token;
+            String resetLink = "http://localhost:8080/reset-password?token="+token;
 
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(email);
+            message.setTo(user.getEmail());
             message.setSubject("Password Reset Request");
             message.setText("To reset your password, click the following link: " + resetLink);
             mailSender.send(message);
@@ -195,48 +190,6 @@ public class AuthServiceImpl implements AuthService {
                 .address(response.getAddress())
                 .build();
     }
-
-//    @Override
-//    public UserLoginResponse refreshToken(String refreshToken) {
-//        // Validate JWT signature và không hết hạn
-//        if (!jwtTokenProvider.validateToken(refreshToken) || jwtTokenProvider.isTokenExpired(refreshToken)) {
-//            throw new RuntimeException("Invalid or expired refresh token");
-//        }
-//
-//        // Kiểm tra blacklist
-//        if (isBlacklisted(refreshToken)) {
-//            throw new RuntimeException("Refresh token is blacklisted");
-//        }
-//
-//        String username = jwtTokenProvider.extractUsername(refreshToken);
-//        UserEntity user = userRepository.findByUsername(username)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        // Kiểm tra refresh token khớp với DB
-//        if (!refreshToken.equals(user.getRefreshToken())) {
-//            throw new RuntimeException("Invalid refresh token");
-//        }
-//
-//        CustomUserDetails userDetails = new CustomUserDetails(user);
-//
-//        // Generate new access và new refresh (rotation để bảo mật)
-//        String newAccessToken = jwtTokenProvider.generateAccessToken(userDetails);
-//        String newRefreshToken = jwtTokenProvider.generateRefreshToken(userDetails);
-//        Date accessTokenExpiry = jwtTokenProvider.extractExpiration(newAccessToken);
-//        Date refreshTokenExpiry = jwtTokenProvider.extractExpiration(newRefreshToken);
-//
-//        // Update new refresh vào DB và blacklist old refresh
-//        user.setRefreshToken(newRefreshToken);
-//        userRepository.save(user);
-//        addToBlacklist(refreshToken, blacklistDuration);
-//
-//        return UserLoginResponse.builder()
-//                .accessToken(newAccessToken)
-//                .refreshToken(newRefreshToken)
-//                .accessTokenExpiryDate(accessTokenExpiry)
-//                .refreshTokenExpiryDate(refreshTokenExpiry)
-//                .build();
-//    }
 
     //cach su dung refreshToken cu ma ko tao moi
     @Override

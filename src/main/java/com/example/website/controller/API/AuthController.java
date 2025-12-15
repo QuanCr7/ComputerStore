@@ -98,8 +98,8 @@ public class AuthController extends BaseController {
             tags = {"Tài Khoản"}
     )
     @PostMapping("/forgot-password")
-    public ResponseEntity<BaseResponse<String>> forgotPassword(@RequestParam String email) {
-        authService.initiatePasswordReset(email);
+    public ResponseEntity<BaseResponse<String>> forgotPassword(@RequestParam String username) {
+        authService.initiatePasswordReset(username);
         return returnOtpSuccess("Đã gửi email đặt lại mật khẩu");
     }
 

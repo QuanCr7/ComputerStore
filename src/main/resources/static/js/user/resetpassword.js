@@ -1,74 +1,74 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const API_BASE_URL = 'http://localhost:8080';
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
-    const loadingElement = document.getElementById('loading');
-    const errorElement = document.getElementById('error');
-    const successElement = document.getElementById('success');
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("resetPasswordForm");
+    const error = document.getElementById("error");
+    const success = document.getElementById("success");
 
-    // Kiểm tra xem token có tồn tại không
+    // Lấy token từ URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("token");
+
     if (!token) {
-        showError('Không tìm thấy token đặt lại mật khẩu');
+        error.innerText = "❌ Token không hợp lệ hoặc đã hết hạn";
+        error.style.display = "block";
         return;
     }
 
-    // Xử lý form đặt lại mật khẩu mới
-    document.getElementById('resetPasswordForm')?.addEventListener('submit', async function (event) {
-        event.preventDefault();
-        const newPassword = document.getElementById('newPassword').value.trim();
-        const confirmPassword = document.getElementById('confirmPassword').value.trim();
+    document.getElementById("token").value = token;
 
-        if (!newPassword || !confirmPassword) {
-            showError('Vui lòng nhập đầy đủ mật khẩu');
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const newPassword = document.getElementById("newPassword").value;
+        const confirmPassword = document.getElementById("confirmPassword").value;
+
+        error.style.display = "none";
+        success.style.display = "none";
+
+        // ✅ Validate mật khẩu trùng nhau
+        if (newPassword !== confirmPassword) {
+            error.innerText = "❌ Mật khẩu nhập lại không khớp";
+            error.style.display = "block";
             return;
         }
 
-        if (newPassword !== confirmPassword) {
-            showError('Mật khẩu xác nhận không khớp');
+        if (newPassword.length < 6) {
+            error.innerText = "❌ Mật khẩu phải có ít nhất 6 ký tự";
+            error.style.display = "block";
             return;
         }
 
         try {
-            loadingElement.style.display = 'block';
-            errorElement.style.display = 'none';
-            successElement.style.display = 'none';
+            const params = new URLSearchParams();
+            params.append("token", token);
+            params.append("newPassword", newPassword);
 
-            const response = await fetch(`${API_BASE_URL}/auth/reset-password?token=${encodeURIComponent(token)}&newPassword=${encodeURIComponent(newPassword)}`, {
-                method: 'POST',
+            const response = await fetch("/auth/reset-password", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/x-www-form-urlencoded"
                 },
-                credentials: 'include',
+                body: params.toString()
             });
 
-            const data = await response.json();
-            console.log('reset-password.js: Reset password response:', JSON.stringify(data, null, 2));
+            const result = await response.json();
 
-            if (response.ok && data.code === 200 && data.data === true) {
-                showSuccess('Đặt lại mật khẩu thành công! Bạn có thể đăng nhập với mật khẩu mới.');
-                setTimeout(() => {
-                    window.location.href = '/login';
-                }, 3000);
-            } else {
-                throw new Error(data.message || 'Không thể đặt lại mật khẩu');
+            if (!response.ok || result.success === false) {
+                error.innerText = result.message || "❌ Đặt lại mật khẩu thất bại";
+                error.style.display = "block";
+                return;
             }
-        } catch (error) {
-            console.error('reset-password.js: Lỗi:', error);
-            showError(error.message);
-        } finally {
-            loadingElement.style.display = 'none';
+
+            success.innerText = "✅ Đặt lại mật khẩu thành công! Đang chuyển về đăng nhập...";
+            success.style.display = "block";
+
+            setTimeout(() => {
+                window.location.href = "/auth/login";
+            }, 3000);
+
+        } catch (err) {
+            error.innerText = "❌ Lỗi kết nối máy chủ";
+            error.style.display = "block";
+            console.error(err);
         }
     });
-
-    function showError(message) {
-        errorElement.textContent = message;
-        errorElement.style.display = 'block';
-        successElement.style.display = 'none';
-    }
-
-    function showSuccess(message) {
-        successElement.textContent = message;
-        successElement.style.display = 'block';
-        errorElement.style.display = 'none';
-    }
 });
