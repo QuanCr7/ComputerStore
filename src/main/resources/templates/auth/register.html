@@ -14,7 +14,6 @@
 <body>
 <div th:replace="~{guest/common/header :: header}"></div>
 
-<!-- Main Content -->
 <main class="main-content">
     <section class="register-section">
         <div class="register-container">
@@ -114,14 +113,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="description" class="form-label">
-                            <i class="fas fa-info-circle"></i>
-                            Mô tả
-                        </label>
-                        <textarea id="description" name="description" class="form-input" placeholder="Nhập mô tả về bạn"></textarea>
-                    </div>
-
-                    <div class="form-group">
                         <label for="image" class="form-label">
                             <i class="fas fa-image"></i>
                             Ảnh đại diện
@@ -173,11 +164,13 @@
         </div>
     </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
 <script src="/js/user/register.js" defer></script>
 <script src="/js/shopping.js" defer></script>
 <script src="/js/categories.js" defer></script>
 <script src="/js/user/auth.js" defer></script>
+<script src="/js/notification.js" defer></script>
 </body>
 </html>

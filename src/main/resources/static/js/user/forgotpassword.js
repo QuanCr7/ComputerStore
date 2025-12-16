@@ -1,47 +1,56 @@
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("requestResetForm");
     const loading = document.getElementById("loading");
-    const error = document.getElementById("error");
-    const success = document.getElementById("success");
 
-    form.addEventListener("submit", async (e) => {
-        e.preventDefault();
+    if (form) {
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
 
-        const username = document.getElementById("username").value.trim();
+            const usernameInput = document.getElementById("username");
+            if (!usernameInput) return;
 
-        loading.style.display = "block";
-        error.style.display = "none";
-        success.style.display = "none";
+            const username = usernameInput.value.trim();
 
-        try {
-            const formData = new FormData();
-            formData.append("username", username);
-
-            const response = await fetch("/auth/forgot-password", {
-                method: "POST",
-                body: formData
-            });
-
-            const result = await response.json();
-
-            loading.style.display = "none";
-
-            if (!response.ok || result.success === false) {
-                error.innerText = result.message || "Có lỗi xảy ra";
-                error.style.display = "block";
+            if (!username) {
+                showToast("Vui lòng nhập email hoặc username", "error");
                 return;
             }
 
-            success.innerText =
-                "Đã gửi email đặt lại mật khẩu";
-            success.style.display = "block";
-            form.reset();
+            // Validation email format
+            if (username.includes('@')) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(username)) {
+                    showToast("Email không hợp lệ", "error");
+                    return;
+                }
+            }
 
-        } catch (err) {
-            loading.style.display = "none";
-            error.innerText = "❌ Không thể kết nối máy chủ";
-            error.style.display = "block";
-            console.error(err);
-        }
-    });
+            // Hiển thị loading
+            if (loading) loading.style.display = "block";
+
+            try {
+                const formData = new FormData();
+                formData.append("username", username);
+
+                const response = await fetch("/auth/forgot-password", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || result.success === false) {
+                    throw new Error(result.message || "Có lỗi xảy ra khi gửi yêu cầu");
+                }
+
+                showToast("Đã gửi email đặt lại mật khẩu thành công!", "success");
+                form.reset();
+
+            } catch (err) {
+                showToast(err.message || "Không thể kết nối máy chủ. Vui lòng thử lại sau", "error");
+            } finally {
+                if (loading) loading.style.display = "none";
+            }
+        });
+    }
 });

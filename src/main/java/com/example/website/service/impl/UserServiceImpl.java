@@ -117,10 +117,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse changePassword(ChangePasswordRequest request) {
-        // Lấy thông tin user đã được lưu sẵn trong SecurityContext (không cần query DB bằng username)
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        // Kiểm tra xem có phải user đã đăng nhập không
         if (authentication == null || !(authentication.getPrincipal() instanceof CustomUserDetails)) {
             throw new RuntimeException("Người dùng chưa đăng nhập!");
         }
@@ -135,7 +133,6 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Mật khẩu cũ không chính xác!");
         }
 
-        // Kiểm tra mật khẩu mới và xác nhận có khớp không
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             throw new RuntimeException("Mật khẩu mới và xác nhận không khớp!");
         }

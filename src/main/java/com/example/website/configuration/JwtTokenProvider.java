@@ -33,17 +33,18 @@ public class JwtTokenProvider {
     private long refreshTokenExpiration;
 
     public String generateAccessToken(CustomUserDetails user) {
-        return buildToken(user, accessTokenExpiration*1000);
+        return buildToken(user, accessTokenExpiration * 1000, "ACCESS");
     }
 
     public String generateRefreshToken(CustomUserDetails user) {
-        return buildToken(user, refreshTokenExpiration*1000);
+        return buildToken(user, refreshTokenExpiration * 1000, "REFRESH");
     }
 
-    private String buildToken(CustomUserDetails user, long expiration) {
+    private String buildToken(CustomUserDetails user, long expiration, String type) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", user.getUserEntity().getRole().name()); // Thêm role vào claims
         claims.put("userId", user.getId()); // Thêm userId vào claims
+        claims.put("type", type);
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -82,6 +83,15 @@ public class JwtTokenProvider {
             return false;
         }
     }
+
+    public void validateRefreshToken(String token) {
+        Claims claims = extractAllClaims(token);
+
+        if (!"REFRESH".equals(claims.get("type"))) {
+            throw new RuntimeException("Invalid token type");
+        }
+    }
+
 
     public String getTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");

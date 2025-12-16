@@ -92,7 +92,6 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('email', document.getElementById('email').value.trim());
             formData.append('phone', document.getElementById('phone').value.trim());
             formData.append('address', document.getElementById('address').value.trim());
-            formData.append('description', document.getElementById('description').value.trim());
 
             if (imageInput.files[0]) {
                 formData.append('image', imageInput.files[0]);
@@ -107,19 +106,30 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
 
             if (response.ok) {
-                showSuccessMessage('Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.');
+                showToast('Đăng ký thành công!', 'success');
                 registerForm.reset();
                 imagePreview.style.display = 'none';
                 strengthBar.style.width = '0%';
                 strengthText.textContent = 'Độ mạnh mật khẩu';
+
+                setTimeout(() => {
+                    window.location.href = '/auth/login';
+                }, 2000);
             } else {
-                // Handle backend validation errors
-                if (data.errors) {
-                    Object.entries(data.errors).forEach(([field, message]) => {
-                        showError(`${field}-error`, message);
-                    });
+                const message = (data.message || '').toLowerCase();
+
+                hideError('username-error');
+                hideError('email-error');
+                hideError('phone-error');
+
+                if (message.includes('username')) {
+                    showToast('Tên đăng nhập đã tồn tại', 'error');
+                } else if (message.includes('email')) {
+                    showToast('Email đã được sử dụng', 'error');
+                } else if (message.includes('phone')) {
+                    showToast('Số điện thoại đã được sử dụng', 'error');
                 } else {
-                    throw new Error(data.message || 'Đăng ký thất bại');
+                    showToast(data.message || 'Đăng ký thất bại', 'error');
                 }
             }
         } catch (error) {

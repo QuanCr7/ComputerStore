@@ -6,17 +6,15 @@ document.addEventListener('DOMContentLoaded', async function () {
     const errorTextElement = document.getElementById('errorText');
     const formElement = document.getElementById('settingsForm');
 
-    // Kiểm tra đăng nhập
     const isLoggedIn = await checkLoginStatus();
     if (!isLoggedIn) {
-        showError('Bạn cần đăng nhập để chỉnh sửa thông tin!');
+        showToast('Bạn cần đăng nhập để chỉnh sửa thông tin!', 'error');
+        setTimeout(() => window.location.href = '/', 1500);
         return;
     }
 
-    // Load dữ liệu người dùng hiện tại
     await loadCurrentUserProfile();
 
-    // Sự kiện submit form
     formElement.addEventListener('submit', handleFormSubmit);
 
     // Xem trước ảnh khi chọn file
@@ -26,7 +24,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     imageUpload.addEventListener('change', function (e) {
         const file = e.target.files[0];
         if (file) {
-            // Kiểm tra kích thước (5MB)
             if (file.size > 5 * 1024 * 1024) {
                 alert('Dung lượng ảnh tối đa 5MB!');
                 imageUpload.value = '';
@@ -42,9 +39,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
 });
 
-/**
- * Tải thông tin người dùng hiện tại và điền vào form
- */
 async function loadCurrentUserProfile() {
     const loadingElement = document.getElementById('loading');
     const errorElement = document.getElementById('errorMessage');
@@ -96,15 +90,11 @@ async function loadCurrentUserProfile() {
             throw new Error(data.message || 'Không thể tải thông tin người dùng');
         }
     } catch (err) {
-        console.error('Lỗi load profile:', err);
         loadingElement.style.display = 'none';
-        showError(err.message || 'Có lỗi xảy ra khi tải thông tin');
+        showToast(err.message || 'Có lỗi xảy ra khi tải thông tin', 'error');
     }
 }
 
-/**
- * Xử lý submit form cập nhật
- */
 async function handleFormSubmit(e) {
     e.preventDefault();
 
@@ -138,7 +128,6 @@ async function handleFormSubmit(e) {
             formData.append('image', imageFile);
         }
 
-        // Gửi request PUT (theo endpoint hiện tại của bạn)
         const currentUserResponse = await fetch(`${API_BASE_URL}/account/profile`, {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${getAccessToken()}` },
@@ -159,33 +148,20 @@ async function handleFormSubmit(e) {
         const result = await response.json();
 
         if (response.ok && result.code === 200) {
-            alert('Cập nhật thông tin thành công!');
-            // Có thể reload lại trang profile hoặc ở lại trang này
-            window.location.href = '/me';
+            showToast('Cập nhật thông tin thành công', 'success');
+            setTimeout(() => { window.location.href = '/me'; }, 1500);
         } else {
             throw new Error(result.message || 'Cập nhật thất bại');
         }
     } catch (err) {
-        console.error('Lỗi cập nhật:', err);
-        showError(err.message || 'Có lỗi xảy ra khi cập nhật thông tin');
+        showToast('Có lỗi xảy ra khi cập nhật thông tin!', 'error');
     } finally {
         loadingElement.style.display = 'none';
     }
 }
 
-/**
- * Hiển thị lỗi chung
- */
 function showError(message) {
-    const errorElement = document.getElementById('errorMessage');
-    const errorTextElement = document.getElementById('errorText');
     const loadingElement = document.getElementById('loading');
-
     if (loadingElement) loadingElement.style.display = 'none';
-    if (errorElement && errorTextElement) {
-        errorTextElement.textContent = message;
-        errorElement.style.display = 'flex';
-    } else {
-        alert(message);
-    }
+    showToast(message, 'error');
 }

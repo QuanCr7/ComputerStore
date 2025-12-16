@@ -1,14 +1,10 @@
 // /js/user/pay.js
-// Biến toàn cục để lưu trữ giỏ hàng
 let checkoutCart = [];
 
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('pay.js: DOM loaded');
-    
     // Kiểm tra auth.js đã tải chưa
-    if (typeof checkLoginStatus === 'undefined' || typeof showError === 'undefined' || typeof getAccessToken === 'undefined') {
-        console.error('pay.js: auth.js functions (checkLoginStatus, showError, getAccessToken) are not defined');
-        alert('Lỗi hệ thống: Không thể tải auth.js. Vui lòng kiểm tra lại.');
+    if (typeof checkLoginStatus === 'undefined' || typeof getAccessToken === 'undefined') {
+        showToast('Lỗi hệ thống: Không thể tải thư viện xác thực', 'error');
         return;
     }
 
@@ -18,16 +14,17 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Nếu chưa đăng nhập, ẩn tùy chọn "Sử dụng thông tin tài khoản"
     if (!isLoggedIn) {
-        infoSourceSelect.innerHTML = `
-            <option value="manual">Nhập thông tin mới</option>
-        `;
+        if (infoSourceSelect) {
+            infoSourceSelect.innerHTML = `
+                <option value="manual">Nhập thông tin mới</option>
+            `;
+        }
     }
 
     // Đồng bộ giỏ hàng từ sessionStorage và localStorage
     checkoutCart = JSON.parse(sessionStorage.getItem('checkoutCart')) || JSON.parse(localStorage.getItem('cart')) || [];
     if (checkoutCart.length === 0) {
-        console.log('pay.js: Giỏ hàng trống, chuyển hướng về trang chủ');
-        showError('Giỏ hàng của bạn đang trống');
+        showToast('Giỏ hàng của bạn đang trống', 'error');
         setTimeout(() => window.location.href = '/', 2000);
         return;
     }
@@ -47,66 +44,70 @@ document.addEventListener('DOMContentLoaded', async function() {
     };
 
     // Xử lý dropdown nguồn thông tin
-    infoSourceSelect.addEventListener('change', async function() {
-        const value = this.value;
-        console.log('pay.js: infoSource changed to:', value);
+    if (infoSourceSelect) {
+        infoSourceSelect.addEventListener('change', async function() {
+            const value = this.value;
 
-        // Khóa hoặc mở khóa các trường
-        const disableFields = value === 'account';
-        Object.values(fields).forEach(field => {
-            if (field) field.disabled = disableFields;
-        });
+            // Khóa hoặc mở khóa các trường
+            const disableFields = value === 'account';
+            Object.values(fields).forEach(field => {
+                if (field) field.disabled = disableFields;
+            });
 
-        if (value === 'account' && isLoggedIn) {
-            try {
-                const response = await fetch('http://localhost:8080/account/profile', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${getAccessToken()}`,
-                        'Content-Type': 'application/json'
-                    },
-                    credentials: 'include'
-                });
+            if (value === 'account' && isLoggedIn) {
+                try {
+                    const response = await fetch('http://localhost:8080/account/profile', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${getAccessToken()}`,
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: 'include'
+                    });
 
-                const data = await response.json();
-                console.log('pay.js: Profile response:', JSON.stringify(data, null, 2));
+                    const data = await response.json();
 
-                if (response.ok && data.code === 200) {
-                    const profile = data.data;
+                    if (response.ok && data.code === 200) {
+                        const profile = data.data;
 
-                    fields.name.value = profile.fullName || profile.name || '';
-                    fields.phone.value = profile.phone || '';
-                    fields.address.value = profile.address || '';
-                } else {
-                    showError(data.message || 'Không thể lấy thông tin tài khoản');
+                        if (fields.name) fields.name.value = profile.fullName || profile.name || '';
+                        if (fields.phone) fields.phone.value = profile.phone || '';
+                        if (fields.address) fields.address.value = profile.address || '';
+                    } else {
+                        showToast(data.message || 'Không thể lấy thông tin tài khoản', 'error');
+                        infoSourceSelect.value = 'manual';
+                        Object.values(fields).forEach(field => {
+                            if (field) field.disabled = false;
+                        });
+                    }
+                } catch (error) {
+                    showToast('Lỗi khi lấy thông tin tài khoản: ' + error.message, 'error');
                     infoSourceSelect.value = 'manual';
                     Object.values(fields).forEach(field => {
                         if (field) field.disabled = false;
                     });
                 }
-            } catch (error) {
-                console.error('pay.js: Lỗi khi lấy thông tin tài khoản:', error);
-                showError('Lỗi khi lấy thông tin tài khoản: ' + error.message);
-                infoSourceSelect.value = 'manual';
+            } else {
+                // Xóa các trường để người dùng nhập mới
                 Object.values(fields).forEach(field => {
-                    if (field) field.disabled = false;
+                    if (field) field.value = '';
                 });
             }
-        } else {
-            // Xóa các trường để người dùng nhập mới
-            Object.values(fields).forEach(field => {
-                if (field) field.value = '';
-            });
-        }
-    });
+        });
+    }
 
     // Gán sự kiện cho nút thanh toán
-    document.getElementById('completeOrderBtn').addEventListener('click', completeOrder);
+    const completeOrderBtn = document.getElementById('completeOrderBtn');
+    if (completeOrderBtn) {
+        completeOrderBtn.addEventListener('click', completeOrder);
+    }
 });
 
 function renderCartItems(cartItems) {
     const productItemsContainer = document.getElementById('productItemsContainer');
-    productItemsContainer.innerHTML = ''; // Xóa nội dung mẫu
+    if (!productItemsContainer) return;
+
+    productItemsContainer.innerHTML = '';
 
     cartItems.forEach(item => {
         const productItem = document.createElement('div');
@@ -127,29 +128,39 @@ function renderCartItems(cartItems) {
 
 function calculateTotal(cartItems) {
     const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const shipping = 20000; // Phí vận chuyển cố định
-    const discount = subtotal > 100000 ? 10000 : 0; // Giảm giá 10k nếu tổng > 100k
+    const shipping = 20000;
+    const discount = subtotal > 100000 ? 10000 : 0;
     const total = subtotal + shipping - discount;
 
-    // Cập nhật tổng tiền
-    document.getElementById('subtotal').textContent = formatPrice(subtotal);
-    document.getElementById('shipping').textContent = formatPrice(shipping);
-    document.getElementById('discount').textContent = `-${formatPrice(discount)}`;
-    document.getElementById('total').textContent = formatPrice(total);
+    const subtotalEl = document.getElementById('subtotal');
+    const shippingEl = document.getElementById('shipping');
+    const discountEl = document.getElementById('discount');
+    const totalEl = document.getElementById('total');
+
+    if (subtotalEl) subtotalEl.textContent = formatPrice(subtotal);
+    if (shippingEl) shippingEl.textContent = formatPrice(shipping);
+    if (discountEl) discountEl.textContent = `-${formatPrice(discount)}`;
+    if (totalEl) totalEl.textContent = formatPrice(total);
 }
 
 function formatPrice(price) {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+    try {
+        return new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        }).format(price);
+    } catch {
+        return price;
+    }
 }
 
 async function completeOrder(e) {
     e.preventDefault();
-    console.log('pay.js: completeOrder: Bắt đầu xử lý đơn hàng');
 
     // Kiểm tra đăng nhập
     const isLoggedIn = await checkLoginStatus();
     if (!isLoggedIn) {
-        showError('Bạn cần đăng nhập để đặt hàng');
+        showToast('Bạn cần đăng nhập để đặt hàng', 'error');
         return;
     }
 
@@ -160,21 +171,27 @@ async function completeOrder(e) {
         address: document.getElementById('address')
     };
 
-    if (!fields.name.value || !fields.phone.value || !fields.address.value) {
-        showError('Vui lòng điền đầy đủ thông tin khách hàng');
+    // Kiểm tra các trường bắt buộc
+    const missingFields = [];
+    if (!fields.name || !fields.name.value.trim()) missingFields.push('họ tên');
+    if (!fields.phone || !fields.phone.value.trim()) missingFields.push('số điện thoại');
+    if (!fields.address || !fields.address.value.trim()) missingFields.push('địa chỉ');
+
+    if (missingFields.length > 0) {
+        showToast(`Vui lòng điền đầy đủ thông tin: ${missingFields.join(', ')}`, 'error');
         return;
     }
 
     if (checkoutCart.length === 0) {
-        showError('Giỏ hàng của bạn đang trống');
+        showToast('Giỏ hàng của bạn đang trống', 'error');
         return;
     }
 
-    // Tạo đối tượng đơn hàng khớp với OrderRequest
+    // Tạo đối tượng đơn hàng
     const order = {
-        shippingAddress: fields.address.value,
-        name: fields.name.value,
-        phone: fields.phone.value,
+        shippingAddress: fields.address.value.trim(),
+        name: fields.name.value.trim(),
+        phone: fields.phone.value.trim(),
         totalAmount: calculateOrderTotal(checkoutCart),
         orderDate: new Date().toISOString(),
         orderDetails: checkoutCart.map(item => ({
@@ -183,6 +200,10 @@ async function completeOrder(e) {
             price: item.price
         }))
     };
+
+    // Hiển thị loading
+    const loadingElement = document.getElementById('loading');
+    if (loadingElement) loadingElement.style.display = 'flex';
 
     // Gửi đơn hàng đến server
     try {
@@ -197,22 +218,25 @@ async function completeOrder(e) {
         });
 
         const data = await response.json();
-        console.log('pay.js: Order response:', JSON.stringify(data, null, 2));
 
         if (response.ok && data.code === 200) {
-            // Hiển thị thông báo thành công
-            alert('Đơn hàng của bạn đã được đặt thành công! Cảm ơn bạn đã mua sắm tại ComputerStore.');
+            showToast('Đơn hàng của bạn đã được đặt thành công!', 'success');
+
             // Xóa giỏ hàng sau khi đặt hàng thành công
             localStorage.removeItem('cart');
             sessionStorage.removeItem('checkoutCart');
-            // Chuyển hướng về trang chủ
-            window.location.href = '/';
+
+            // Chuyển hướng về trang chủ sau 2 giây
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2000);
         } else {
-            showError(data.message || 'Không thể đặt đơn hàng');
+            throw new Error(data.message || 'Không thể đặt đơn hàng');
         }
     } catch (error) {
-        console.error('pay.js: Lỗi khi đặt đơn hàng:', error);
-        showError('Lỗi khi đặt đơn hàng: ' + error.message);
+        showToast(error.message, 'error');
+    } finally {
+        if (loadingElement) loadingElement.style.display = 'none';
     }
 }
 
