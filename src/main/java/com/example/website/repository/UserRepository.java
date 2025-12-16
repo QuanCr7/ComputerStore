@@ -32,5 +32,4 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
             "(:phone IS NULL OR u.phone LIKE %:phone%)")
     Page<UserEntity> searchByCondition(Pageable pageable, String name, String email,Integer userId, String phone);
 
-    Optional<UserEntity> findByUsernameAndRefreshToken(String username, String refreshToken);
 }

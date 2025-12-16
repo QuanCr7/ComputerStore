@@ -100,26 +100,21 @@ public class AuthServiceImpl implements AuthService {
             Date accessTokenExpiry = jwtTokenProvider.extractExpiration(accessToken);
             Date refreshTokenExpiry = jwtTokenProvider.extractExpiration(refreshToken);
 
-            UserEntity user = userDetails.getUserEntity();
-            user.setRefreshToken(refreshToken);
-            userRepository.save(user);
-
             return UserLoginResponse.builder()
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .accessTokenExpiryDate(accessTokenExpiry)
                     .refreshTokenExpiryDate(refreshTokenExpiry)
-//                    .userInfo(userInfo)
                     .build();
         } catch(AuthenticationException e) {
-            throw new RuntimeException("Wrong username or password");
+            throw new RuntimeException("Tên đăng nhập hoặc mật khẩu không chính xác!");
         }
     }
 
     @Override
     public void initiatePasswordReset(String username) {
         UserEntity user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("Tên đăng nhập không tồn tại!"));
 
         if (user != null) {
             String token = UUID.randomUUID().toString();
@@ -143,7 +138,7 @@ public class AuthServiceImpl implements AuthService {
     public boolean resetPassword(String token, String newPassword) {
         Long expiryTime = tokenExpiryMap.get(token);
         if (expiryTime == null || System.currentTimeMillis() > expiryTime) {
-            return false;  // Token không tồn tại hoặc đã hết hạn
+            return false;
         }
         UserEntity user = userRepository.findByPasswordToken(token);
         if (user != null) {
@@ -163,14 +158,11 @@ public class AuthServiceImpl implements AuthService {
                 String fileName = imageFile.getOriginalFilename();
                 Path filePath = rootLocation.resolve(fileName);
 
-                // Kiểm tra và tạo thư mục nếu chưa tồn tại
                 Files.createDirectories(filePath.getParent());
                 Files.write(filePath, imageFile.getBytes());
 
                 return fileName;
             } catch (IOException e) {
-//                e.printStackTrace();
-//                throw new RuntimeException("Failed to save image file: " + e.getMessage(), e);
                 log.error("Failed to save image file: {}", e.getMessage(), e);
                 throw new RuntimeException("Failed to save image file", e);
             }
@@ -194,21 +186,12 @@ public class AuthServiceImpl implements AuthService {
     //cach su dung refreshToken cu ma ko tao moi
     @Override
     public UserLoginResponse refreshToken(String refreshToken) {
-        if (!jwtTokenProvider.validateToken(refreshToken) || jwtTokenProvider.isTokenExpired(refreshToken)) {
-            throw new RuntimeException("Invalid or expired refresh token");
-        }
-        if (isBlacklisted(refreshToken)) {
-            throw new RuntimeException("Refresh token is blacklisted");
-        }
+        jwtTokenProvider.validateToken(refreshToken);
+        jwtTokenProvider.validateRefreshToken(refreshToken);
 
         String username = jwtTokenProvider.extractUsername(refreshToken);
         UserEntity user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // kiểm tra token có khớp không
-        if (!refreshToken.equals(user.getRefreshToken())) {
-            throw new RuntimeException("Invalid refresh token");
-        }
 
         CustomUserDetails userDetails = new CustomUserDetails(user);
         String newAccessToken = jwtTokenProvider.generateAccessToken(userDetails);
@@ -222,27 +205,22 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void logout(String token) { // token là access token
+    public void logout(String token) {
         if (!jwtTokenProvider.validateToken(token)) {
             throw new RuntimeException("Invalid token");
         }
 
-        String username = jwtTokenProvider.extractUsername(token);
-        UserEntity user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Revoke refresh token bằng cách set null trong DB
-        user.setRefreshToken(null);
-        userRepository.save(user);
-
-        // Blacklist access token
+        // Blacklist access token đến khi hết hạn
         Date expiration = jwtTokenProvider.extractExpiration(token);
         long remainingTime = expiration.getTime() - System.currentTimeMillis();
-        long actualTtl = Math.max(remainingTime, 300000); // Tối thiểu 5 phút
-        addToBlacklist(token, Math.min(actualTtl, blacklistDuration));
+
+        if (remainingTime > 0) {
+            addToBlacklist(token, remainingTime);
+        }
 
         SecurityContextHolder.clearContext();
     }
+
 
     public void addToBlacklist(String token, long ttlMillis) {
         long expiryTime = System.currentTimeMillis() + ttlMillis;
@@ -266,30 +244,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
     // Phương thức dọn dẹp định kỳ (tùy chọn)
-    @Scheduled(fixedRate = 3600000) // Mỗi giờ chạy 1 lần
+    @Scheduled(fixedRate = 3600000)
     public void cleanupExpiredTokens() {
         long now = System.currentTimeMillis();
         tokenBlacklist.entrySet().removeIf(entry -> entry.getValue() < now);
         log.info("Cleaned up expired blacklisted tokens");
     }
 }
-
-
-//@PostMapping("/refresh-token")
-//public ResponseEntity<BaseResponse<UserLoginResponse>> refreshToken(
-//        HttpServletRequest request, HttpServletResponse response) {
-//    String refreshToken = null;
-//    if (request.getCookies() != null) {
-//        for (Cookie cookie : request.getCookies()) {
-//            if ("refreshToken".equals(cookie.getName())) {
-//                refreshToken = cookie.getValue();
-//                break;
-//            }
-//        }
-//    }
-//    if (refreshToken == null) {
-//        throw new RuntimeException("Refresh token not found in cookie");
-//    }
-//    UserLoginResponse refreshResponse = authService.refreshToken(refreshToken);
-//    return returnSuccess(refreshResponse);
-//}

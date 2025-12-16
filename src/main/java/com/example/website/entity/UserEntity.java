@@ -36,8 +36,6 @@ public class UserEntity {
     private String address;
     @Column(name = "password_token")
     private String passwordToken;
-    @Column(name = "refresh_token")
-    private String refreshToken;
     private LocalDate dateOfBirth;
     private LocalDate dateCreate;
 
