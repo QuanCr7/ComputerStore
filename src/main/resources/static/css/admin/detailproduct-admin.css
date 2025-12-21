@@ -123,6 +123,7 @@
 }
 
 .btn-large {
+    text-decoration: none;
     padding: 16px 32px;
     font-size: 1.1rem;
     border-radius: 50px;

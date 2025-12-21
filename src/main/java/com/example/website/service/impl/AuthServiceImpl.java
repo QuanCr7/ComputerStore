@@ -10,11 +10,12 @@ import com.example.website.response.UserLoginResponse;
 import com.example.website.response.UserResponse;
 import com.example.website.service.AuthService;
 import com.example.website.utils.Role;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -116,21 +117,52 @@ public class AuthServiceImpl implements AuthService {
         UserEntity user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Tên đăng nhập không tồn tại!"));
 
-        if (user != null) {
-            String token = UUID.randomUUID().toString();
-            user.setPasswordToken(token);
-            userRepository.save(user);
+        String token = UUID.randomUUID().toString();
+        user.setPasswordToken(token);
+        userRepository.save(user);
 
-            long time = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(15);
-            tokenExpiryMap.put(token, time);
+        long expiryTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(15);
+        tokenExpiryMap.put(token, expiryTime);
 
-            String resetLink = "http://localhost:8080/reset-password?token="+token;
+        String resetLink = "http://localhost:8080/reset-password?token=" + token;
 
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(user.getEmail());
-            message.setSubject("Password Reset Request");
-            message.setText("To reset your password, click the following link: " + resetLink);
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(user.getEmail());
+            helper.setSubject("Đặt lại mật khẩu");
+
+            String htmlContent = """
+            <!DOCTYPE html>
+            <html lang="vi">
+            <body style="font-family: Arial, sans-serif; background:#f4f4f4; padding:20px;">
+                <div style="max-width:600px; margin:auto; background:#fff; padding:30px; border-radius:8px;">
+                    <h2 style="color:#0d6efd;">Đặt lại mật khẩu</h2>
+                    <p>Xin chào <b>%s</b>,</p>
+                    <p>Bạn đã yêu cầu đặt lại mật khẩu. Nhấn vào nút bên dưới:</p>
+    
+                    <p style="text-align:center; margin:30px 0;">
+                        <a href="%s"
+                           style="background:#0d6efd; color:white; padding:12px 24px;
+                                  text-decoration:none; border-radius:5px;">
+                            Đặt lại mật khẩu
+                        </a>
+                    </p>
+    
+                    <p style="font-size:13px; color:#777;">
+                        Link sẽ hết hạn sau 15 phút.
+                    </p>
+                </div>
+            </body>
+            </html>
+            """.formatted(user.getUsername(), resetLink);
+
+            helper.setText(htmlContent, true);
             mailSender.send(message);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Gửi email thất bại", e);
         }
     }
 

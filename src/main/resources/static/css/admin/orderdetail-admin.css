@@ -289,7 +289,7 @@
 }
 
 #updateStatusBtn {
-    padding: 10px 20px;
+    padding: 20px 50px;
     background: var(--primary);
     color: white;
     font-weight: 600;

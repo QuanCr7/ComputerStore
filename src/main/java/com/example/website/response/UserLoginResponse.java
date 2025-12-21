@@ -14,5 +14,4 @@ public class UserLoginResponse {
     private Date accessTokenExpiryDate;  // Thời gian hết hạn access token
     private String refreshToken;
     private Date refreshTokenExpiryDate; // Thời gian hết hạn refresh token
-//    private UserResponse userInfo;
 }

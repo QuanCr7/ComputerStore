@@ -84,9 +84,10 @@ public class ProductController extends BaseController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String brand,
             @RequestParam(required = false) String category,
+            @RequestParam(required = false) String sort,
             @RequestParam(defaultValue = "1") int page
     ){
-        return returnSuccess(productService.getByCondition(page,name,brand,category));
+        return returnSuccess(productService.getByCondition(page,name,brand,category,sort));
     }
 
     @Operation(summary = "Cập nhật sản phẩm", tags = {"Sản phẩm"})

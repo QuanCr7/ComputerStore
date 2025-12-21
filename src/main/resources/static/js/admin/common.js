@@ -127,6 +127,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 usernameEl.textContent = user.fullName || user.username || 'Admin';
             }
 
+            // Gắn sự kiện logout cho admin
+            const adminLogoutBtn = document.getElementById('admin-logout-btn');
+            if (adminLogoutBtn) {
+                adminLogoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+
+
         } catch (err) {
             console.error('Admin auth failed:', err);
             document.body.innerHTML = '';

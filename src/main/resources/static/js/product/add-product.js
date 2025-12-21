@@ -666,7 +666,6 @@ function setupFormSubmit() {
             formData.append('images', file);
         });
 
-        // === GỬI YÊU CẦU ===
         showLoading(true);
         fetch('/addProduct', {
             method: 'POST',
@@ -682,7 +681,7 @@ function setupFormSubmit() {
             })
             .then(data => {
                 alert('Thêm sản phẩm thành công!');
-                window.location.href = '/auth/admin';
+                window.location.href = '/manage/p';
             })
             .catch(error => {
                 console.error('Lỗi:', error);

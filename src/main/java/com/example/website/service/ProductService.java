@@ -20,5 +20,5 @@ public interface ProductService {
 
     ProductResponse updateStockQuantity(StockQuantityRequest request);
 
-    PageProductResponse getByCondition(Integer page,String name,String brand,String category);
+    PageProductResponse getByCondition(Integer page,String name,String brand,String category, String sort);
 }

@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     const errorTextElement = document.getElementById('errorText');
 
     if (!isLoggedIn) {
-        console.log('profile.js: Chưa đăng nhập, hiển thị lỗi');
         if (loadingElement) loadingElement.style.display = 'none';
         if (errorElement && errorTextElement) {
             errorElement.style.display = 'flex';
@@ -33,7 +32,6 @@ async function loadUserProfile() {
 
     try {
         if (!getAccessToken()) {
-            console.log('loadUserProfile: Không có accessToken, thử làm mới token');
             const refreshed = await checkLoginStatus();
             if (!refreshed) {
                 throw new Error('Bạn cần đăng nhập để xem trang này!');
@@ -50,7 +48,6 @@ async function loadUserProfile() {
         });
 
         const data = await response.json();
-        console.log('Profile response:', JSON.stringify(data, null, 2));
 
         if (response.ok && data.code === 200) {
             displayUserProfile(data.data);
@@ -60,7 +57,6 @@ async function loadUserProfile() {
             throw new Error(data.message || 'Không thể lấy thông tin người dùng');
         }
     } catch (error) {
-        console.error('profile.js: Lỗi:', error);
         if (loadingElement) loadingElement.style.display = 'none';
         if (errorElement && errorTextElement) {
             errorElement.style.display = 'flex';
@@ -82,11 +78,9 @@ async function loadOrderCount() {
         });
 
         const data = await response.json();
-        console.log('Order count response:', JSON.stringify(data, null, 2));
 
         if (response.ok && data.code === 200) {
             booksBoughtElement.textContent = data.data.totalElements || 0;
-            // Thêm sự kiện click để chuyển hướng đến trang order
             booksBoughtElement.parentElement.style.cursor = 'pointer';
             booksBoughtElement.parentElement.addEventListener('click', () => {
                 window.location.href = '/me/order';
@@ -101,11 +95,9 @@ async function loadOrderCount() {
 }
 
 function displayUserProfile(userData) {
-    console.log('User data:', userData);
-
     const avatarImg = document.getElementById('userAvatar');
-    if (userData.imageUrl) {
-        avatarImg.src = `/images/user/${userData.imageUrl}?t=${Date.now()}`;
+    if (userData.image) {
+        avatarImg.src = `/images/user/${userData.image}?t=${Date.now()}`;
     } else {
         avatarImg.src = '/images/user/default.jpg';
     }

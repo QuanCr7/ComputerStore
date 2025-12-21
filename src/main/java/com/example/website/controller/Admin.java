@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class Admin {
 
-    @GetMapping("/detail-user")
+    @GetMapping("/u/detail")
     public String getUserDetail(@RequestParam int id, Model model) {
-        model.addAttribute("user", id);
+        model.addAttribute("userId", id);
         return "admin/account-detail";
     }
 

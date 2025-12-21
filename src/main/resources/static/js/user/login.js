@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const password = passwordInput.value;
 
             if (!username || !password) {
-                showToast('Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu', 'error');
+                showToast('Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!', 'error');
                 return;
             }
 

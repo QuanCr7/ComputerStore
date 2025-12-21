@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -104,7 +105,6 @@ public class ProductServiceImpl implements ProductService {
 
         productRepository.save(product);
 
-        // === LƯU THUỘC TÍNH ĐỘNG TRỰC TIẾP ===
         if (attributes != null && !attributes.isEmpty()) {
             List<ProductAttributeEntity> attributeEntities = new ArrayList<>();
             for (ProductAttributeRequest attrReq : attributes) {
@@ -212,9 +212,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PageProductResponse getByCondition(Integer page,String name,String brand,String category) {
+    public PageProductResponse getByCondition(Integer page,String name,String brand,String category, String sort) {
         int pageNumber = (page == null) ? 0 : page - 1;
-        Pageable pageable = PageRequest.of(pageNumber, size);
+
+        Sort sortObj = Sort.unsorted();
+
+        if ("price_asc".equals(sort)) {
+            sortObj = Sort.by("price").ascending();
+        } else if ("price_desc".equals(sort)) {
+            sortObj = Sort.by("price").descending();
+        }
+
+        Pageable pageable = PageRequest.of(pageNumber, size, sortObj);
 
         Page<ProductEntity> entityPage = productRepository.searchByCondition(pageable,name, brand, category);
         Page<ProductResponse> responsePage = entityPage.map(this::response);
@@ -306,8 +315,6 @@ public class ProductServiceImpl implements ProductService {
 
                 return fileName;
             } catch (IOException e) {
-//                e.printStackTrace();
-//                throw new RuntimeException("Failed to save image file: " + e.getMessage(), e);
                 log.error("Failed to save image file: {}", e.getMessage(), e);
                 throw new RuntimeException("Failed to save image file", e);
             }

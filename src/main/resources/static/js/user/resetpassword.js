@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 setTimeout(() => {
                     window.location.href = "/auth/login";
-                }, 3000);
+                }, 1500);
 
             } catch (err) {
                 showToast("Lỗi kết nối máy chủ. Vui lòng thử lại sau", "error");

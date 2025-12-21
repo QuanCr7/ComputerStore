@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chi tiết Sản phẩm - Admin</title>
+    <title>Chi tiết Sản phẩm</title>
     <link rel="stylesheet" href="/css/admin/common.css">
     <link rel="stylesheet" href="/css/admin/hide.css">
     <link rel="stylesheet" href="/css/admin/detailproduct-admin.css">
@@ -11,12 +11,9 @@
 </head>
 <body>
 
-<!-- Loading toàn màn hình -->
 <div class="loading-screen" id="loadingScreen">
-    <div style="text-align:center;">
-        <i class="fas fa-spinner fa-spin fa-3x"></i><br><br>
-        Đang tải chi tiết sản phẩm...
-    </div>
+    <div class="spinner"></div>
+    <div>Đang xác thực quyền truy cập...</div>
 </div>
 
 <div class="admin-wrapper">
@@ -38,7 +35,7 @@
         <header class="topbar">
             <h1>Chi tiết Sản phẩm #<span id="productIdDisplay">-</span></h1>
             <div class="user-info">
-                <span>Xin chào, <strong id="admin-username">Admin</strong></span>
+                <span>Xin chào, <strong id="admin-username"></strong></span>
                 <button id="admin-logout-btn" class="logout-small">
                     <i class="fas fa-sign-out-alt"></i> Đăng xuất
                 </button>

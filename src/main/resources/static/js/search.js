@@ -147,7 +147,7 @@ function loadBrandsForSearch() {
                     const imageUrl = `/images/brand/${imageFile}?t=${timestamp}`;
 
                     div.innerHTML = `
-                        <input type="radio" name="brand" id="brand-${brand.brandId}" value=" ${brand.brandId}">
+                        <input type="radio" name="brand" id="brand-${brand.brandId}" value="${brand.brandId}">
                         <label for="brand-${brand.brandId}">
                             <img src="${imageUrl}" 
                                  alt="${brand.name}" 
@@ -257,7 +257,6 @@ function getFallbackImage(categoryName) {
     return fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
 }
 
-// Hàm lấy category ID từ tên
 function getCategoryIdByName(categoryName) {
     const categoryLabels = document.querySelectorAll('.category-name');
     for (let label of categoryLabels) {
@@ -274,6 +273,8 @@ function handleSearch(page = 1, updateUrlFlag = true) {
     const name = document.getElementById('searchName').value.trim();
     const selectedCategory = document.querySelector('input[name="category"]:checked');
     const selectedBrand = document.querySelector('input[name="brand"]:checked');
+    const sort = document.getElementById('sortPrice').value;
+
 
     // Lấy tên category và brand một cách an toàn tuyệt đối
     let categoryName = '';
@@ -293,7 +294,8 @@ function handleSearch(page = 1, updateUrlFlag = true) {
         page,
         name: name || undefined,
         category: categoryName || undefined,
-        brand: brandName || undefined
+        brand: brandName || undefined,
+        sort: sort || undefined
     };
     sessionStorage.setItem('lastSearchState', JSON.stringify(searchState));
 
@@ -303,6 +305,7 @@ function handleSearch(page = 1, updateUrlFlag = true) {
             name: name || undefined,
             category: categoryName || undefined,
             brand: brandName || undefined,
+            sort: sort || undefined,
             page: page !== 1 ? page : undefined
         });
     }
@@ -313,6 +316,7 @@ function handleSearch(page = 1, updateUrlFlag = true) {
     if (name) apiParams.append('name', name);
     if (categoryName) apiParams.append('category', categoryName);
     if (brandName) apiParams.append('brand', brandName);
+    if (sort) apiParams.append('sort', sort);
 
     const loadingElement = document.getElementById('loading');
     const errorElement = document.getElementById('error');
@@ -349,7 +353,7 @@ function handleSearch(page = 1, updateUrlFlag = true) {
         });
 }
 
-// Hàm lấy danh sách sách từ API
+// Hàm lấy danh sách từ API
 function fetchProducts(page = 1, updateUrlFlag = true) {
     currentPage = page;
 
@@ -394,7 +398,7 @@ function fetchProducts(page = 1, updateUrlFlag = true) {
         });
 }
 
-// Hàm hiển thị danh sách dưới dạng grid
+// Hàm hiển thị danh dưới dạng grid
 function renderProducts(products) {
     const productsGrid = document.getElementById('productsGrid');
     productsGrid.innerHTML = '';
@@ -466,7 +470,6 @@ function renderProducts(products) {
     });
 }
 
-// Hàm tạo phân trang
 function renderPagination(currentPage, totalPages) {
     const paginationElement = document.getElementById('pagination');
     paginationElement.innerHTML = '';
@@ -560,16 +563,19 @@ function renderPagination(currentPage, totalPages) {
 // Thêm hàm kiểm tra
 function isSearching() {
     const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.has('name') || urlParams.has('category') || urlParams.has('brand');
+    return (
+        urlParams.has('name') ||
+        urlParams.has('category') ||
+        urlParams.has('brand') ||
+        urlParams.has('sort')
+    );
 }
 
-// Hàm xem chi tiết sách
 function viewProductDetail(productId) {
     window.location.href = `/detail?id=${productId}`;
 }
 
 function handleSearchFromCategory(page, categoryName) {
-    // Lưu trạng thái tìm kiếm vào sessionStorage
     const searchState = {
         page,
         category: categoryName || undefined
@@ -592,7 +598,11 @@ function handleSearchFromCategory(page, categoryName) {
     productsGrid.innerHTML = '';
     paginationElement.innerHTML = '';
 
-    // Gọi API tìm kiếm
+    updateUrl({
+        category: categoryName,
+        page: page !== 1 ? page : undefined
+    });
+
     fetch(`/p/search?${apiParams.toString()}`)
         .then(response => {
             if (!response.ok) throw new Error('Không thể tải dữ liệu sản phẩm');
@@ -624,13 +634,15 @@ function updateUrl(params) {
     const url = new URL(window.location.href);
 
     // Xóa hết các param cũ
-    ['name', 'category', 'brand', 'page'].forEach(p => url.searchParams.delete(p));
+    ['name', 'category', 'brand', 'sort', 'page'].forEach(p => url.searchParams.delete(p));
 
     // Thêm param mới - URLSearchParams sẽ tự động encode
     if (params.name) url.searchParams.set('name', params.name);
     if (params.category) url.searchParams.set('category', params.category);
     if (params.brand) url.searchParams.set('brand', params.brand);
+    if (params.sort) url.searchParams.set('sort', params.sort);
     if (params.page && params.page !== 1) url.searchParams.set('page', params.page);
+
 
     window.history.pushState({}, '', url.toString());
 }
@@ -679,6 +691,12 @@ function loadFromUrl() {
             }
         }
     }
+
+    const sort = urlParams.get('sort');
+    if (sort) {
+        document.getElementById('sortPrice').value = sort;
+    }
+
 
     if (category || brand || name) {
         handleSearch(page, false);

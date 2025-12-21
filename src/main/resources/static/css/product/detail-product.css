@@ -248,9 +248,17 @@
     justify-content: center;
 }
 
-.btn-primary {
+.add{
+    background: linear-gradient(135deg, #ffc107, #e0a800);
+    color: white;
+}
+
+.addComment{
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     color: white;
+}
+
+.btn-primary {
     box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
 }
 

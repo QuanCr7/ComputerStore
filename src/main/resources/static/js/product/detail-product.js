@@ -75,7 +75,6 @@ function loadProductDetail(productId) {
                 const ts = Date.now();
                 currentProduct.image = `/images/product/${currentProduct.images[0]}?t=${ts}`;
             } else {
-                // Dùng placeholder đẹp, không bị 404 nữa
                 currentProduct.image = 'https://placehold.co/200x280/4a6cf7/ffffff/png?text=Không+có+ảnh&font=roboto';
             }
             currentProduct.title = currentProduct.name;
@@ -143,7 +142,6 @@ function renderProductDetail(product) {
     initComments(product.productId);
 }
 
-// THÔNG SỐ KỸ THUẬT
 function renderSpecifications(attributes) {
     const grid = document.getElementById('specsGrid');
     grid.innerHTML = '';
@@ -355,16 +353,16 @@ async function deleteComment(commentId, button) {
             button.closest('.comment-item').style.animation = 'fadeOut 0.4s ease';
             setTimeout(() => {
                 button.closest('.comment-item').remove();
-                showToast('Đã xóa bình luận!');
+                showToast('Đã xóa bình luận!','success');
                 // Cập nhật lại số lượng
                 const count = parseInt(document.getElementById('commentCount').textContent.match(/\d+/)?.[0] || '0');
                 document.getElementById('commentCount').textContent = `(${count - 1})`;
             }, 400);
         } else {
-            showToast(data.message || 'Không thể xóa bình luận');
+            showToast(data.message || 'Không thể xóa bình luận','error');
         }
     } catch (err) {
-        showToast('Lỗi kết nối');
+        showToast('Bạn không thể xóa bình luận này!','error');
     }
 }
 
@@ -444,26 +442,4 @@ function showError(msg) {
     el.textContent = msg;
     el.style.display = 'block';
     document.getElementById('loading').style.display = 'none';
-}
-
-function showToast(msg) {
-    const toast = document.createElement('div');
-    toast.innerHTML = `<i class="fas fa-check-circle"></i> ${msg}`;
-    Object.assign(toast.style, {
-        position:'fixed', top:'20px', right:'20px', background:'#10b981',
-        color:'white', padding:'16px 24px', borderRadius:'8px', zIndex:'9999',
-        boxShadow:'0 4px 12px rgba(0,0,0,0.2)', animation:'slideIn 0.4s'
-    });
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
-}
-
-// Toast animation
-if (!document.getElementById('toast-anim')) {
-    const style = document.createElement('style');
-    style.id = 'toast-anim';
-    style.textContent = `
-        @keyframes slideIn { from {transform:translateX(100%);opacity:0} to {transform:translateX(0);opacity:1} }
-    `;
-    document.head.appendChild(style);
 }

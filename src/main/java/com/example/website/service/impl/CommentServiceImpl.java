@@ -108,19 +108,23 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void delete(int id) {
-        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !(auth.getPrincipal() instanceof CustomUserDetails userDetails)) {
+            throw new org.springframework.security.authentication.AuthenticationCredentialsNotFoundException(
+                    "Vui lòng đăng nhập để xóa bình luận"
+            );
+        }
+
         Integer currentUserId = userDetails.getId();
         Role currentUserRole = userDetails.getUserEntity().getRole();
-
-        if (currentUserId == null) {
-            throw new RuntimeException("User not authenticated");
-        }
 
         CommentEntity comment = commentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Comment not found with id: " + id));
 
-        // chỉ cho phép xoá nếu là chính chủ hoặc Admin
-        if (!currentUserId.equals(comment.getUser().getUserId()) && currentUserRole != Role.ADMIN) {
+        // chỉ cho phép xoá nếu là chính chủ hoặc ADMIN
+        if (!currentUserId.equals(comment.getUser().getUserId())
+                && currentUserRole != Role.ADMIN) {
             throw new AccessDeniedException("Bạn không có quyền xoá bình luận này");
         }
 

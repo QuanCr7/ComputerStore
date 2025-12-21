@@ -57,7 +57,7 @@
                         <div class="product-description" id="productDescription"></div>
 
                         <div class="action-buttons">
-                            <button class="btn btn-primary" id="addBtn">
+                            <button class="btn btn-primary add" id="addBtn">
                                 <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
                             </button>
                             <button class="btn btn-secondary" onclick="window.history.back()">
@@ -89,13 +89,13 @@
                 <!-- Form thêm comment -->
                 <div class="comment-form-container" id="commentFormContainer">
                     <form id="commentForm" class="comment-form">
-            <textarea
+                <textarea
                     id="commentContent"
                     placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."
                     required
-            ></textarea>
+                ></textarea>
                         <div class="form-actions">
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary addComment">
                                 Gửi đánh giá
                             </button>
                         </div>
@@ -123,5 +123,6 @@
 <script src="/js/user/auth.js" defer></script>
 <script src="/js/categories.js" defer></script>
 <script src="/js/product/detail-product.js" defer></script>
+<script src="/js/notification.js" defer></script>
 </body>
 </html>
