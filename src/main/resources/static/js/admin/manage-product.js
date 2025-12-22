@@ -103,8 +103,8 @@ function loadBrandsForAdmin() {
                 const imgUrl = brand.image ? `/images/brand/${brand.image}` : '/images/brand-default.jpg';
                 const div = document.createElement('div');
                 div.className = 'option';
-                div.dataset.value = brand.name;  // Lưu tên
-                div.dataset.id = brand.brandId;  // Lưu ID cho mapping
+                div.dataset.value = brand.name;
+                div.dataset.id = brand.brandId;
                 div.innerHTML = `
                     <img src="${imgUrl}" alt="${brand.name}" onerror="this.src='/images/brand-default.jpg'">
                     <span class="name">${brand.name}</span>

@@ -15,10 +15,12 @@ import java.util.List;
 public class OrderResponse {
     private int id;
     private LocalDateTime orderDate;
+
     private String name;
     private String phone;
-    private BigDecimal totalAmount;
     private String shippingAddress;
+
+    private BigDecimal totalAmount;
     private String status;
     private int userId;
     private List<OrderDetailResponse> orderDetails;

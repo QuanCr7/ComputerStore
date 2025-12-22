@@ -1,63 +1,38 @@
 // /js/user/orderdetail-admin.js
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', async function () {
     const urlParams = new URLSearchParams(window.location.search);
-    let orderId = urlParams.get('id');
+    const orderId = urlParams.get('id');
 
-    const isLoggedIn = await checkLoginStatus();
     const loadingElement = document.getElementById('loading');
     const errorElement = document.getElementById('errorMessage');
     const errorTextElement = document.getElementById('errorText');
 
+    const isLoggedIn = await checkLoginStatus();
+
     if (!isLoggedIn) {
-        console.log('order-detail-product.js: Chưa đăng nhập, hiển thị lỗi');
         if (loadingElement) loadingElement.style.display = 'none';
-        if (errorElement && errorTextElement) {
-            errorElement.style.display = 'flex';
-            errorTextElement.textContent = 'Bạn cần đăng nhập để xem chi tiết đơn hàng!';
-            showError('Bạn cần đăng nhập để xem chi tiết đơn hàng!');
-        } else {
-            alert('Bạn cần đăng nhập để xem chi tiết đơn hàng!');
-        }
+        showErrorUI('Bạn cần đăng nhập để xem chi tiết đơn hàng!');
         return;
     }
 
-    if (!orderId || isNaN(orderId) || orderId === 'undefined') {
-        console.error('order-detail-product.js: Không tìm thấy orderId hợp lệ trong URL');
-        if (errorElement && errorTextElement) {
-            errorElement.style.display = 'flex';
-            errorTextElement.textContent = 'Không tìm thấy mã đơn hàng!';
-            showError('Không tìm thấy mã đơn hàng!');
-        }
+    if (!orderId || isNaN(orderId)) {
+        showErrorUI('Không tìm thấy mã đơn hàng!');
         return;
     }
 
     loadOrderDetail(orderId);
-
-    document.getElementById('printInvoice').addEventListener('click', () => {
-        window.print();
-    });
-
-    document.getElementById('reorder').addEventListener('click', () => {
-        reorder(orderId);
-    });
 });
 
+/* ================= LOAD ORDER ================= */
 async function loadOrderDetail(orderId) {
     const API_BASE_URL = 'http://localhost:8080';
+
     const loadingElement = document.getElementById('loading');
     const errorElement = document.getElementById('errorMessage');
     const errorTextElement = document.getElementById('errorText');
     const orderContent = document.getElementById('orderContent');
 
     try {
-        if (!getAccessToken()) {
-            console.log('loadOrderDetail: Không có accessToken, thử làm mới token');
-            const refreshed = await checkLoginStatus();
-            if (!refreshed) {
-                throw new Error('Bạn cần đăng nhập để xem chi tiết đơn hàng!');
-            }
-        }
-
         if (loadingElement) loadingElement.style.display = 'flex';
         if (errorElement) errorElement.style.display = 'none';
         if (orderContent) orderContent.style.display = 'none';
@@ -67,29 +42,21 @@ async function loadOrderDetail(orderId) {
             headers: {
                 'Authorization': `Bearer ${getAccessToken()}`,
                 'Content-Type': 'application/json'
-            },
-            credentials: 'include'
+            }
         });
 
-        const data = await response.json();
-        console.log('order-detail-product.js: Order detail response:', JSON.stringify(data, null, 2));
+        const result = await response.json();
 
-        if (response.ok && data.code === 200) {
-            const order = data.data;
-            displayOrderDetail(order);
+        if (response.ok && result.code === 200) {
+            displayOrderDetail(result.data);
             if (orderContent) orderContent.style.display = 'block';
-            if (loadingElement) loadingElement.style.display = 'none';
         } else {
-            throw new Error(data.message || 'Không thể lấy chi tiết đơn hàng');
+            throw new Error(result.message || 'Không thể tải đơn hàng');
         }
-    } catch (error) {
-        console.error('order-detail-product.js: Lỗi:', error);
+    } catch (err) {
+        showErrorUI(err.message);
+    } finally {
         if (loadingElement) loadingElement.style.display = 'none';
-        if (errorElement && errorTextElement) {
-            errorElement.style.display = 'flex';
-            errorTextElement.textContent = error.message;
-            showError(error.message);
-        }
     }
 }
 
@@ -98,171 +65,172 @@ function displayOrderDetail(order) {
     document.getElementById('orderIdDisplay').textContent = `#${order.id}`;
     document.getElementById('orderDate').textContent = formatDate(order.orderDate);
 
+    /* ===== USER ID (CLICKABLE) ===== */
+    const userIdEl = document.getElementById('userId');
+    userIdEl.textContent = order.userId;
+    userIdEl.onclick = () => {
+        window.location.href = `/u/detail?id=${order.userId}`;
+    };
+
+    document.getElementById('name').textContent = order.name || 'Không có';
+    document.getElementById('phone').textContent = order.phone || 'Không có';
+    document.getElementById('shippingAddress').textContent = order.shippingAddress || 'Không có';
+
+    renderOrderStatus(order);
+
+    renderOrderItems(order.orderDetails);
+
+    renderSummary(order);
+
+    handleCancelButton(order);
+}
+
+function renderOrderStatus(order) {
     const statusDisplay = document.getElementById('orderStatusDisplay');
     const statusActions = document.getElementById('statusActions');
     const statusSelect = document.getElementById('statusSelect');
+    const updateBtn = document.getElementById('updateStatusBtn');
 
-    // Cập nhật trạng thái hiện tại
+    if (!statusDisplay) return;
+
     const currentStatus = order.status;
-    statusDisplay.textContent = getStatusText(currentStatus);
+    const isAdmin = window.location.pathname.includes('/manage/');
+
     statusDisplay.className = `order-status status-${currentStatus.toLowerCase()}`;
     statusDisplay.innerHTML = `<i class="fas fa-circle"></i> ${getStatusText(currentStatus)}`;
 
-    const isAdmin = window.location.pathname.includes('/manage/');
+    // ❗ Nếu thiếu element → ẩn và thoát
+    if (!statusActions || !statusSelect || !updateBtn) {
+        return;
+    }
 
-    // === CHỈ HIỂN THỊ PHẦN CẬP NHẬT NẾU:
-    // - Là Admin
-    // - Và trạng thái KHÔNG PHẢI là CANCELLED hoặc COMPLETED
     if (isAdmin && !['CANCELLED', 'COMPLETED'].includes(currentStatus)) {
         statusActions.style.display = 'flex';
         statusSelect.value = currentStatus;
     } else {
-        statusActions.style.display = 'none'; // Ẩn hoàn toàn nếu đã hủy hoặc hoàn thành
+        statusActions.style.display = 'none';
+        return;
     }
 
-    // Xử lý nút cập nhật (chỉ gắn sự kiện nếu đang hiển thị)
-    const updateBtn = document.getElementById('updateStatusBtn');
-    if (updateBtn && isAdmin && !['CANCELLED', 'COMPLETED'].includes(currentStatus)) {
-        // Xóa listener cũ nếu có (tránh attach nhiều lần)
-        updateBtn.replaceWith(updateBtn.cloneNode(true));
-        const newUpdateBtn = document.getElementById('updateStatusBtn');
+    updateBtn.replaceWith(updateBtn.cloneNode(true));
+    const newBtn = document.getElementById('updateStatusBtn');
 
-        newUpdateBtn.addEventListener('click', async () => {
-            const newStatus = statusSelect.value;
+    if (!newBtn) return;
 
-            if (newStatus === currentStatus) {
-                showNotification('Trạng thái không thay đổi', 'warning');
-                return;
-            }
+    newBtn.onclick = async () => {
+        const newStatus = statusSelect.value;
+        if (newStatus === currentStatus) return;
 
-            if (!confirm(`Chuyển trạng thái thành "${getStatusText(newStatus)}"?`)) {
-                return;
-            }
+        if (!confirm(`Chuyển trạng thái thành "${getStatusText(newStatus)}"?`)) return;
 
-            try {
-                const response = await fetch(`http://localhost:8080/order/status/${order.id}?status=${newStatus}`, {
+        try {
+            const res = await fetch(
+                `http://localhost:8080/order/status/${order.id}?status=${newStatus}`,
+                {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${getAccessToken()}`,
                         'Content-Type': 'application/json'
-                    },
-                    credentials: 'include'
-                });
-
-                const data = await response.json();
-
-                if (response.ok && data.code === 200) {
-                    // Cập nhật lại giao diện
-                    statusDisplay.textContent = getStatusText(newStatus);
-                    statusDisplay.className = `order-status status-${newStatus.toLowerCase()}`;
-                    statusDisplay.innerHTML = `<i class="fas fa-circle"></i> ${getStatusText(newStatus)}`;
-
-                    showNotification('Cập nhật trạng thái thành công!', 'success');
-
-                    // === TỰ ĐỘNG ẨN PHẦN CẬP NHẬT NẾU CHUYỂN SANG CANCELLED HOẶC COMPLETED ===
-                    if (newStatus === 'CANCELLED' || newStatus === 'COMPLETED') {
-                        statusActions.style.display = 'none';
                     }
-                } else {
-                    alert(data.message || 'Cập nhật thất bại');
                 }
-            } catch (err) {
-                console.error(err);
-                alert('Lỗi kết nối khi cập nhật trạng thái');
-            }
-        });
-    }
+            );
 
+            const data = await res.json();
+            if (res.ok && data.code === 200) {
+                statusDisplay.className = `order-status status-${newStatus.toLowerCase()}`;
+                statusDisplay.innerHTML = `<i class="fas fa-circle"></i> ${getStatusText(newStatus)}`;
+                showNotification('Cập nhật thành công', 'success');
+
+                if (['CANCELLED', 'COMPLETED'].includes(newStatus)) {
+                    statusActions.style.display = 'none';
+                }
+            }
+        } catch {
+            alert('Lỗi kết nối');
+        }
+    };
+}
+
+
+/* ================= ITEMS ================= */
+function renderOrderItems(items) {
     const orderItems = document.getElementById('orderItems');
     orderItems.innerHTML = '';
-    order.orderDetails.forEach(item => {
-        const imageUrl = item.image
+
+    items.forEach(item => {
+        const image = item.image
             ? `http://localhost:8080/images/product/${item.image}`
             : 'https://via.placeholder.com/80x100';
 
-        const itemElement = document.createElement('div');
-        itemElement.className = 'order-item';
-        itemElement.innerHTML = `
-            <img src="${imageUrl}" alt="${item.product}" class="item-image">
-            <div class="item-details">
-                <h3 class="item-title">${item.product}</h3>
-                <p class="item-price">${formatPrice(item.price)}</p>
-                <p class="item-quantity">Số lượng: ${item.quantity}</p>
-                <p class="item-info">Thương hiệu: ${item.brand} | Danh mục: ${item.category}</p>
+        orderItems.innerHTML += `
+            <div class="order-item">
+                <img src="${image}" class="item-image">
+                <div class="item-details">
+                    <div class="item-title">${item.product}</div>
+                    <div class="item-price">${formatPrice(item.price)}</div>
+                    <div class="item-quantity">Số lượng: ${item.quantity}</div>
+                    <div class="item-info">Thương hiệu: ${item.brand} | Danh mục: ${item.category}</div>
+                </div>
             </div>
         `;
-        orderItems.appendChild(itemElement);
     });
+}
 
-    // Tính tiền (có thể lấy từ backend tốt hơn)
-    const subtotal = order.totalAmount || order.orderDetails.reduce((s, i) => s + i.price * i.quantity, 0);
-    document.getElementById('subtotal').textContent = formatPrice(subtotal);
-    document.getElementById('shipping').textContent = formatPrice(30000);
-    document.getElementById('discount').textContent = '-0 ₫';
-    document.getElementById('total').textContent = formatPrice(subtotal + 30000);
+/* ================= SUMMARY ================= */
+function renderSummary(order) {
+    const subtotal = order.totalAmount;
+    document.getElementById('subtotal').textContent = formatPrice(subtotal - 10000);
+    document.getElementById('shipping').textContent = formatPrice(10000);
+    document.getElementById('total').textContent = formatPrice(subtotal);
+}
 
-    // Nút hủy đơn (chỉ user)
-    const cancelButton = document.getElementById('cancelOrder');
-    if (!isAdmin && (currentStatus === 'PENDING' || currentStatus === 'PROCESSING')) {
-        if (cancelButton) cancelButton.style.display = 'inline-flex';
-    } else if (cancelButton) {
-        cancelButton.style.display = 'none';
+function handleCancelButton(order) {
+    const cancelBtn = document.getElementById('cancelOrder');
+
+    if (!cancelBtn) return;
+
+    const isAdmin = window.location.pathname.includes('/manage/');
+
+    if (!isAdmin && ['PENDING', 'PROCESSING'].includes(order.status)) {
+        cancelBtn.style.display = 'inline-flex';
+    } else {
+        cancelBtn.style.display = 'none';
     }
 }
 
+
+/* ================= HELPERS ================= */
 function getStatusText(status) {
-    switch (status) {
-        case 'PENDING': return 'Đang chờ xử lý';
-        case 'PROCESSING': return 'Đang xử lý';
-        case 'SHIPPED': return 'Đang vận chuyển';
-        case 'COMPLETED': return 'Hoàn thành';
-        case 'CANCELLED': return 'Đã hủy';
-        default: return 'Không xác định';
-    }
+    return {
+        PENDING: 'Đang chờ xử lý',
+        PROCESSING: 'Đang xử lý',
+        SHIPPING: 'Đang vận chuyển',
+        COMPLETED: 'Hoàn thành',
+        CANCELLED: 'Đã hủy'
+    }[status] || 'Không xác định';
 }
 
-async function reorder(orderId) {
-    const API_BASE_URL = 'http://localhost:8080';
-    try {
-        const response = await fetch(`${API_BASE_URL}/order/detail/${orderId}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${getAccessToken()}`,
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
-        });
-
-        const data = await response.json();
-        console.log('order-detail-product.js: Reorder response:', JSON.stringify(data, null, 2));
-
-        if (response.ok && data.code === 200) {
-            const order = data.data;
-            const cartItems = order.orderDetails.map(detail => ({
-                id: detail.id,
-                title: detail.product,
-                price: detail.price,
-                quantity: detail.quantity,
-                image: detail.imageUrl ? `${API_BASE_URL}/images/product/${detail.imageUrl}` : 'https://via.placeholder.com/80x100'
-            }));
-
-            localStorage.setItem('cart', JSON.stringify(cartItems));
-            alert('Đã thêm các sản phẩm vào giỏ hàng!');
-            window.location.href = '/pay';
-        } else {
-            showError(data.message || 'Không thể đặt lại đơn hàng');
-        }
-    } catch (error) {
-        console.error('order-detail-product.js: Lỗi khi đặt lại đơn hàng:', error);
-        showError('Lỗi khi đặt lại đơn hàng: ' + error.message);
-    }
-}
-
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleString('vi-VN', { dateStyle: 'medium', timeStyle: 'short' });
+function formatDate(date) {
+    return new Date(date).toLocaleString('vi-VN', {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+    });
 }
 
 function formatPrice(price) {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
+    }).format(price);
+}
+
+function showErrorUI(message) {
+    const errorElement = document.getElementById('errorMessage');
+    const errorTextElement = document.getElementById('errorText');
+    if (errorElement && errorTextElement) {
+        errorElement.style.display = 'flex';
+        errorTextElement.textContent = message;
+    } else {
+        alert(message);
+    }
 }

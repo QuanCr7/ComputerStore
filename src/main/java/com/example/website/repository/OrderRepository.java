@@ -37,4 +37,22 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate
     );
+
+    @Query("""
+    SELECT o FROM OrderEntity o
+    WHERE
+        (:keyword IS NULL OR
+            CAST(o.orderId AS string) LIKE %:keyword% OR
+            o.phone LIKE %:keyword% OR
+            o.user.username LIKE %:keyword%)
+    AND
+        (:status IS NULL OR o.status = :status)
+    ORDER BY o.orderDate DESC
+    """)
+    Page<OrderEntity> searchOrders(
+            @Param("keyword") String keyword,
+            @Param("status") OrderStatus status,
+            Pageable pageable
+    );
+
 }

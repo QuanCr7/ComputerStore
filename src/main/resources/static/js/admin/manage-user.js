@@ -46,7 +46,7 @@ function renderUsers(list) {
             <td>${u.fullName || ''}</td>
             <td>${u.email}</td>
             <td class="center">${u.phone || 'N/A'}</td>
-            <td>${formatDate(u.dateCreate)}</td>
+            <td class="center">${formatDate(u.dateCreate)}</td>
             <td class="action-buttons">
                 <button class="action-btn view" onclick="location.href='/u/detail?id=${u.userId}'"><i class="fas fa-eye"></i></button>
                 <button class="action-btn delete" onclick="confirmDeleteUser(${u.userId}, '${u.username}')".replace(/'/g, "\\'")}')"><i class="fas fa-trash"></i></button>

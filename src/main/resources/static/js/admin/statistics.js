@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const labels = Object.keys(statusCount);
         const data = Object.values(statusCount);
-        const colors = ['#f39c12', '#00bc8c', '#e74c3c', '#3498db', '#9b59b6'];
+        const colors = ['#3498db','#e74c3c','#00bc8c','#f39c12', '#9b59b6'];
 
         if (statusChart) statusChart.destroy();
 
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
             type: 'doughnut',
             data: {
                 labels: labels.map(s => {
-                    const map = { PENDING: 'Chờ xử lý', COMPLETED: 'Hoàn thành', CANCELLED: 'Đã hủy' };
+                    const map = { PENDING: 'Đang chờ xử lý', COMPLETED: 'Hoàn thành', CANCELLED: 'Đã hủy' , SHIPPING: 'Đang vận chuyển', PROCESSING: 'Đang xử lý'};
                     return map[s] || s;
                 }),
                 datasets: [{

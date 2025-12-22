@@ -4,8 +4,7 @@ import com.example.website.request.OrderRequest;
 import com.example.website.response.BaseResponse;
 import com.example.website.response.OrderResponse;
 import com.example.website.response.PageOrderResponse;
-import com.example.website.service.impl.OrderServiceImpl;
-import com.example.website.utils.OrderStatus;
+import com.example.website.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/order")
 public class OrderController extends BaseController {
-    private final OrderServiceImpl orderServiceImpl;
+    private final OrderService orderService;
 
     @Operation(
             summary = "Lấy tất cả đơn hàng",
@@ -26,7 +25,7 @@ public class OrderController extends BaseController {
     @GetMapping("/all")
     public ResponseEntity<BaseResponse<PageOrderResponse>> getAllOrder(
             @RequestParam(defaultValue = "1") int page) {
-        return returnSuccess(orderServiceImpl.findAll(page));
+        return returnSuccess(orderService.findAll(page));
     }
 
     @Operation(
@@ -36,7 +35,7 @@ public class OrderController extends BaseController {
     )
     @GetMapping("/detail/{id}")
     public ResponseEntity<BaseResponse<OrderResponse>> display(@PathVariable("id") Integer id) {
-        return returnSuccess(orderServiceImpl.getById(id));
+        return returnSuccess(orderService.getById(id));
     }
 
     @Operation(
@@ -47,7 +46,7 @@ public class OrderController extends BaseController {
     @GetMapping("/user")
     public ResponseEntity<BaseResponse<PageOrderResponse>> displayByUser(
             @RequestParam(defaultValue = "1") int page) {
-        return returnSuccess(orderServiceImpl.getByUserId(page));
+        return returnSuccess(orderService.getByUserId(page));
     }
 
     @Operation(
@@ -57,15 +56,7 @@ public class OrderController extends BaseController {
     )
     @PostMapping("/pay")
     public ResponseEntity<BaseResponse<OrderResponse>> create(@Valid @RequestBody OrderRequest request) {
-        // Xác thực orderDetails
-        if (request.getOrderDetails() == null || request.getOrderDetails().isEmpty()) {
-            throw new IllegalArgumentException("Order details cannot be empty");
-        }
-        // Đảm bảo trạng thái là PENDING đối với các đơn hàng mới
-        if (request.getStatus() != null && request.getStatus() != OrderStatus.PENDING) {
-            throw new IllegalArgumentException("New orders must have PENDING status");
-        }
-        return returnSuccess(orderServiceImpl.create(request, request.getOrderDetails()));
+        return returnSuccess(orderService.create(request, request.getOrderDetails()));
     }
 
     @Operation(
@@ -75,7 +66,7 @@ public class OrderController extends BaseController {
     )
     @PutMapping("/cancel/{orderId}")
     public ResponseEntity<BaseResponse<OrderResponse>> cancelOrder(@PathVariable("orderId") Integer orderId) {
-        return returnSuccess(orderServiceImpl.cancelOrder(orderId));
+        return returnSuccess(orderService.cancelOrder(orderId));
     }
 
     @Operation(summary = "Admin cập nhật trạng thái đơn hàng")
@@ -83,6 +74,15 @@ public class OrderController extends BaseController {
     public ResponseEntity<BaseResponse<OrderResponse>> updateStatus(
             @PathVariable("orderId") Integer orderId,
             @RequestParam("status") String status) {
-        return returnSuccess(orderServiceImpl.updateStatus(orderId, status));
+        return returnSuccess(orderService.updateStatus(orderId, status));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<BaseResponse<PageOrderResponse>> getOrders(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "ALL") String status,
+            @RequestParam(defaultValue = "1") Integer page
+    ) {
+        return returnSuccess(orderService.getByCondition(page,keyword,status));
     }
 }

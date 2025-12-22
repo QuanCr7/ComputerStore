@@ -190,6 +190,38 @@ public class OrderServiceImpl implements OrderService {
         return response(order);
     }
 
+    @Override
+    public PageOrderResponse getByCondition(Integer page, String keyword, String status) {
+        int pageNumber = (page == null) ? 0 : page - 1;
+        Pageable pageable = PageRequest.of(pageNumber, size);
+
+        String searchKeyword = (keyword == null || keyword.trim().isEmpty())
+                ? null
+                : keyword.trim();
+
+        OrderStatus orderStatus = null;
+        if (status != null && !status.equalsIgnoreCase("ALL")) {
+            try {
+                orderStatus = OrderStatus.valueOf(status.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("Trạng thái đơn hàng không hợp lệ");
+            }
+        }
+
+        Page<OrderEntity> entityPage =
+                orderRepository.searchOrders(searchKeyword, orderStatus, pageable);
+
+        Page<OrderResponse> responsePage = entityPage.map(this::response);
+
+        return PageOrderResponse.builder()
+                .currentPage(pageNumber + 1)
+                .pageSize(responsePage.getSize())
+                .totalPages(responsePage.getTotalPages())
+                .totalElements(responsePage.getTotalElements())
+                .orders(responsePage.getContent())
+                .build();
+    }
+
     public OrderResponse response(OrderEntity order) {
         List<OrderDetailResponse> detailResponses = order.getOrderDetails().stream()
                 .map(detail -> OrderDetailResponse.builder()

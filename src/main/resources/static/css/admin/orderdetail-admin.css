@@ -69,11 +69,58 @@
     margin-bottom: 20px;
 }
 
-.status-pending    { background: #fff8e1; color: #ff8f00; border: 1px solid #ffe58f; }
-.status-processing { background: #e3f2fd; color: #1976d2; border: 1px solid #bbdefb; }
-.status-shipped    { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
-.status-delivered  { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
-.status-cancelled  { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+/* ===== Status Colors ===== */
+.status-pending {
+    background: #fff7ed;
+    color: #d97706;
+    border: 1px solid #fed7aa;
+}
+
+.status-processing {
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+}
+
+.status-shipped {
+    background: #ecfeff;
+    color: #0891b2;
+    border: 1px solid #67e8f9;
+}
+
+.status-completed {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #86efac;
+}
+
+.status-cancelled {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.highlight-id {
+    display: inline-block;
+    padding: 6px 14px;
+    background: #f1f5ff;
+    color: var(--primary);
+    font-weight: 600;
+    border-radius: 8px;
+    border: 1px dashed var(--primary);
+    width: fit-content;
+}
+
+.highlight-id {
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.highlight-id:hover {
+    background: var(--primary);
+    color: white;
+}
+
 
 /* Thông tin grid */
 .order-info-grid {

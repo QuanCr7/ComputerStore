@@ -16,4 +16,6 @@ public interface OrderService {
     OrderResponse create(OrderRequest request, List<OrderDetailRequest> orderDetailRequests);
     OrderResponse updateStatus(int orderId, String newStatus);
     OrderResponse cancelOrder(int orderId);
+
+    PageOrderResponse getByCondition(Integer page, String keyword, String status);
 }

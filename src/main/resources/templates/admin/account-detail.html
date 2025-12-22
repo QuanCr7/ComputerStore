@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/css/admin/common.css">
     <link rel="stylesheet" href="/css/admin/hide.css">
     <link rel="stylesheet" href="/css/admin/detailuser-admin.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icon/computer.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -14,6 +15,8 @@
     <div class="spinner"></div>
     <div>Đang xác thực quyền truy cập...</div>
 </div>
+
+<input type="hidden" id="userId" th:value="${userId}">
 
 <div class="admin-wrapper" id="adminContent">
     <div th:replace="~{admin/common :: common}"></div>
@@ -37,7 +40,7 @@
                         <img id="userAvatar" src="/images/user/default.jpg" alt="Avatar">
                     </div>
                     <div class="user-basic-info">
-                        <h2 id="userDisplayName">Tên người dùng</h2>
+                        <h2 id="fullName">Tên người dùng</h2>
                         <p class="username">@<span id="username"></span></p>
                         <span class="role-badge" id="userRole">USER</span>
                     </div>
@@ -71,9 +74,6 @@
                 </div>
 
                 <div class="user-actions">
-                    <button class="btn btn-warning" onclick="editUser()">
-                        <i class="fas fa-edit"></i> Chỉnh sửa
-                    </button>
                     <button class="btn btn-danger" onclick="deleteUser()">
                         <i class="fas fa-trash"></i> Xóa tài khoản
                     </button>
