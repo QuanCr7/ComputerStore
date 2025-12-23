@@ -2,696 +2,131 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Đặt lại mật khẩu</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        /* ===== Global Styles ===== */
-        :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --accent-color: #4895ef;
-            --success-color: #4cc9f0;
-            --danger-color: #f72585;
-            --warning-color: #f8961e;
-            --light-color: #f8f9fa;
-            --dark-color: #212529;
-            --gray-color: #6c757d;
-            --white-color: #ffffff;
-            --border-radius: 8px;
-            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s ease;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, body {
-            height: 100%;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            color: var(--dark-color);
-            background-color: #f5f7fa;
-            line-height: 1.6;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* ===== Header Styles ===== */
-        .main-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background-color: var(--white-color);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            padding: 15px 0;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-
-        .logo-icon {
-            font-size: 1.8rem;
-        }
-
-        .nav-list {
-            display: flex;
-            list-style: none;
-            gap: 25px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            position: relative; /* Cần thiết để dropdown định vị đúng */
-        }
-
-        .nav-link {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-            color: var(--dark-color);
-            transition: var(--transition);
-            padding: 8px 0;
-            position: relative;
-        }
-
-        .nav-link.active {
-            color: var(--primary-color);
-            font-weight: bold;
-        }
-
-        .nav-link:hover {
-            color: var(--primary-color);
-        }
-
-        .nav-link.active:after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: var(--primary-color);
-        }
-
-        /* Dropdown Styles - Đã sửa để hiển thị 3 cột */
-        .categories-dropdown {
-            position: absolute;
-            top: 100%; /* Hiển thị ngay dưới mục Thể loại */
-            left: 0;
-            background-color: var(--white-color);
-            width: 600px; /* Tăng chiều rộng để chứa 3 cột */
-            border-radius: var(--border-radius);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(10px);
-            transition: var(--transition);
-            z-index: 1000;
-            padding: 15px;
-        }
-
-        .nav-item:hover .categories-dropdown {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .categories-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* Chia thành 3 cột bằng nhau */
-            gap: 10px;
-        }
-
-        .category-column {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .category-item {
-            cursor: pointer;
-            padding: 8px 10px;
-            transition: var(--transition);
-        }
-
-        .category-item:hover {
-            background-color: var(--light-color);
-        }
-
-        .category-link {
-            cursor: pointer;
-            display: block;
-            color: var(--dark-color);
-            text-decoration: none;
-            transition: var(--transition);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100%; /* Đảm bảo liên kết chiếm toàn bộ chiều rộng */
-        }
-
-        .category-link:hover {
-            color: var(--primary-color);
-            padding-left: 5px;
-        }
-
-        .auth-section {
-            display: flex;
-            gap: 15px;
-        }
-
-        .auth-btn {
-            padding: 8px 16px;
-            border-radius: var(--border-radius);
-            font-weight: 500;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .login-btn {
-            color: var(--primary-color);
-            border: 1px solid var(--primary-color);
-        }
-
-        .login-btn:hover {
-            background-color: var(--primary-color);
-            color: var(--white-color);
-        }
-
-        .register-btn {
-            background-color: var(--primary-color);
-            color: var(--white-color);
-        }
-
-        .register-btn:hover {
-            background-color: var(--secondary-color);
-        }
-
-        /* User dropdown styles */
-        .user-dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .user-btn {
-            background-color: var(--primary-color);
-            color: var(--white-color);
-            padding: 10px 15px;
-            border: none;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-
-        .user-btn:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            background-color: var(--white-color);
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-        }
-
-        .dropdown-content a {
-            color: var(--dark-color);
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            transition: var(--transition);
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .dropdown-content a:hover {
-            background-color: var(--light-color);
-        }
-
-        .user-dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--dark-color);
-            cursor: pointer;
-        }
-
-        /* Main */
-        .main-content {
-            flex: 1 0 auto;
-            margin-top: 80px; /* Bù cho header fixed */
-            padding: 20px 0;
-        }
-
-        /* Footer styles */
-        .main-footer {
-            background-color: var(--dark-color);
-            color: var(--white-color);
-            padding: 60px 0 20px;
-            margin-top: auto;
-            flex-shrink: 0;
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .footer-col {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .footer-title {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .footer-links {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .footer-links a {
-            color: #adb5bd;
-            transition: var(--transition);
-        }
-
-        .footer-links a:hover {
-            color: var(--white-color);
-            padding-left: 5px;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 10px;
-        }
-
-        .social-links a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--white-color);
-            transition: var(--transition);
-        }
-
-        .social-links a:hover {
-            background-color: var(--primary-color);
-            transform: translateY(-3px);
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: #adb5bd;
-            font-size: 0.9rem;
-        }
-
-        /* ===== Responsive Styles ===== */
-        @media (max-width: 768px) {
-            .nav-list {
-                position: fixed;
-                top: 70px;
-                left: 0;
-                right: 0;
-                background-color: var(--white-color);
-                flex-direction: column;
-                align-items: center;
-                padding: 20px 0;
-                gap: 15px;
-                box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-                transform: translateY(-150%);
-                transition: transform 0.3s ease;
-                z-index: 999;
-            }
-
-            .nav-list.active {
-                transform: translateY(0);
-            }
-
-            .nav-link {
-                padding: 10px 0;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .auth-section {
-                display: none;
-            }
-
-            .footer-grid {
-                grid-template-columns: 1fr;
-                gap: 25px;
-            }
-
-            .main-footer {
-                padding: 40px 0 20px;
-            }
-        }
-        /* end headandfoot */
-
-        /* ===== Authentication Form Styles ===== */
-        .auth-form {
-            background-color: var(--white-color);
-            padding: 30px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            width: 100%;
-            max-width: 450px;
-            text-align: center;
-        }
-
-        .form-title {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.95rem;
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: var(--dark-color);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #dee2e6;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            color: var(--dark-color);
-            transition: var(--transition);
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 8px rgba(67, 97, 238, 0.2);
-        }
-
-        .form-actions {
-            margin-top: 25px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            border: none;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: var(--white-color);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-2px);
-        }
-
-        .form-footer {
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: var(--gray-color);
-        }
-
-        .form-footer a {
-            color: var(--primary-color);
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        .form-footer a:hover {
-            color: var(--secondary-color);
-            text-decoration: underline;
-        }
-
-        .loading, .error, .success {
-            padding: 12px;
-            border-radius: var(--border-radius);
-            margin-bottom: 20px;
-            font-size: 0.95rem;
-            text-align: center;
-        }
-
-        .loading {
-            background-color: var(--light-color);
-            color: var(--dark-color);
-        }
-
-        .error {
-            background-color: rgba(247, 37, 133, 0.1);
-            color: var(--danger-color);
-            border: 1px solid var(--danger-color);
-        }
-
-        .success {
-            background-color: rgba(76, 201, 240, 0.1);
-            color: var(--success-color);
-            border: 1px solid var(--success-color);
-        }
-
-        /* Responsive Adjustments */
-        @media (max-width: 576px) {
-            .auth-form {
-                padding: 20px;
-                margin: 0 15px;
-            }
-
-            .form-title {
-                font-size: 1.5rem;
-            }
-
-            .btn {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-            }
-        }
-    </style>
-    <link rel="icon" href="/images/school.png">
+    <title>Quản lý Đơn hàng</title>
+    <link rel="stylesheet" href="/css/admin/common.css">
+    <link rel="stylesheet" href="/css/admin/hide.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icon/computer.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
+<div class="loading-screen" id="loadingScreen">
+    <div class="spinner"></div>
+    <div>Đang xác thực quyền truy cập...</div>
+</div>
 
-<header class="main-header">
-    <div class="container">
-        <div class="header-content">
-            <div class="logo-container">
-                <a href="/" class="logo">
-                    <span class="logo-text">ComputerStore</span>
-                </a>
+<div class="admin-wrapper" id="adminContent">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-cogs"></i> Admin Panel</h2>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="/manage/p" class="menu-item">
+                <i class="fas fa-box"></i>
+                <span>Quản lý Sản phẩm</span>
+            </a>
+            <a href="/manage/u" class="menu-item">
+                <i class="fas fa-users"></i>
+                <span>Quản lý Người dùng</span>
+            </a>
+            <a href="/manage/o" class="menu-item">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Quản lý Đơn hàng</span>
+            </a>
+            <a href="/manage/statistics" class="menu-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Thống kê Doanh thu</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <h1>Quản lý Đơn hàng</h1>
+            <div class="user-info">
+                <span>Xin chào, <strong id="admin-username"></strong></span>
+                <button id="admin-logout-btn" class="logout-small">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </button>
             </div>
+        </header>
 
-            <nav class="main-nav">
-                <ul class="nav-list">
-                    <li class="nav-item"><a href="/" class="nav-link active"><i class="fas fa-home"></i> Trang chủ</a></li>
-                    <li class="nav-item"><a href="/search" class="nav-link"><i class="fas fa-search"></i> Tìm kiếm</a></li>
-                    <li class="nav-item">
-                        <span class="nav-link"><i class="fas fa-tags"></i> Danh mục</span>
-                        <div class="categories-dropdown">
-                            <div class="categories-container">
-                                <!-- Nội dung sẽ được thêm bằng JavaScript -->
+        <div class="content-wrapper">
+            <div class="toolbar advanced-search-toolbar">
+                <div class="search-section-admin">
+                    <h3>Bộ lọc đơn hàng</h3>
+
+                    <div class="filter-row">
+                        <!-- Keyword -->
+                        <div class="filter-group full-width">
+                            <label for="orderKeyword">Tìm kiếm</label>
+                            <input type="text"
+                                   id="orderKeyword"
+                                   placeholder="Mã đơn hoặc SĐT">
+                        </div>
+
+                        <!-- Trạng thái -->
+                        <div class="filter-group">
+                            <label>Trạng thái</label>
+                            <div class="custom-select-wrapper">
+                                <div class="custom-select" id="orderStatusSelect">
+                                    <div class="selected-option">
+                                        <span class="placeholder">Tất cả trạng thái</span>
+                                        <i class="fas fa-chevron-down arrow"></i>
+                                    </div>
+                                    <div class="options-container">
+                                        <div class="option" data-value="ALL">Tất cả trạng thái</div>
+                                        <div class="option" data-value="PENDING">Chờ xử lý</div>
+                                        <div class="option" data-value="PROCESSING">Đang xử lý</div>
+                                        <div class="option" data-value="SHIPPING">Đang giao</div>
+                                        <div class="option" data-value="COMPLETED">Hoàn thành</div>
+                                        <div class="option" data-value="CANCELLED">Đã hủy</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </li>
-                    <li class="nav-item"><a href="/about" class="nav-link"><i class="fas fa-info-circle"></i> Giới thiệu</a></li>
-                </ul>
-            </nav>
-
-            <div class="auth-section" id="authSection">
-                <a href="/auth/login" class="auth-btn login-btn"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a>
-                <a href="/auth/register" class="auth-btn register-btn"><i class="fas fa-user-plus"></i> Đăng ký</a>
-            </div>
-
-            <button class="mobile-menu-btn">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-    </div>
-</header>
-
-<main class="main-content">
-    <section class="auth-section">
-        <div class="container">
-
-            <div id="error" class="error" style="display:none;"></div>
-            <div id="success" class="success" style="display:none;"></div>
-
-            <div class="auth-form">
-                <h2>🔐 Đặt lại mật khẩu</h2>
-
-                <form id="resetPasswordForm">
-
-                    <div class="form-group">
-                        <label class="form-label">Mật khẩu mới</label>
-                        <input type="password"
-                               id="newPassword"
-                               class="form-input"
-                               placeholder="Nhập mật khẩu mới"
-                               required>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Nhập lại mật khẩu</label>
-                        <input type="password"
-                               id="confirmPassword"
-                               class="form-input"
-                               placeholder="Nhập lại mật khẩu"
-                               required>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">
-                            Đặt lại mật khẩu
+                    <div class="filter-actions">
+                        <button class="btn btn-primary" onclick="applyFilters(1)">
+                            Áp dụng bộ lọc
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetFilters()">
+                            Đặt lại
                         </button>
                     </div>
-
-                </form>
-
-
-            </div>
-        </div>
-    </section>
-</main>
-
-<footer class="main-footer">
-    <div class="container">
-        <div class="footer-grid">
-            <div class="footer-col">
-                <h3 class="footer-title">Về ComputerStore</h3>
-                <p>Hệ thống quản lý và bán linh kiện máy tính trực tuyến với nhiều thể loại đa dạng, phong phú.</p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
 
-            <div class="footer-col">
-                <h3 class="footer-title">Liên kết nhanh</h3>
-                <ul class="footer-links">
-                    <li><a href="/trangchu">Trang chủ</a></li>
-                    <li><a href="/books">Danh sách sản phẩm</a></li>
-                    <li><a href="/categories">Danh mục</a></li>
-                    <li><a href="/about">Giới thiệu</a></li>
-                </ul>
-            </div>
 
-            <div class="footer-col">
-                <h3 class="footer-title">Hỗ trợ</h3>
-                <ul class="footer-links">
-                    <li><a href="#">Trợ giúp</a></li>
-                    <li><a href="#">FAQ</a></li>
-                    <li><a href="#">Liên hệ</a></li>
-                    <li><a href="#">Chính sách bảo mật</a></li>
-                </ul>
+            <div class="table-container">
+                <table id="orders-table">
+                    <thead>
+                    <tr>
+                        <th class="center">Mã đơn</th>
+                        <th class="center">SĐT</th>
+                        <th class="center">Tổng tiền</th>
+                        <th class="center">Địa chỉ</th>
+                        <th class="center">Ngày đặt</th>
+                        <th class="center">Trạng thái</th>
+                        <th class="center">Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody id="orders-table-body"></tbody>
+                </table>
             </div>
-
-            <div class="footer-col">
-                <h3 class="footer-title">Liên hệ</h3>
-                <p><i class="fas fa-map-marker-alt"></i> 123 Đường Kim, Hà Nội</p>
-                <p><i class="fas fa-phone"></i> (024) 123 4567</p>
-                <p><i class="fas fa-envelope"></i> info@computerstore.vn</p>
-            </div>
+            <div id="pagination-orders" class="pagination"></div>
         </div>
+    </main>
+</div>
 
-        <div class="footer-bottom">
-            <p>&copy; 2023 ComputerStore. All rights reserved.</p>
-        </div>
-    </div>
-</footer>
+<div class="notification" id="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notification-message"></span>
+</div>
 
-<script src="/js/user/resetpassword.js"></script>
+<script src="/js/admin/common.js" defer></script>
+<script src="/js/user/auth.js" defer></script>
+<script src="/js/admin/manage-order.js" defer></script>
 </body>
 </html>

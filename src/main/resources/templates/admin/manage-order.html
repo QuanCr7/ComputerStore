@@ -16,7 +16,29 @@
 </div>
 
 <div class="admin-wrapper" id="adminContent">
-    <div th:replace="~{admin/common :: common}"></div>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-cogs"></i> Admin Panel</h2>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="/manage/p" class="menu-item">
+                <i class="fas fa-box"></i>
+                <span>Quản lý Sản phẩm</span>
+            </a>
+            <a href="/manage/u" class="menu-item">
+                <i class="fas fa-users"></i>
+                <span>Quản lý Người dùng</span>
+            </a>
+            <a href="/manage/o" class="menu-item">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Quản lý Đơn hàng</span>
+            </a>
+            <a href="/manage/statistics" class="menu-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Thống kê Doanh thu</span>
+            </a>
+        </nav>
+    </aside>
 
     <main class="main-content">
         <header class="topbar">
@@ -30,19 +52,50 @@
         </header>
 
         <div class="content-wrapper">
-            <div class="toolbar">
-                <div class="search-box">
-                    <input type="text" id="searchOrder" placeholder="Tìm mã đơn, tên khách, SĐT...">
-                    <button onclick="searchOrders()"><i class="fas fa-search"></i></button>
+            <div class="toolbar advanced-search-toolbar">
+                <div class="search-section-admin">
+                    <h3>Bộ lọc đơn hàng</h3>
+
+                    <div class="filter-row">
+                        <!-- Keyword -->
+                        <div class="filter-group full-width">
+                            <label for="orderKeyword">Tìm kiếm</label>
+                            <input type="text"
+                                   id="orderKeyword"
+                                   placeholder="Mã đơn hoặc SĐT">
+                        </div>
+
+                        <!-- Trạng thái -->
+                        <div class="filter-group">
+                            <label>Trạng thái</label>
+                            <div class="custom-select-wrapper">
+                                <div class="custom-select" id="orderStatusSelect">
+                                    <div class="selected-option">
+                                        <span class="placeholder">Tất cả trạng thái</span>
+                                        <i class="fas fa-chevron-down arrow"></i>
+                                    </div>
+                                    <div class="options-container">
+                                        <div class="option" data-value="ALL">Tất cả trạng thái</div>
+                                        <div class="option" data-value="PENDING">Chờ xử lý</div>
+                                        <div class="option" data-value="PROCESSING">Đang xử lý</div>
+                                        <div class="option" data-value="SHIPPING">Đang giao</div>
+                                        <div class="option" data-value="COMPLETED">Hoàn thành</div>
+                                        <div class="option" data-value="CANCELLED">Đã hủy</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button class="btn btn-primary" onclick="applyFilters(1)">
+                            Áp dụng bộ lọc
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetFilters()">
+                            Đặt lại
+                        </button>
+                    </div>
                 </div>
-                <select id="statusFilter" class="form-control">
-                    <option value="ALL" selected>Tất cả trạng thái</option>
-                    <option value="PENDING">Chờ xử lý</option>
-                    <option value="PROCESSING">Đang xử lý</option>
-                    <option value="SHIPPING">Đang vận chuyển</option>
-                    <option value="COMPLETED">Hoàn thành</option>
-                    <option value="CANCELLED">Đã hủy</option>
-                </select>
             </div>
 
             <div class="table-container">

@@ -79,10 +79,10 @@ public class AccountController extends BaseController {
     )
     @GetMapping("/search")
     public ResponseEntity<BaseResponse<PageUserResponse>> search(
-            @RequestParam String name,
-            @RequestParam String email,
-            @RequestParam Integer id,
-            @RequestParam String phone,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) Integer id,
+            @RequestParam(required = false) String phone,
             @RequestParam(defaultValue = "1") int page) {
         return returnSuccess(userService.getByCondition(page,name,email,id,phone));
     }

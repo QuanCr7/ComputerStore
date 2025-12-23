@@ -24,7 +24,6 @@ function loadProductDetail(id) {
         })
         .catch(err => {
             showToast(err.message || 'Lỗi tải sản phẩm', 'error');
-            document.getElementById('loadingScreen').style.display = 'none';
         });
 }
 

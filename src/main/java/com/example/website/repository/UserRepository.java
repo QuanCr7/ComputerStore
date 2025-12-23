@@ -28,8 +28,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     @Query("SELECT u FROM UserEntity u WHERE" +
             "(:name IS NULL OR u.username LIKE %:name%) AND " +
             "(:email IS NULL OR u.email LIKE %:email%) AND" +
-            "(:id IS NULL OR u.userId = :userId) AND" +
+            "(:id IS NULL OR u.userId = :id) AND" +
             "(:phone IS NULL OR u.phone LIKE %:phone%)")
-    Page<UserEntity> searchByCondition(Pageable pageable, String name, String email,Integer userId, String phone);
+    Page<UserEntity> searchByCondition(Pageable pageable, String name, String email,Integer id, String phone);
 
 }

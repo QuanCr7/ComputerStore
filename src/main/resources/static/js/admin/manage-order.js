@@ -1,54 +1,138 @@
-// manage-order.js
+// /js/admin/manage-order.js
 let currentPage = 1;
+let selectedStatus = 'ALL';
 
+let currentFilters = {
+    keyword: '',
+    status: 'ALL',
+    page: 1
+};
+
+/* ================= INIT ================= */
 document.addEventListener('DOMContentLoaded', () => {
-    fetchOrders(1);
+    initCustomSelect();
+    applyFiltersFromUrl();
 
-    const statusFilter = document.getElementById('statusFilter');
-    if (statusFilter) {
-        statusFilter.addEventListener('change', () => fetchOrders(1));
-    }
-
-    const searchInput = document.getElementById('searchOrder');
-    if (searchInput) {
-        searchInput.addEventListener('keyup', e => {
-            if (e.key === 'Enter') fetchOrders(1);
-        });
-    }
+    // Enter để tìm
+    document.getElementById('orderKeyword')?.addEventListener('keyup', e => {
+        if (e.key === 'Enter') applyFilters(1);
+    });
 });
 
-function fetchOrders(page = 1) {
-    currentPage = page;
+/* ================= CUSTOM SELECT ================= */
+function initCustomSelect() {
+    document.addEventListener('click', e => {
+        document.querySelectorAll('.custom-select').forEach(select => {
+            if (!select.contains(e.target)) {
+                select.classList.remove('open');
+            }
+        });
+    });
 
+    document.querySelectorAll('.custom-select').forEach(select => {
+        const selected = select.querySelector('.selected-option');
+        const options = select.querySelectorAll('.option');
+
+        selected.onclick = () => {
+            select.classList.toggle('open');
+        };
+
+        options.forEach(option => {
+            option.onclick = () => {
+                selectedStatus = option.dataset.value;
+                select.querySelector('.placeholder').textContent = option.textContent;
+                select.classList.remove('open');
+            };
+        });
+    });
+}
+
+/* ================= APPLY FILTER ================= */
+function applyFilters(page = 1) {
+    currentFilters = {
+        keyword: document.getElementById('orderKeyword')?.value.trim() || '',
+        status: selectedStatus,
+        page
+    };
+
+    currentPage = page;
+    updateUrl();
+    fetchOrders();
+}
+
+/* ================= RESET FILTER ================= */
+function resetFilters() {
+    document.getElementById('orderKeyword').value = '';
+    selectedStatus = 'ALL';
+
+    document.querySelector('#orderStatusSelect .placeholder')
+        .textContent = 'Tất cả trạng thái';
+
+    applyFilters(1);
+}
+
+function updateUrl() {
+    const params = new URLSearchParams();
+
+    if (currentFilters.keyword)
+        params.set('keyword', currentFilters.keyword);
+
+    if (currentFilters.status && currentFilters.status !== 'ALL')
+        params.set('status', currentFilters.status);
+
+    if (currentFilters.page > 1)
+        params.set('page', currentFilters.page);
+
+    const query = params.toString();
+
+    // ✅ KHÔNG có param → KHÔNG thêm ?
+    const newUrl = query ? `/manage/o?${query}` : `/manage/o`;
+
+    history.replaceState(null, '', newUrl);
+}
+
+
+/* ================= READ URL ================= */
+function applyFiltersFromUrl() {
+    const params = new URLSearchParams(location.search);
+
+    currentFilters.keyword = params.get('keyword') || '';
+    currentFilters.status = params.get('status') || 'ALL';
+    currentFilters.page = parseInt(params.get('page')) || 1;
+
+    document.getElementById('orderKeyword').value = currentFilters.keyword;
+    selectedStatus = currentFilters.status;
+
+    document.querySelector('#orderStatusSelect .placeholder')
+        .textContent = getStatusText(selectedStatus) || 'Tất cả trạng thái';
+
+    fetchOrders();
+}
+
+/* ================= FETCH DATA ================= */
+function fetchOrders() {
     const tbody = document.getElementById('orders-table-body');
     const pagination = document.getElementById('pagination-orders');
 
-    const keyword = document.getElementById('searchOrder')?.value.trim() || '';
-    const status = document.getElementById('statusFilter')?.value || 'ALL';
-
     tbody.innerHTML = `<tr><td colspan="7" class="loading">Đang tải...</td></tr>`;
-    if (pagination) pagination.innerHTML = '';
+    pagination.innerHTML = '';
 
-    const params = new URLSearchParams({
-        page,
-        keyword,
-        status
-    });
+    const params = new URLSearchParams(currentFilters);
 
     fetch(`/order/search?${params.toString()}`)
-        .then(res => {
-            if (!res.ok) throw new Error('Không tải được đơn hàng');
-            return res.json();
+        .then(r => {
+            if (!r.ok) throw new Error('Không tải được đơn hàng');
+            return r.json();
         })
         .then(res => {
             const data = res.data;
-            if (data?.orders?.length > 0) {
+            if (data?.orders?.length) {
                 renderOrders(data.orders);
                 renderPagination(data.currentPage, data.totalPages);
             } else {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" style="text-align:center;padding:40px;color:#6c757d;">
+                        <td colspan="7" class="center text-muted py-4">
                             Không có đơn hàng nào
                         </td>
                     </tr>`;
@@ -57,20 +141,21 @@ function fetchOrders(page = 1) {
         .catch(err => {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="7" style="color:#dc3545;text-align:center;">
-                        Lỗi: ${err.message}
+                    <td colspan="7" class="center text-danger py-4">
+                        ${err.message}
                     </td>
                 </tr>`;
         });
 }
 
+/* ================= RENDER ================= */
 function renderOrders(orders) {
     const tbody = document.getElementById('orders-table-body');
     tbody.innerHTML = '';
 
     orders.forEach(o => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
             <td class="center">#${o.id}</td>
             <td class="center">${o.phone || 'N/A'}</td>
             <td class="center">${formatPrice(o.totalAmount)}</td>
@@ -85,23 +170,91 @@ function renderOrders(orders) {
                 <button class="action-btn view" onclick="viewOrder(${o.id})">
                     <i class="fas fa-eye"></i>
                 </button>
-            </td>
-        `;
-        tbody.appendChild(row);
+            </td>`;
+        tbody.appendChild(tr);
     });
 }
 
-function renderPagination(current, total) {
+function renderPagination(currentPage, totalPages) {
     const pagination = document.getElementById('pagination-orders');
     pagination.innerHTML = '';
 
-    for (let i = 1; i <= total; i++) {
-        const btn = document.createElement('button');
-        btn.textContent = i;
-        btn.className = i === current ? 'active' : '';
-        btn.onclick = () => fetchOrders(i);
-        pagination.appendChild(btn);
+    if (totalPages <= 1) return;
+
+    const buttonsDiv = document.createElement('div');
+    buttonsDiv.className = 'pagination-buttons';
+
+    /* ===== PREVIOUS ===== */
+    if (currentPage > 1) {
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'pagination-btn';
+        prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        prevBtn.title = 'Trang trước';
+        prevBtn.onclick = () => applyFilters(currentPage - 1);
+        buttonsDiv.appendChild(prevBtn);
     }
+
+    /* ===== PAGE NUMBERS ===== */
+    const maxVisible = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+    if (endPage - startPage + 1 < maxVisible) {
+        startPage = Math.max(1, endPage - maxVisible + 1);
+    }
+
+    // Trang đầu
+    if (startPage > 1) {
+        const firstBtn = document.createElement('button');
+        firstBtn.className = 'pagination-btn';
+        firstBtn.textContent = '1';
+        firstBtn.onclick = () => applyFilters(1);
+        buttonsDiv.appendChild(firstBtn);
+
+        if (startPage > 2) {
+            const dots = document.createElement('span');
+            dots.className = 'pagination-ellipsis';
+            dots.textContent = '...';
+            buttonsDiv.appendChild(dots);
+        }
+    }
+
+    // Các trang giữa
+    for (let i = startPage; i <= endPage; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'pagination-btn' + (i === currentPage ? ' active' : '');
+        btn.textContent = i;
+        btn.onclick = () => applyFilters(i);
+        buttonsDiv.appendChild(btn);
+    }
+
+    // Trang cuối
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+            const dots = document.createElement('span');
+            dots.className = 'pagination-ellipsis';
+            dots.textContent = '...';
+            buttonsDiv.appendChild(dots);
+        }
+
+        const lastBtn = document.createElement('button');
+        lastBtn.className = 'pagination-btn';
+        lastBtn.textContent = totalPages;
+        lastBtn.onclick = () => applyFilters(totalPages);
+        buttonsDiv.appendChild(lastBtn);
+    }
+
+    /* ===== NEXT ===== */
+    if (currentPage < totalPages) {
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'pagination-btn';
+        nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        nextBtn.title = 'Trang sau';
+        nextBtn.onclick = () => applyFilters(currentPage + 1);
+        buttonsDiv.appendChild(nextBtn);
+    }
+
+    pagination.appendChild(buttonsDiv);
 }
 
 function viewOrder(id) {
@@ -110,6 +263,7 @@ function viewOrder(id) {
 
 function getStatusText(status) {
     return {
+        ALL: 'Tất cả trạng thái',
         PENDING: 'Chờ xử lý',
         PROCESSING: 'Đang xử lý',
         SHIPPING: 'Đang vận chuyển',

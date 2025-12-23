@@ -99,7 +99,6 @@ function renderOrderStatus(order) {
     statusDisplay.className = `order-status status-${currentStatus.toLowerCase()}`;
     statusDisplay.innerHTML = `<i class="fas fa-circle"></i> ${getStatusText(currentStatus)}`;
 
-    // ❗ Nếu thiếu element → ẩn và thoát
     if (!statusActions || !statusSelect || !updateBtn) {
         return;
     }
@@ -120,8 +119,6 @@ function renderOrderStatus(order) {
     newBtn.onclick = async () => {
         const newStatus = statusSelect.value;
         if (newStatus === currentStatus) return;
-
-        if (!confirm(`Chuyển trạng thái thành "${getStatusText(newStatus)}"?`)) return;
 
         try {
             const res = await fetch(
@@ -151,8 +148,6 @@ function renderOrderStatus(order) {
     };
 }
 
-
-/* ================= ITEMS ================= */
 function renderOrderItems(items) {
     const orderItems = document.getElementById('orderItems');
     orderItems.innerHTML = '';
@@ -176,7 +171,6 @@ function renderOrderItems(items) {
     });
 }
 
-/* ================= SUMMARY ================= */
 function renderSummary(order) {
     const subtotal = order.totalAmount;
     document.getElementById('subtotal').textContent = formatPrice(subtotal - 10000);
@@ -198,8 +192,6 @@ function handleCancelButton(order) {
     }
 }
 
-
-/* ================= HELPERS ================= */
 function getStatusText(status) {
     return {
         PENDING: 'Đang chờ xử lý',

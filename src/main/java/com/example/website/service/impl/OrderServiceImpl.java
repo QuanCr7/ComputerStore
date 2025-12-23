@@ -36,11 +36,9 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
-    private final OrderDetailService orderDetailService;
     private final ProductRepository productRepository;
-    private final OrderDetailRepository orderDetailRepository;
 
-    private static final int size = 15;
+    private static final int size = 10;
 
     @Override
     public PageOrderResponse findAll(Integer page) {

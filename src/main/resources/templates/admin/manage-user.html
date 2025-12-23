@@ -30,10 +30,37 @@
         </header>
 
         <div class="content-wrapper">
-            <div class="toolbar">
-                <div class="search-box">
-                    <input type="text" id="searchUser" placeholder="Tìm theo tên, email, số điện thoại...">
-                    <button onclick="searchUsers()"><i class="fas fa-search"></i></button>
+            <div class="toolbar advanced-search-toolbar">
+                <div class="search-section-admin">
+                    <h3>Bộ lọc người dùng</h3>
+
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>Tên đăng nhập</label>
+                            <input type="text" id="filter-username">
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Email</label>
+                            <input type="text" id="filter-email">
+                        </div>
+
+                        <div class="filter-group">
+                            <label>SĐT</label>
+                            <input type="text" id="filter-phone">
+                        </div>
+
+                        <div class="filter-group">
+                            <label>ID</label>
+                            <input type="number" id="filter-id">
+                        </div>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button class="btn btn-primary" onclick="applyFilters(1)">Áp dụng</button>
+                        <button class="btn btn-secondary" onclick="resetFilters()">Đặt lại</button>
+                    </div>
+
                 </div>
             </div>
 
