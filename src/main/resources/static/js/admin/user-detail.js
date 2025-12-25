@@ -1,5 +1,19 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    const loadingScreen = document.getElementById('loadingScreen');
+    const adminContent = document.getElementById('adminContent');
     const userIdInput = document.getElementById('userId');
+
+    const isLoggedIn = await checkLoginStatus();
+
+    if (!isLoggedIn) {
+        if (loadingScreen) loadingScreen.style.display = 'none';
+        alert('Bạn cần đăng nhập để truy cập trang quản trị');
+        window.location.href = '/auth/login';
+        return;
+    }
+
+    if (loadingScreen) loadingScreen.style.display = 'none';
+    if (adminContent) adminContent.style.display = 'flex';
 
     if (!userIdInput || !userIdInput.value) {
         alert('Không tìm thấy ID người dùng');
@@ -8,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadUserDetail(userIdInput.value);
 });
+
 
 async function loadUserDetail(userId) {
     try {

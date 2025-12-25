@@ -10,8 +10,22 @@ let currentFilters = {
 
 let userToDelete = null;
 
+document.addEventListener('DOMContentLoaded', async () => {
+    const loadingScreen = document.getElementById('loadingScreen');
+    const adminContent = document.getElementById('adminContent');
 
-document.addEventListener('DOMContentLoaded', () => {
+    const isLoggedIn = await checkLoginStatus();
+
+    if (!isLoggedIn) {
+        if (loadingScreen) loadingScreen.style.display = 'none';
+        alert('Bạn cần đăng nhập để truy cập trang quản trị');
+        window.location.href = '/login';
+        return;
+    }
+
+    if (loadingScreen) loadingScreen.style.display = 'none';
+    if (adminContent) adminContent.style.display = 'flex';
+
     applyFiltersFromUrl();
 
     document.getElementById('confirmDelete')?.addEventListener('click', () => {
@@ -21,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('cancelDelete')?.addEventListener('click', closeDeleteModal);
     document.getElementById('closeModal')?.addEventListener('click', closeDeleteModal);
 });
-
 
 function fetchUsers(page = 1) {
     currentPage = page;
@@ -38,16 +51,29 @@ function fetchUsers(page = 1) {
     if (currentFilters.phone) params.append('phone', currentFilters.phone);
     if (currentFilters.id) params.append('id', currentFilters.id);
 
-    fetch(`/account/search?${params.toString()}`)
-        .then(r => r.json())
+    fetch(`/account/search?${params.toString()}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${getAccessToken()}`,
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(r => {
+            if (!r.ok) {
+                if (r.status === 401 || r.status === 403)
+                    throw new Error('Bạn không có quyền truy cập');
+                throw new Error('Lỗi tải dữ liệu');
+            }
+            return r.json();
+        })
         .then(res => {
             const data = res.data;
             renderUsers(data.users || []);
             renderPagination(data.currentPage, data.totalPages);
         })
-        .catch(() => {
+        .catch(err => {
             tbody.innerHTML =
-                `<tr><td colspan="7" class="text-danger text-center">Lỗi tải dữ liệu</td></tr>`;
+                `<tr><td colspan="7" class="text-danger text-center">${err.message}</td></tr>`;
         });
 }
 
@@ -210,9 +236,20 @@ function closeDeleteModal() {
 }
 
 function deleteUser(id) {
-    fetch(`/account/deleteUser/${id}`, { method: 'DELETE' })
-        .then(r => {
-            if (!r.ok) throw new Error('Xóa thất bại');
+    fetch(`/account/deleteUser/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${getAccessToken()}`,
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(async r => {
+            if (!r.ok) {
+                if (r.status === 401 || r.status === 403)
+                    throw new Error('Bạn không có quyền xóa người dùng');
+                const err = await r.json().catch(() => ({}));
+                throw new Error(err.message || 'Xóa thất bại');
+            }
             return r.json();
         })
         .then(() => {
@@ -222,6 +259,7 @@ function deleteUser(id) {
         })
         .catch(err => showNotification(err.message, 'error'));
 }
+
 
 function applyFiltersFromUrl() {
     const params = new URLSearchParams(location.search);

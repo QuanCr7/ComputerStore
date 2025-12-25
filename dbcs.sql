@@ -8,11 +8,11 @@ INSERT INTO brands (name, image) VALUES
 ('Samsung', 'samsung.png'),
 ('Kioxia', 'kioxia.png'),
 ('MSI', 'msi.png'),
-('AMD','amd.png'),
+('AMD','amd.jpg'),
 ('Zotac','zotac.png'),
 ('AORUS','aorus.png'),
 ('Gigabyte','gigabyte.png'),
-('ASRock','asrock.png'),
+('ASRock','asrock.jpg'),
 ('BIOSTAR','biostar.png'),
 ('CORSAIR','corsair.png'),
 ('GSKILL','gskill.png'),
@@ -38,9 +38,9 @@ INSERT INTO categories (name, image) VALUES
 ('Nguồn máy tính', 'nguonmaytinh.png');
 
 INSERT INTO users (username, password, role, full_name, image, email, phone, address, date_of_birth, date_create) VALUES
-('admin', '$2a$10$yYSM8ARsaONzNLw7p2Pi/.LG4LTGDGz9Vnhveo9B8TfGyPMu/T2by', 'ADMIN', 'Admin', 'admin.jpg', 'admin@gmail.com.com', '0901234567', 'Nghe An', '1990-01-15', '2023-01-01'),
-('quancr', '$2a$10$bpqBdC6T9cPzhe5kLjwLR.xwSlMTG.eG3.JW6ZaTx8mB.GDvJO8sS', 'CUSTOMER', 'Bien Quan', 'ronaldo.jpg', 'bienanhquan7@gmail.com.com', '0336684254', 'Viet Nam', '2002-01-02', '2023-01-01'),
-('ronaldo', '$2a$10$bpqBdC6T9cPzhe5kLjwLR.xwSlMTG.eG3.JW6ZaTx8mB.GDvJO8sS', 'CUSTOMER', 'Cristiano Ronaldo', 'ronaldo.jpg', 'ronaldo@gmail.com.com', '0965427504', 'Protugal', '1985-02-05', '2023-01-01');
+('admin', '$2a$10$OcwT6NHGWnd8Tu3dxQW3Q.m5oW6hGHJ7sZYp7dZo5d8Kxl37n1U/y', 'ADMIN', 'Admin', 'admin.jpg', 'admin@gmail.com', '0901234567', 'Nghe An', '1990-01-15', '2023-01-01'),
+('quancr', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.', 'CUSTOMER', 'Bien Quan', 'ronaldo.jpg', 'bienanhquan7@gmail.com', '0336684254', 'Viet Nam', '2002-01-02', '2023-01-01'),
+('ronaldo', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.', 'CUSTOMER', 'Cristiano Ronaldo', 'ronaldo.jpg', 'ronaldo@gmail.com', '0965427504', 'Protugal', '1985-02-05', '2023-01-01');
 
 -- CPU (15 sản phẩm)
 INSERT INTO products (name, price, description, stock_quantity, warranty, discount, create_date, category_id, brand_id) VALUES
@@ -60,6 +60,23 @@ INSERT INTO products (name, price, description, stock_quantity, warranty, discou
 ('Intel Pentium Gold G7400', 1890000, 'CPU Intel Pentium, 2 nhân 4 luồng', 70, 36, 2, '2024-01-05', 1, 1),
 ('AMD Ryzen 3 4100', 1990000, 'CPU AMD Ryzen 3, 4 nhân 8 luồng', 55, 36, 4, '2024-01-12', 1, 8);
 
+INSERT INTO product_image (product_id, images) VALUES
+(1, 'cpu1.jpg'),
+(2, 'i7.jpg'),
+(3, 'i9.jpg'),
+(4, 'amd5.jpg'),
+(5, 'amd7.jpg'),
+(6, 'i3.jpg'),
+(7, 'amd9.jpg'),
+(8, 'i5.jpg'),
+(9, 'amd5.jpg'),
+(10, 'i7.jpg'),
+(11, 'amd7.jpg'),
+(12, 'i9.jpg'),
+(13, 'amd9.jpg'),
+(14, 'igold.jpg'),
+(15, 'amd3.jpg');
+
 -- Card đồ họa (15 sản phẩm)
 INSERT INTO products (name, price, description, stock_quantity, warranty, discount, create_date, category_id, brand_id) VALUES
 ('NVIDIA GeForce RTX 4090', 42990000, 'Card đồ họa NVIDIA RTX 4090 24GB GDDR6X', 10, 36, 15, '2024-02-01', 2, 2),
@@ -77,6 +94,23 @@ INSERT INTO products (name, price, description, stock_quantity, warranty, discou
 ('MSI RTX 3060 Ti', 12990000, 'Card đồ họa MSI RTX 3060 Ti 8GB GDDR6', 12, 24, 18, '2024-01-18', 2, 7),
 ('AMD Radeon RX 6700 XT', 11990000, 'Card đồ họa AMD Radeon RX 6700 XT 12GB GDDR6', 9, 36, 13, '2024-01-22', 2, 8),
 ('Zotac RTX 4070 Super', 22990000, 'Card đồ họa Zotac RTX 4070 Super 12GB GDDR6X', 11, 36, 10, '2024-02-20', 2, 9);
+
+INSERT INTO product_image (product_id, images) VALUES
+(16, 'nvidia4090.jpg'),
+(17, 'asus4080.jpg'),
+(18, 'msi4070.jpg'),
+(19, 'gg4060.jpg'),
+(20, 'amd7900.jpg'),
+(21, 'nvidia3080.jpg'),
+(22, 'asus4070.png'),
+(23, 'msi7800.jpg'),
+(24, 'gg3050.jpg'),
+(25, 'amd7600.jpg'),
+(26, 'nvidia1660.jpg'),
+(27, 'asus4060.jpg'),
+(28, 'msi3060.jpg'),
+(29, 'amd6700.jpg'),
+(30, 'zotac4070.jpg');
 
 -- Mainboard (15 sản phẩm)
 INSERT INTO products (name, price, description, stock_quantity, warranty, discount, create_date, category_id, brand_id) VALUES
@@ -96,6 +130,23 @@ INSERT INTO products (name, price, description, stock_quantity, warranty, discou
 ('Biostar B450MH', 1590000, 'Mainboard Biostar B450 Micro-ATX cho AMD', 60, 24, 10, '2024-01-03', 3, 13),
 ('ASUS ProArt Z790-Creator', 12990000, 'Mainboard ASUS Z790 cho sáng tạo nội dung', 18, 36, 14, '2024-02-15', 3, 3);
 
+INSERT INTO product_image (product_id, images) VALUES
+(31, 'asusz790.png'),
+(32, 'msib760m.jpg'),
+(33, 'ggb650m.jpg'),
+(34, 'asusb550mplus.jpg'),
+(35, 'msiz790.jpg'),
+(36, 'asrockb660m.jpg'),
+(37, 'aorusx670e.jpg'),
+(38, 'asush610mk.jpg'),
+(39, 'msib550.jpg'),
+(40, 'asrocka520m.jpg'),
+(41, 'gigabytez690.jpg'),
+(42, 'asusx670e.jpg'),
+(43, 'msib550m.jpg'),
+(44, 'biostarb450mh.jpg'),
+(45, 'asusz790.jpg');
+
 -- RAM (15 sản phẩm)
 INSERT INTO products (name, price, description, stock_quantity, warranty, discount, create_date, category_id, brand_id) VALUES
 ('Kingston Fury Beast DDR5 32GB (2x16GB) 6000MHz', 2990000, 'RAM Kingston Fury Beast DDR5 32GB 6000MHz', 50, 60, 10, '2024-02-01', 4, 4),
@@ -113,6 +164,23 @@ INSERT INTO products (name, price, description, stock_quantity, warranty, discou
 ('Kingston Fury Beast RGB DDR5 48GB (2x24GB) 5600MHz', 3490000, 'RAM Kingston Fury Beast RGB DDR5 48GB', 22, 60, 14, '2024-02-08', 4, 4),
 ('Corsair Vengeance LPX DDR4 64GB (2x32GB) 3200MHz', 4490000, 'RAM Corsair Vengeance LPX DDR4 64GB', 18, 60, 16, '2024-02-12', 4, 14),
 ('ADATA Premier DDR5 32GB (1x32GB) 4800MHz', 1790000, 'RAM ADATA Premier DDR5 32GB', 38, 60, 7, '2024-01-28', 4, 16);
+
+INSERT INTO product_image (product_id, images) VALUES
+(46, 'kingston6000mhz.jpg'),
+(47, 'corsair3600mhz.jpg'),
+(48, 'gskillz5.png'),
+(49, 'samsung4800mhz.jpg'),
+(50, 'kingston3200mhz.jpg'),
+(51, 'cor5200mhz.png'),
+(52, 'adata3600mhz.png'),
+(53, 'teamgroup6000mhz.jpg'),
+(54, 'kingston2666mhz.jpg'),
+(55, 'gskillz4400mhz.jpg'),
+(56, 'samsung3200mhz.jpg'),
+(57, 'crucial3600mhz.jpg'),
+(58, 'kingston5600mhz.jpg'),
+(59, 'cor3200mhz.png'),
+(60, 'adata4800mhz.jpg');
 
 -- Ổ cứng (15 sản phẩm)
 INSERT INTO products (name, price, description, stock_quantity, warranty, discount, create_date, category_id, brand_id) VALUES
@@ -132,6 +200,23 @@ INSERT INTO products (name, price, description, stock_quantity, warranty, discou
 ('Kingston KC3000 1TB NVMe', 2790000, 'SSD Kingston KC3000 1TB PCIe 4.0 NVMe', 26, 60, 13, '2024-02-12', 5, 4),
 ('Samsung 990 Pro 2TB NVMe', 5990000, 'SSD Samsung 990 Pro 2TB PCIe 4.0 NVMe', 18, 60, 22, '2024-02-15', 5, 5);
 
+INSERT INTO product_image (product_id, images) VALUES
+(61, 'samsung980.jpg'),
+(62, 'westernsn570.jpg'),
+(63, 'kingston2tb.jpg'),
+(64, 'crucial1tb.jpg'),
+(65, 'samsung870.jpg'),
+(66, 'kioxia1tb.jpg'),
+(67, 'wdsn850x.jpg'),
+(68, 'kingston400gb.jpg'),
+(69, 'samsung970.jpg'),
+(70, 'crucialmx500.png'),
+(71, 'kioxia2tb.jpg'),
+(72, 'wdblue4tb.jpg'),
+(73, 'hddbarracuda2tb.jpg'),
+(74, 'kingston1tb.jpg'),
+(75, 'Samsung990.jpg');
+
 -- Case (15 sản phẩm)
 INSERT INTO products (name, price, description, stock_quantity, warranty, discount, create_date, category_id, brand_id) VALUES
 ('Corsair 4000D Airflow', 2490000, 'Case Corsair 4000D Airflow Mid-Tower', 30, 24, 10, '2024-02-01', 6, 14),
@@ -149,6 +234,23 @@ INSERT INTO products (name, price, description, stock_quantity, warranty, discou
 ('Fractal Design Pop Air RGB', 1990000, 'Case Fractal Design Pop Air RGB Mid-Tower', 34, 24, 8, '2024-01-12', 6, 25),
 ('Cooler Master HAF 700 EVO', 8990000, 'Case Cooler Master HAF 700 EVO Full-Tower', 10, 36, 20, '2024-02-15', 6, 19),
 ('Phanteks NV7', 6990000, 'Case Phanteks NV7 Full-Tower', 12, 36, 16, '2024-02-12', 6, 25);
+
+INSERT INTO product_image (product_id, images) VALUES
+(76, 'corsair4000d.jpg'),
+(77, 'nzxth5flow.jpg'),
+(78, 'lianli011.jpg'),
+(79, 'meshify2.jpg'),
+(80, 'coolertd500.png'),
+(81, 'PhanteksEclipseP400A.jpg'),
+(82, 'asusgt301.jpg'),
+(83, 'msiforge100r.jpg'),
+(84, 'deepcoolch560.jpg'),
+(85, 'corsair5000d.jpg'),
+(86, 'nzxth7flow.jpg'),
+(87, 'lianli216.jpg'),
+(88, 'fractal.jpg'),
+(89, 'cooler700.jpg'),
+(90, 'phanteknv7.jpg');
 
 -- Tản nhiệt (15 sản phẩm)
 INSERT INTO products (name, price, description, stock_quantity, warranty, discount, create_date, category_id, brand_id) VALUES
@@ -168,6 +270,23 @@ INSERT INTO products (name, price, description, stock_quantity, warranty, discou
 ('NZXT Kraken 240 RGB', 3290000, 'Tản nước AIO 240mm NZXT Kraken', 29, 60, 16, '2024-02-12', 7, 21),
 ('Corsair H100i Elite Capellix', 3290000, 'Tản nước AIO 240mm Corsair H100i', 31, 60, 17, '2024-02-15', 7, 14);
 
+INSERT INTO product_image (product_id, images) VALUES
+(91, 'corsairh150i.png'),
+(92, 'nzxt360.jpg'),
+(93, 'cooler212.jpg'),
+(94, 'AK620.jpg'),
+(95, 'arctic280.jpg'),
+(96, 'noctuanhd15.jpg'),
+(97, 'lianli360.jpg'),
+(98, 'thermalright12.jpg'),
+(99, 'msi240R.jpg'),
+(100, 'masterliquidml240l.jpg'),
+(101, 'deepcoollt720.png'),
+(102, 'bequietdrp4.jpg'),
+(103, 'XTS224.jpg'),
+(104, 'nzxt240.jpg'),
+(105, 'corsairh100i.png');
+
 -- Nguồn máy tính (15 sản phẩm)
 INSERT INTO products (name, price, description, stock_quantity, warranty, discount, create_date, category_id, brand_id) VALUES
 ('Corsair RM850x 850W 80 Plus Gold', 3490000, 'Nguồn Corsair RM850x 850W Full Modular', 30, 120, 15, '2024-02-01', 8, 14),
@@ -185,6 +304,23 @@ INSERT INTO products (name, price, description, stock_quantity, warranty, discou
 ('Cooler Master V850 Gold V2', 2990000, 'Nguồn Cooler Master V850 850W 80 Plus Gold', 29, 120, 16, '2024-01-28', 8, 19),
 ('ASUS TUF Gaming 750W Bronze', 1790000, 'Nguồn ASUS TUF Gaming 750W 80 Plus Bronze', 42, 60, 6, '2024-01-12', 8, 3),
 ('MSI MAG A650BN 650W', 1190000, 'Nguồn MSI MAG A650BN 650W 80 Plus Bronze', 45, 36, 4, '2024-01-05', 8, 7);
+
+INSERT INTO product_image (product_id, images) VALUES
+(106, 'corsair850w.jpg'),
+(107, 'seasonicgx850.jpg'),
+(108, 'coolermastergold750w.jpg'),
+(109, 'asus1000w.png'),
+(110, 'msi850w.png'),
+(111, 'evga750.jpg'),
+(112, 'bequiet850w.jpg'),
+(113, 'hydro1000w.jpg'),
+(114, 'thermaltakegf1850w.jpg'),
+(115, 'corsaircv650.jpg'),
+(116, 'GigabyteUD850GM.jpg'),
+(117, 'seasonictx1000.jpg'),
+(118, 'coolerv850.jpg'),
+(119, 'asus750w.jpg'),
+(120, 'msi650w.jpg');
 
 -- Thuộc tính cho CPU
 INSERT INTO `product-attributes` (product_id, attribute_key, attribute_value) VALUES
@@ -1939,147 +2075,3 @@ INSERT INTO `product-attributes` (product_id, attribute_key, attribute_value) VA
 (120, 'số_cổng_cắm', '1 x 24-pin Main, 1 x 8-pin (4+4) EPS, 2 x 8-pin (6+2) PCIe, 6 x SATA, 3 x 4-pin Peripheral'),
 (120, 'quạt_làm_mát', '1 x 120 mm fan'),
 (120, 'nguồn_đầu_vào', '100 - 240VAC');
-
--- Hình ảnh cho CPU (ID 1-15)
-INSERT INTO product_image (product_id, images) VALUES
-(1, 'cpu1.jpg'),
-(2, 'cpu1.jpg'),
-(3, 'cpu1.jpg'),
-(4, 'cpu1.jpg'),
-(5, 'cpu1.jpg'),
-(6, 'cpu1.jpg'),
-(7, 'cpu1.jpg'),
-(8, 'cpu1.jpg'),
-(9, 'cpu1.jpg'),
-(10, 'cpu1.jpg'),
-(11, 'cpu1.jpg'),
-(12, 'cpu1.jpg'),
-(13, 'cpu1.jpg'),
-(14, 'cpu1.jpg'),
-(15, 'cpu1.jpg');
-
--- Hình ảnh cho Card đồ họa (ID 16-30)
-INSERT INTO product_image (product_id, images) VALUES
-(16, 'gpu1.jpg'),
-(17, 'gpu1.jpg'),
-(18, 'gpu1.jpg'),
-(19, 'gpu1.jpg'),
-(20, 'gpu1.jpg'),
-(21, 'gpu1.jpg'),
-(22, 'gpu1.jpg'),
-(23, 'gpu1.jpg'),
-(24, 'gpu1.jpg'),
-(25, 'gpu1.jpg'),
-(26, 'gpu1.jpg'),
-(27, 'gpu1.jpg'),
-(28, 'gpu1.jpg'),
-(29, 'gpu1.jpg'),
-(30, 'gpu1.jpg');
-
--- Hình ảnh cho Mainboard (ID 31-45)
-INSERT INTO product_image (product_id, images) VALUES
-(31, 'mainboard1.jpg'),
-(32, 'mainboard1.jpg'),
-(33, 'mainboard1.jpg'),
-(34, 'mainboard1.jpg'),
-(35, 'mainboard1.jpg'),
-(36, 'mainboard1.jpg'),
-(37, 'mainboard1.jpg'),
-(38, 'mainboard1.jpg'),
-(39, 'mainboard1.jpg'),
-(40, 'mainboard1.jpg'),
-(41, 'mainboard1.jpg'),
-(42, 'mainboard1.jpg'),
-(43, 'mainboard1.jpg'),
-(44, 'mainboard1.jpg'),
-(45, 'mainboard1.jpg');
-
--- Hình ảnh cho RAM (ID 46-60)
-INSERT INTO product_image (product_id, images) VALUES
-(46, 'ram1.jpg'),
-(47, 'ram1.jpg'),
-(48, 'ram1.jpg'),
-(49, 'ram1.jpg'),
-(50, 'ram1.jpg'),
-(51, 'ram1.jpg'),
-(52, 'ram1.jpg'),
-(53, 'ram1.jpg'),
-(54, 'ram1.jpg'),
-(55, 'ram1.jpg'),
-(56, 'ram1.jpg'),
-(57, 'ram1.jpg'),
-(58, 'ram1.jpg'),
-(59, 'ram1.jpg'),
-(60, 'ram1.jpg');
-
--- Hình ảnh cho Ổ cứng (ID 61-75)
-INSERT INTO product_image (product_id, images) VALUES
-(61, 'ssd1.jpg'),
-(62, 'ssd1.jpg'),
-(63, 'ssd1.jpg'),
-(64, 'ssd1.jpg'),
-(65, 'ssd1.jpg'),
-(66, 'ssd1.jpg'),
-(67, 'ssd1.jpg'),
-(68, 'ssd1.jpg'),
-(69, 'ssd1.jpg'),
-(70, 'ssd1.jpg'),
-(71, 'ssd1.jpg'),
-(72, 'ssd1.jpg'),
-(73, 'ssd1.jpg'),
-(74, 'ssd1.jpg'),
-(75, 'ssd1.jpg');
-
--- Hình ảnh cho Case (ID 76-90)
-INSERT INTO product_image (product_id, images) VALUES
-(76, 'case1.jpg'),
-(77, 'case1.jpg'),
-(78, 'case1.jpg'),
-(79, 'case1.jpg'),
-(80, 'case1.jpg'),
-(81, 'case1.jpg'),
-(82, 'case1.jpg'),
-(83, 'case1.jpg'),
-(84, 'case1.jpg'),
-(85, 'case1.jpg'),
-(86, 'case1.jpg'),
-(87, 'case1.jpg'),
-(88, 'case1.jpg'),
-(89, 'case1.jpg'),
-(90, 'case1.jpg');
-
--- Hình ảnh cho Tản nhiệt (ID 91-105)
-INSERT INTO product_image (product_id, images) VALUES
-(91, 'heatsink1.jpg'),
-(92, 'heatsink1.jpg'),
-(93, 'heatsink1.jpg'),
-(94, 'heatsink1.jpg'),
-(95, 'heatsink1.jpg'),
-(96, 'heatsink1.jpg'),
-(97, 'heatsink1.jpg'),
-(98, 'heatsink1.jpg'),
-(99, 'heatsink1.jpg'),
-(100, 'heatsink1.jpg'),
-(101, 'heatsink1.jpg'),
-(102, 'heatsink1.jpg'),
-(103, 'heatsink1.jpg'),
-(104, 'heatsink1.jpg'),
-(105, 'heatsink1.jpg');
-
--- Hình ảnh cho Nguồn (ID 106-120)
-INSERT INTO product_image (product_id, images) VALUES
-(106, 'psu1.jpg'),
-(107, 'psu1.jpg'),
-(108, 'psu1.jpg'),
-(109, 'psu1.jpg'),
-(110, 'psu1.jpg'),
-(111, 'psu1.jpg'),
-(112, 'psu1.jpg'),
-(113, 'psu1.jpg'),
-(114, 'psu1.jpg'),
-(115, 'psu1.jpg'),
-(116, 'psu1.jpg'),
-(117, 'psu1.jpg'),
-(118, 'psu1.jpg'),
-(119, 'psu1.jpg'),
-(120, 'psu1.jpg');

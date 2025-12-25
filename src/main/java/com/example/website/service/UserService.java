@@ -16,7 +16,7 @@ public interface UserService {
 
     PageUserResponse getByCondition(Integer page,String name,String email,Integer id,String phone);
 
-    UserResponse update(int id,UserRegisterRequest request);
+    UserResponse update(UserRegisterRequest request);
     void delete(int id);
 
     UserResponse changePassword(ChangePasswordRequest request);

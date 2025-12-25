@@ -5,7 +5,6 @@ import com.example.website.entity.OrderDetailEntity;
 import com.example.website.entity.OrderEntity;
 import com.example.website.entity.ProductEntity;
 import com.example.website.entity.UserEntity;
-import com.example.website.repository.OrderDetailRepository;
 import com.example.website.repository.OrderRepository;
 import com.example.website.repository.ProductRepository;
 import com.example.website.repository.UserRepository;
@@ -14,9 +13,7 @@ import com.example.website.request.OrderRequest;
 import com.example.website.response.OrderDetailResponse;
 import com.example.website.response.OrderResponse;
 import com.example.website.response.PageOrderResponse;
-import com.example.website.service.OrderDetailService;
 import com.example.website.service.OrderService;
-import com.example.website.service.ProductService;
 import com.example.website.utils.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -161,7 +158,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse cancelOrder(int orderId) {
-        // Lấy thông tin user hiện tại
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
         Integer currentUserId = userDetails.getId();

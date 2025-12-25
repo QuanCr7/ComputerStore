@@ -8,18 +8,31 @@ let currentFilters = {
     page: 1
 };
 
-/* ================= INIT ================= */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    const loadingScreen = document.getElementById('loadingScreen');
+    const adminContent = document.getElementById('adminContent');
+
+    const isLoggedIn = await checkLoginStatus();
+
+    if (!isLoggedIn) {
+        if (loadingScreen) loadingScreen.style.display = 'none';
+        alert('Bạn cần đăng nhập để truy cập trang quản trị');
+        window.location.href = '/login';
+        return;
+    }
+
+    // Đã đăng nhập → cho hiển thị admin
+    if (loadingScreen) loadingScreen.style.display = 'none';
+    if (adminContent) adminContent.style.display = 'flex';
+
     initCustomSelect();
     applyFiltersFromUrl();
 
-    // Enter để tìm
     document.getElementById('orderKeyword')?.addEventListener('keyup', e => {
         if (e.key === 'Enter') applyFilters(1);
     });
 });
 
-/* ================= CUSTOM SELECT ================= */
 function initCustomSelect() {
     document.addEventListener('click', e => {
         document.querySelectorAll('.custom-select').forEach(select => {
@@ -47,7 +60,6 @@ function initCustomSelect() {
     });
 }
 
-/* ================= APPLY FILTER ================= */
 function applyFilters(page = 1) {
     currentFilters = {
         keyword: document.getElementById('orderKeyword')?.value.trim() || '',
@@ -60,7 +72,6 @@ function applyFilters(page = 1) {
     fetchOrders();
 }
 
-/* ================= RESET FILTER ================= */
 function resetFilters() {
     document.getElementById('orderKeyword').value = '';
     selectedStatus = 'ALL';
@@ -85,14 +96,11 @@ function updateUrl() {
 
     const query = params.toString();
 
-    // ✅ KHÔNG có param → KHÔNG thêm ?
     const newUrl = query ? `/manage/o?${query}` : `/manage/o`;
 
     history.replaceState(null, '', newUrl);
 }
 
-
-/* ================= READ URL ================= */
 function applyFiltersFromUrl() {
     const params = new URLSearchParams(location.search);
 
@@ -109,7 +117,6 @@ function applyFiltersFromUrl() {
     fetchOrders();
 }
 
-/* ================= FETCH DATA ================= */
 function fetchOrders() {
     const tbody = document.getElementById('orders-table-body');
     const pagination = document.getElementById('pagination-orders');
@@ -119,8 +126,13 @@ function fetchOrders() {
 
     const params = new URLSearchParams(currentFilters);
 
-    fetch(`/order/search?${params.toString()}`)
-        .then(r => {
+    fetch(`/order/search?${params.toString()}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${getAccessToken()}`,
+            'Content-Type': 'application/json'
+        }
+    }).then(r => {
             if (!r.ok) throw new Error('Không tải được đơn hàng');
             return r.json();
         })
@@ -148,7 +160,6 @@ function fetchOrders() {
         });
 }
 
-/* ================= RENDER ================= */
 function renderOrders(orders) {
     const tbody = document.getElementById('orders-table-body');
     tbody.innerHTML = '';

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -22,6 +23,7 @@ public class OrderController extends BaseController {
             description = "Lấy danh sách tất cả đơn hàng trong hệ thống (phân trang)",
             tags = {"Đơn hàng"}
     )
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<BaseResponse<PageOrderResponse>> getAllOrder(
             @RequestParam(defaultValue = "1") int page) {
@@ -33,6 +35,7 @@ public class OrderController extends BaseController {
             description = "Lấy thông tin chi tiết của một đơn hàng theo ID",
             tags = {"Đơn hàng"}
     )
+    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
     @GetMapping("/detail/{id}")
     public ResponseEntity<BaseResponse<OrderResponse>> display(@PathVariable("id") Integer id) {
         return returnSuccess(orderService.getById(id));
@@ -77,6 +80,7 @@ public class OrderController extends BaseController {
         return returnSuccess(orderService.updateStatus(orderId, status));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/search")
     public ResponseEntity<BaseResponse<PageOrderResponse>> getOrders(
             @RequestParam(required = false) String keyword,

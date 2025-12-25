@@ -9,6 +9,7 @@ import com.example.website.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -22,6 +23,7 @@ public class AccountController extends BaseController {
             description = "Lấy tất cả danh sách người dùng trong hệ thống",
             tags = {"Tài khoản"}
     )
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("")
     public ResponseEntity<BaseResponse<PageUserResponse>> index(
             @RequestParam(defaultValue = "1") int page
@@ -44,6 +46,7 @@ public class AccountController extends BaseController {
             description = "Lấy thông tin chi tiết người dùng theo ID",
             tags = {"Tài khoản"}
     )
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse<UserResponse>> get(@PathVariable("id") int id) {
         return returnSuccess(userService.get(id));
@@ -51,14 +54,13 @@ public class AccountController extends BaseController {
 
     @Operation(
             summary = "Cập nhật người dùng",
-            description = "Cập nhật thông tin người dùng theo ID",
+            description = "Cập nhật thông tin người dùng",
             tags = {"Tài khoản"}
     )
-    @PutMapping("/editUser/{id}")
+    @PutMapping("/profile")
     public ResponseEntity<BaseResponse<UserResponse>> update(
-            @PathVariable("id") int id,
             @ModelAttribute UserRegisterRequest request) {
-        return returnSuccess(userService.update(id, request));
+        return returnSuccess(userService.update(request));
     }
 
     @Operation(
@@ -66,6 +68,7 @@ public class AccountController extends BaseController {
             description = "Xóa người dùng theo ID",
             tags = {"Tài khoản"}
     )
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/deleteUser/{id}")
     public ResponseEntity<BaseResponse<String>> delete(@PathVariable("id") int id) {
         userService.delete(id);
@@ -77,6 +80,7 @@ public class AccountController extends BaseController {
             description = "Tìm tất cả người dùng theo điều kiện",
             tags = {"Tài khoản"}
     )
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/search")
     public ResponseEntity<BaseResponse<PageUserResponse>> search(
             @RequestParam(required = false) String name,

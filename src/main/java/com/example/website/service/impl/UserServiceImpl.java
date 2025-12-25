@@ -94,19 +94,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse update(int id, UserRegisterRequest request) {
-        UserEntity user = getByid(id);
-        user.setFullName(request.getFullName());
-        user.setDateOfBirth(request.getDateOfBirth());
-        String image = saveImage(request.getImage());
-        if (image!=null && !image.isEmpty()) {
-            user.setImage(image);
-        } else {
-            user.setImage(user.getImage());
+    public UserResponse update(UserRegisterRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!(auth.getPrincipal() instanceof CustomUserDetails userDetails)) {
+            throw new RuntimeException("Chưa đăng nhập");
         }
+
+        UserEntity user = userRepository.findById(userDetails.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setAddress(request.getAddress());
+        user.setDateOfBirth(request.getDateOfBirth());
+
+        if (request.getImage() != null && !request.getImage().isEmpty()) {
+            String image = saveImage(request.getImage());
+            user.setImage(image);
+        }
+
         return response(userRepository.save(user));
     }
 

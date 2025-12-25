@@ -396,24 +396,27 @@ function performDelete(id) {
     fetch(`/deleteProduct/${id}`, {
         method: 'DELETE',
         headers: {
+            'Authorization': `Bearer ${getAccessToken()}`,
             'Content-Type': 'application/json'
         }
     })
         .then(async r => {
-            if (r.ok) {
-                return r.json();
-            } else {
-                const error = await r.json().catch(() => ({ message: 'Xóa thất bại' }));
-                throw new Error(error.message || 'Xóa thất bại');
+            if (!r.ok) {
+                if (r.status === 401 || r.status === 403) {
+                    throw new Error('Bạn không có quyền xoá sản phẩm');
+                }
+                const err = await r.json().catch(() => ({ message: 'Xóa thất bại' }));
+                throw new Error(err.message);
             }
+            return r.json();
         })
         .then(() => {
             showToast('Xóa sản phẩm thành công!', 'success');
-            fetchFilteredProducts(); // Load lại danh sách
+            fetchFilteredProducts();
         })
         .catch(err => {
-            console.error('Lỗi xóa sản phẩm:', err);
-            showToast(err.message || 'Lỗi xóa sản phẩm', 'error');
+            console.error(err);
+            showToast(err.message, 'error');
         });
 }
 

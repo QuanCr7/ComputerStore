@@ -7,6 +7,7 @@ import com.example.website.service.BrandService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,6 +43,7 @@ public class BrandController extends BaseController {
             description = "Thêm một nhãn hàng mới vào hệ thống",
             tags = {"Nhãn hàng"}
     )
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping("/addBrand")
     public ResponseEntity<BaseResponse<BrandResponse>> add(@ModelAttribute BrandRequest request) {
         return returnSuccess(brandService.add(request));
@@ -52,6 +54,7 @@ public class BrandController extends BaseController {
             description = "Thay đổi thông tin nhãn hàng theo ID chỉ định",
             tags = {"Nhãn hàng"}
     )
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/editBrand/{id}")
     public ResponseEntity<BaseResponse<BrandResponse>> update(
             @PathVariable("id") Integer id,
@@ -64,6 +67,7 @@ public class BrandController extends BaseController {
             description = "Xóa nhãn hàng theo ID chỉ định",
             tags = {"Nhãn hàng"}
     )
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/deleteBrand/{id}")
     public ResponseEntity<BaseResponse<String>> delete(@PathVariable("id") Integer id) {
         brandService.delete(id);

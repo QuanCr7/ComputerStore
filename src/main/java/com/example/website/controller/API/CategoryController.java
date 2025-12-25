@@ -7,6 +7,7 @@ import com.example.website.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,6 +43,7 @@ public class CategoryController extends BaseController {
             description = "Thêm một thể loại sách mới vào hệ thống",
             tags = {"Thể loại"}
     )
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping("/addCategory")
     public ResponseEntity<BaseResponse<CategoryResponse>> add(@ModelAttribute CategoryRequest request) {
         return returnSuccess(categoryService.add(request));
@@ -52,6 +54,7 @@ public class CategoryController extends BaseController {
             description = "Thay đổi thông tin thể loại theo ID chỉ định",
             tags = {"Thể loại"}
     )
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/editCategory/{id}")
     public ResponseEntity<BaseResponse<CategoryResponse>> update(
             @PathVariable("id") Integer id,
@@ -64,6 +67,7 @@ public class CategoryController extends BaseController {
             description = "Xóa thể loại sách theo ID chỉ định",
             tags = {"Thể loại"}
     )
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/deleteCategory/{id}")
     public ResponseEntity<BaseResponse<String>> delete(@PathVariable("id") Integer id) {
         categoryService.delete(id);

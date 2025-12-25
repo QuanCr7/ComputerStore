@@ -405,7 +405,6 @@ const specificForms = {
     `
 };
 
-// === 2. Map tên danh mục → key (nếu API không có value) ===
 function getCategoryValue(name) {
     const map = {
         'CPU': 'cpu',
@@ -420,20 +419,18 @@ function getCategoryValue(name) {
     return map[name.trim()] || null;
 }
 
-// === 3. DOM Elements ===
 const categoryContainer = document.getElementById('categoryRadioContainer');
 const brandContainer = document.getElementById('brandRadioContainer');
 const specificFields = document.getElementById('specificFields');
 const imageInput = document.getElementById('images');
 const imagePreview = document.getElementById('imagePreview');
 const form = document.getElementById('addProductForm');
-const loading = document.getElementById('loading');
+const loading = document.getElementById('loadingScreen');
 const errorEl = document.getElementById('error');
 
 let categories = [];
 let brands = [];
 
-// === 4. Khởi chạy ===
 document.addEventListener('DOMContentLoaded', () => {
     loadCategories();
     loadBrands();
@@ -441,7 +438,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFormSubmit();
 });
 
-// === 5. Tải danh mục ===
 function loadCategories() {
     categoryContainer.innerHTML = '<div class="loading-text">Đang tải danh mục...</div>';
     fetch('/categories')
@@ -474,7 +470,6 @@ function loadBrands() {
         });
 }
 
-// === 6. Hiển thị danh mục ===
 function renderCategories() {
     categoryContainer.innerHTML = '';
     if (!categories || categories.length === 0) {
@@ -536,7 +531,6 @@ function renderBrands() {
     });
 }
 
-// === 7. Hiển thị form riêng ===
 function showSpecificForm(categoryValue) {
     console.log('Hiển thị form cho:', categoryValue);
     specificFields.innerHTML = ''; // XÓA CŨ
@@ -554,7 +548,6 @@ function showSpecificForm(categoryValue) {
     specificFields.classList.add('active');
 }
 
-// === 8. Xem trước ảnh ===
 function setupImagePreview() {
     imageInput.addEventListener('change', function () {
         imagePreview.innerHTML = '';
@@ -590,7 +583,6 @@ function setupImagePreview() {
     });
 }
 
-// === 9. Xóa ảnh ===
 function removeImage(btn, index) {
     const dt = new DataTransfer();
     const files = Array.from(imageInput.files);
@@ -600,12 +592,11 @@ function removeImage(btn, index) {
     btn.parentElement.remove();
 }
 
-// === 10. Submit form ===
 function setupFormSubmit() {
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        // === LẤY DỮ LIỆU ===
+        // LẤY DỮ LIỆU
         const name = document.getElementById('name').value.trim();
         const price = parseFloat(document.getElementById('price').value);
         const description = document.getElementById('description').value.trim();
@@ -616,7 +607,7 @@ function setupFormSubmit() {
         const selectedBrand = document.querySelector('input[name="brand"]:checked');
         const images = imageInput.files;
 
-        // === VALIDATE NGHIÊM NGẶT ===
+        // VALIDATE
         if (!name) return showError('Tên sản phẩm không được để trống!');
         if (isNaN(price) || price <= 0) return showError('Giá phải lớn hơn 0!');
         if (isNaN(stock) || stock < 1) return showError('Số lượng tồn phải ≥ 1!');
@@ -669,6 +660,9 @@ function setupFormSubmit() {
         showLoading(true);
         fetch('/addProduct', {
             method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${getAccessToken()}`
+            },
             body: formData
         })
             .then(response => {
@@ -680,7 +674,7 @@ function setupFormSubmit() {
                 return response.json();
             })
             .then(data => {
-                alert('Thêm sản phẩm thành công!');
+                showToast('Thêm sản phẩm thành công', 'success');
                 window.location.href = '/manage/p';
             })
             .catch(error => {
@@ -693,7 +687,6 @@ function setupFormSubmit() {
     });
 }
 
-// === 11. Hiệu ứng loading & lỗi ===
 function showLoading(show) {
     loading.style.display = show ? 'flex' : 'none';
 }
@@ -702,4 +695,26 @@ function showError(msg) {
     errorEl.textContent = msg;
     errorEl.style.display = 'block';
     setTimeout(() => errorEl.style.display = 'none', 5000);
+}
+
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('notificationToast');
+    const msgEl = document.getElementById('toastMessage');
+
+    msgEl.textContent = message;
+    toast.className = `notification-toast ${type}`;
+
+    // Force reflow + show
+    toast.classList.remove('show');
+    void toast.offsetWidth;
+    toast.classList.add('show');
+
+    // Tự ẩn sau 4 giây
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 4000);
+}
+
+function closeToast() {
+    document.getElementById('notificationToast').classList.remove('show');
 }

@@ -18,7 +18,7 @@
     <div>Đang xác thực quyền truy cập...</div>
 </div>
 
-<div class="admin-wrapper">
+<div class="admin-wrapper" id="adminContent">
     <div th:replace="~{admin/common :: common}"></div>
 
     <main class="main-content">
@@ -106,6 +106,14 @@
             </form>
         </div>
     </main>
+</div>
+
+<div class="notification-toast" id="notificationToast">
+    <div class="toast-icon">
+        <i class="fas fa-check-circle"></i>
+    </div>
+    <div class="toast-message" id="toastMessage">Thêm sản phẩm thành công!</div>
+    <button class="toast-close" onclick="closeToast()">&times;</button>
 </div>
 
 <script src="/js/admin/common.js" defer></script>

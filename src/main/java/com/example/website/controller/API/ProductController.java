@@ -9,6 +9,7 @@ import com.example.website.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,6 +49,7 @@ public class ProductController extends BaseController {
             description = "Thêm một sản phẩm mới vào hệ thống kèm theo các thuộc tính động",
             tags = {"Sản phẩm"}
     )
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping("/addProduct")
     public ResponseEntity<BaseResponse<ProductResponse>> add(
             @ModelAttribute ProductRequest request
@@ -56,16 +58,12 @@ public class ProductController extends BaseController {
         return returnSuccess(response);
     }
 
-    @PutMapping("/editProduct/{id}")
-    public ResponseEntity<BaseResponse<ProductResponse>> update(){
-        return null;
-    }
-
     @Operation(
             summary = "Xóa sản phẩm",
             description = "Xóa sản phẩm khỏi hệ thống theo ID chỉ định",
             tags = {"Sản phẩm"}
     )
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/deleteProduct/{id}")
     public ResponseEntity<BaseResponse<String>> delete(
             @PathVariable("id") Integer id
@@ -91,6 +89,7 @@ public class ProductController extends BaseController {
     }
 
     @Operation(summary = "Cập nhật sản phẩm", tags = {"Sản phẩm"})
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/product/update/{id}")
     public ResponseEntity<BaseResponse<ProductResponse>> update(
             @PathVariable("id") Integer id,

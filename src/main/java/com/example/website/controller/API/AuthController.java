@@ -65,7 +65,7 @@ public class AuthController extends BaseController {
         }
 
         if (refreshToken == null) {
-            throw new RuntimeException("Refresh token not found in cookie");
+            throw new RuntimeException("Phiên đăng nhập đã hết hạn! Vui lòng đăng nhập");
         }
 
         UserLoginResponse refreshResponse = authService.refreshToken(refreshToken);

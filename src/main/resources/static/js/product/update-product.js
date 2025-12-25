@@ -586,6 +586,9 @@ function handleSubmit(e) {
     // Gửi request
     fetch(`/product/update/${id}`, {
         method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${getAccessToken()}`
+        },
         body: formData
     })
         .then(r => {
