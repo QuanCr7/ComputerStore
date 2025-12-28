@@ -69,6 +69,15 @@ body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; }
     border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
+.sidebar-header a{
+    text-decoration: none;
+    color: #b8a5d8;
+}
+
+.sidebar-header a:hover {
+    color: #f1f1f1;
+}
+
 .sidebar-header h2 {
     font-size: 1.6rem;
     font-weight: 600;

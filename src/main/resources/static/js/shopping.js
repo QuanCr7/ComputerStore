@@ -30,7 +30,6 @@ class ShoppingCart {
                         <span id="cartTotal">0₫</span>
                     </div>
                     <div class="cart-actions">
-                        <a href="/cart.html" class="cart-btn view-cart">Xem giỏ hàng</a>
                         <a href="#" class="cart-btn checkout" onclick="shoppingCart.checkout()">Thanh toán</a>
                     </div>
                 </div>

@@ -95,7 +95,7 @@ function displayOrderDetail(order) {
 
     // Cập nhật thông tin đơn hàng
     document.getElementById('orderId').textContent = order.id;
-    document.getElementById('orderIdDisplay').textContent = `#${order.id}`;
+    document.getElementById('orderIdDisplay').textContent = `${order.id}`;
     document.getElementById('orderDate').textContent = formatDate(order.orderDate);
 
     const statusElement = document.getElementById('orderStatus');
