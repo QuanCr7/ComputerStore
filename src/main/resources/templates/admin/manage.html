@@ -18,10 +18,9 @@
 <div class="admin-wrapper" id="adminContent">
     <div th:replace="~{admin/common :: common}"></div>
 
-    <!-- Nội dung chính -->
     <main class="main-content">
         <header class="topbar">
-            <h1>Chào mừng đến với Admin Panel</h1>
+            <h1>Chào mừng đến với trang quản trị</h1>
             <div class="user-info">
                 <span>Xin chào, <strong id="admin-username"></strong></span>
                 <button id="admin-logout-btn" class="logout-small">
@@ -33,13 +32,12 @@
         <div class="content-wrapper">
             <div class="welcome-card">
                 <h2>Chọn một mục từ menu bên trái để bắt đầu</h2>
-                <p>Giao diện quản trị mới – hiện đại, gọn gàng, dễ mở rộng</p>
+                <p>Giao diện quản trị</p>
             </div>
         </div>
     </main>
 </div>
 
-<!-- Notification -->
 <div class="notification" id="notification">
     <i class="fas fa-check-circle"></i>
     <span id="notification-message"></span>

@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/order")
@@ -28,6 +30,12 @@ public class OrderController extends BaseController {
     public ResponseEntity<BaseResponse<PageOrderResponse>> getAllOrder(
             @RequestParam(defaultValue = "1") int page) {
         return returnSuccess(orderService.findAll(page));
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @GetMapping("/statistics")
+    public ResponseEntity<BaseResponse<List<OrderResponse>>> getAllOrder() {
+        return returnSuccess(orderService.findAllForStatistics());
     }
 
     @Operation(

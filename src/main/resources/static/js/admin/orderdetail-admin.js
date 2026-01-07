@@ -62,7 +62,7 @@ async function loadOrderDetail(orderId) {
 
 function displayOrderDetail(order) {
     document.getElementById('orderId').textContent = order.id;
-    document.getElementById('orderIdDisplay').textContent = `#${order.id}`;
+    document.getElementById('orderIdDisplay').textContent = `${order.id}`;
     document.getElementById('orderDate').textContent = formatDate(order.orderDate);
 
     /* ===== USER ID (CLICKABLE) ===== */

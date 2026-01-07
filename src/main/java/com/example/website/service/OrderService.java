@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface OrderService {
     PageOrderResponse findAll(Integer page);
+    List<OrderResponse> findAllForStatistics();
 
     OrderResponse getById(int id);
     PageOrderResponse getByUserId(Integer page);

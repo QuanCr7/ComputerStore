@@ -41,7 +41,7 @@ function fetchUsers(page = 1) {
     currentFilters.page = page;
 
     const tbody = document.getElementById('users-table-body');
-    tbody.innerHTML = `<tr><td colspan="7" class="loading">Đang tải...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" class="loading">Đang tải dữ liệu ...</td></tr>`;
 
     const params = new URLSearchParams();
     params.append('page', page);

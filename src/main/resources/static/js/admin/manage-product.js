@@ -207,7 +207,7 @@ function applyFiltersFromUrl() {
 function fetchFilteredProducts() {
     const { name = '', category = '', brand = '', page = 1 } = currentFilters;
     const tbody = document.getElementById('products-table-body');
-    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4"><i class="fas fa-spinner fa-spin"></i> Đang tải...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu ...</td></tr>`;
 
     const params = new URLSearchParams();
     params.append('page', page);

@@ -121,7 +121,7 @@ function fetchOrders() {
     const tbody = document.getElementById('orders-table-body');
     const pagination = document.getElementById('pagination-orders');
 
-    tbody.innerHTML = `<tr><td colspan="7" class="loading">Đang tải...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" class="loading">Đang tải dữ liệu đơn hàng...</td></tr>`;
     pagination.innerHTML = '';
 
     const params = new URLSearchParams(currentFilters);
@@ -167,7 +167,7 @@ function renderOrders(orders) {
     orders.forEach(o => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td class="center">#${o.id}</td>
+            <td class="center">${o.id}</td>
             <td class="center">${o.phone || 'N/A'}</td>
             <td class="center">${formatPrice(o.totalAmount)}</td>
             <td class="center">${o.shippingAddress || 'N/A'}</td>

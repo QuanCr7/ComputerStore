@@ -55,6 +55,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<OrderResponse> findAllForStatistics() {
+        return orderRepository.findAll()
+                .stream()
+                .map(this::response)
+                .toList();
+    }
+
+    @Override
     public OrderResponse getById(int id) {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();

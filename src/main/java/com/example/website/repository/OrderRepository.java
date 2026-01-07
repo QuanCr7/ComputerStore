@@ -15,21 +15,11 @@ import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
+    List<OrderEntity> findAll();
     Optional<OrderEntity> findByOrderId(int id);
 
     @Query("SELECT o FROM OrderEntity o WHERE o.user.userId = :userId")
     Page<OrderEntity> findByUserId(Integer userId, Pageable pageable);
-
-    List<OrderEntity> findByOrderDateBetweenAndStatus(
-            LocalDateTime startDate,
-            LocalDateTime endDate,
-            OrderStatus status
-    );
-
-    List<OrderEntity> findByOrderDateBetween(
-            LocalDateTime startDate,
-            LocalDateTime endDate
-    );
 
     @Query("SELECT o FROM OrderEntity o WHERE o.user.userId = :userId AND o.orderDate BETWEEN :startDate AND :endDate")
     List<OrderEntity> findByUserIdAndOrderDateBetween(

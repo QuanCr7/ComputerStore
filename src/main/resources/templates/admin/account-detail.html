@@ -34,46 +34,75 @@
         </header>
 
         <div class="content-wrapper">
-            <div class="user-detail-card">
-                <div class="user-header">
-                    <div class="user-avatar">
+            <div class="user-detail-card modern">
+
+                <!-- Header -->
+                <div class="user-header-modern">
+                    <div class="avatar-wrap">
                         <img id="userAvatar" src="/images/user/default.jpg" alt="Avatar">
                     </div>
-                    <div class="user-basic-info">
+
+                    <div class="user-main-info">
                         <h2 id="fullName">Tên người dùng</h2>
-                        <p class="username">@<span id="username"></span></p>
-                        <span class="role-badge" id="userRole">USER</span>
+                        <p class="username"><span id="username"></span></p>
+
+                        <span class="role-badge admin" id="userRole">
+                <i class="fas fa-shield-alt"></i> USER
+            </span>
                     </div>
                 </div>
 
+                <!-- Thông tin cơ bản -->
                 <div class="user-info-section">
                     <h3><i class="fas fa-id-card"></i> Thông tin cơ bản</h3>
-                    <div class="info-grid">
+
+                    <div class="info-grid modern">
+
                         <div class="info-item">
-                            <label>Email</label>
-                            <span id="email">---</span>
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <label>Email</label>
+                                <span id="email">---</span>
+                            </div>
                         </div>
+
                         <div class="info-item">
-                            <label>Số điện thoại</label>
-                            <span id="phone">---</span>
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <label>Số điện thoại</label>
+                                <span id="phone">---</span>
+                            </div>
                         </div>
+
                         <div class="info-item">
-                            <label>Ngày sinh</label>
-                            <span id="dateOfBirth">---</span>
+                            <i class="fas fa-birthday-cake"></i>
+                            <div>
+                                <label>Ngày sinh</label>
+                                <span id="dateOfBirth">---</span>
+                            </div>
                         </div>
+
                         <div class="info-item">
-                            <label>Ngày đăng ký</label>
-                            <span id="dateCreate">---</span>
+                            <i class="fas fa-calendar-check"></i>
+                            <div>
+                                <label>Ngày đăng ký</label>
+                                <span id="dateCreate">---</span>
+                            </div>
                         </div>
+
                     </div>
                 </div>
 
+                <!-- Địa chỉ -->
                 <div class="user-info-section">
                     <h3><i class="fas fa-map-marker-alt"></i> Địa chỉ</h3>
-                    <p id="address" class="address-text">---</p>
+                    <div class="address-box" id="address">
+                        ---
+                    </div>
                 </div>
 
-                <div class="user-actions">
+                <!-- Actions -->
+                <div class="user-actions modern">
                     <button class="btn btn-danger" onclick="deleteUser()">
                         <i class="fas fa-trash"></i> Xóa tài khoản
                     </button>
@@ -81,7 +110,9 @@
                         <i class="fas fa-arrow-left"></i> Quay lại
                     </button>
                 </div>
+
             </div>
+
         </div>
 
     </main>

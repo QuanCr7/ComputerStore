@@ -1,6 +1,6 @@
 // /js/admin/statistics.js
 document.addEventListener('DOMContentLoaded', async function () {
-    const API_URL = '/order/all';
+    const API_URL = '/order/statistics';
 
     const isLoggedIn = await checkLoginStatus();
     if (!isLoggedIn) {
@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 return r.json();
             })
             .then(res => {
-                allOrders = res.data?.orders || [];
+                allOrders = res.data || [];
 
                 if (!startDate || !endDate) {
                     const now = new Date();
