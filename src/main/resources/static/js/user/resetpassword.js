@@ -83,4 +83,18 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', function () {
+            const input = this.previousElementSibling;
+            if (!input) return;
+
+            input.type = input.type === 'password' ? 'text' : 'password';
+
+            const icon = this.querySelector('i');
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        });
+    });
+
 });

@@ -16,6 +16,21 @@ document.addEventListener('DOMContentLoaded', async function () {
     const successEl = document.getElementById('successMessage');
     const successText = document.getElementById('successText');
 
+    document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', function () {
+            const input = this.previousElementSibling; // input ngay trước button
+            if (!input) return;
+
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+
+            const icon = this.querySelector('i');
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        });
+    });
+
+
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
 

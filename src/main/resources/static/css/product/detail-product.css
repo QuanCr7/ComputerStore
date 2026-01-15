@@ -1,10 +1,10 @@
-/* ===== Product Detail Styles ===== */
+/*detail-product.css*/
 .detail-section {
     padding: 40px 0;
     min-height: 100vh;
 }
 
-.loading, .error {
+.loading{
     text-align: center;
     padding: 60px 20px;
     font-size: 1.2rem;
@@ -17,12 +17,6 @@
 .loading i {
     color: var(--primary-color);
     margin-right: 10px;
-}
-
-.error {
-    color: var(--danger-color);
-    background: #fef2f2;
-    border: 1px solid #fecaca;
 }
 
 .product-header {

@@ -482,16 +482,21 @@ function loadCategories() {
             container.appendChild(div);
         });
 
-        // Sau khi load xong → chọn lại danh mục cũ
         if (currentProduct && currentProduct.category) {
-            const oldCatId = currentProduct.category.categoryId;
-            const radio = container.querySelector(`input[value="${oldCatId}"]`);
-            if (radio) {
-                radio.checked = true;
-                const key = categoryKeyMap[currentProduct.category.name];
-                if (key) showSpecificForm(key);
-            }
+            const oldCatName = currentProduct.category;
+
+            const radios = container.querySelectorAll('input[type="radio"]');
+            radios.forEach(radio => {
+                const label = radio.nextElementSibling;
+                if (label && label.textContent.trim() === oldCatName) {
+                    radio.checked = true;
+
+                    const key = categoryKeyMap[oldCatName];
+                    if (key) showSpecificForm(key);
+                }
+            });
         }
+
     });
 }
 
@@ -510,9 +515,17 @@ function loadBrands() {
         });
 
         if (currentProduct && currentProduct.brand) {
-            const radio = container.querySelector(`input[value="${currentProduct.brand.brandId}"]`);
-            if (radio) radio.checked = true;
+            const oldBrandName = currentProduct.brand;
+
+            const radios = container.querySelectorAll('input[type="radio"]');
+            radios.forEach(radio => {
+                const label = radio.nextElementSibling;
+                if (label && label.textContent.trim() === oldBrandName) {
+                    radio.checked = true;
+                }
+            });
         }
+
     });
 }
 

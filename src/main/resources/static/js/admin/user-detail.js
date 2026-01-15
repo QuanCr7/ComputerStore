@@ -67,6 +67,39 @@ function displayUser(user) {
         ? `/images/user/${user.image}` : '/images/user/default.jpg';
 }
 
+async function deleteUser() {
+    const userId = document.getElementById('userId').value;
+    if (!userId) return;
+
+    if (!confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) return;
+
+    try {
+        const response = await fetch(`/account/deleteUser/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${getAccessToken()}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const res = await response.json();
+
+        if (!response.ok) {
+            throw new Error(res.message || 'Xóa nguời dùng thất bại');
+        }
+
+        showNotification('Xóa nguời dùng thành công!', 'success');
+
+        setTimeout(() => {
+            window.location.href = '/manage/u';
+        }, 1000);
+
+    } catch (err) {
+        showNotification(err.message, 'error');
+    }
+}
+
+
 function formatDate(date) {
     return new Date(date).toLocaleDateString('vi-VN');
 }

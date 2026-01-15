@@ -207,7 +207,7 @@ function getStatusText(status) {
     const statusMap = {
         'PENDING': 'Đang chờ xử lý',
         'PROCESSING': 'Đang xử lý',
-        'SHIPPED': 'Đang vận chuyển',
+        'SHIPPING': 'Đang vận chuyển',
         'COMPLETED': 'Hoàn thành',
         'CANCELLED': 'Đã hủy'
     };

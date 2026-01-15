@@ -43,14 +43,11 @@ document.addEventListener('click', function (e) {
     }
 });
 
-// LOAD CHI TIẾT SẢN PHẨM
 function loadProductDetail(productId) {
     const loading = document.getElementById('loading');
-    const error = document.getElementById('error');
     const detail = document.getElementById('product-detail');
 
     loading.style.display = 'block';
-    error.style.display = 'none';
     detail.style.display = 'none';
 
     fetch(`/p/searchId/${productId}`)
@@ -64,13 +61,11 @@ function loadProductDetail(productId) {
 
             currentProduct = result.data;
 
-            // Tính giá sau giảm và gán thêm thuộc tính cần thiết cho giỏ hàng
             const price = Number(currentProduct.price);
             const discount = currentProduct.discount || 0;
             currentProduct.finalPrice = discount > 0 ? price * (1 - discount / 100) : price;
             currentProduct.displayPrice = discount > 0 ? currentProduct.finalPrice : price;
 
-            // Chuẩn bị URL ảnh đầu tiên (với cache busting)
             if (currentProduct.images && currentProduct.images.length > 0) {
                 const ts = Date.now();
                 currentProduct.image = `/images/product/${currentProduct.images[0]}?t=${ts}`;
@@ -83,13 +78,9 @@ function loadProductDetail(productId) {
         })
         .catch(err => {
             loading.style.display = 'none';
-            error.textContent = err.message;
-            error.style.display = 'block';
-            console.error(err);
         });
 }
 
-// HIỂN THỊ CHI TIẾT
 function renderProductDetail(product) {
     document.getElementById('productName').textContent = product.name;
     document.getElementById('productSubtitle').textContent = product.description?.split('.')[0] + '.' || '';
@@ -250,7 +241,7 @@ function renderSpecifications(attributes) {
         };
 
         const item = document.createElement('div');
-        item.className = 'spec-item';   // Đã bỏ class "highlight-spec"
+        item.className = 'spec-item';
         item.innerHTML = `
             <div class="spec-label">
                 <i class="${info.icon}"></i> ${info.label}
@@ -292,8 +283,7 @@ function loadComments(productId, page = 1, append = false) {
                 div.className = 'comment-item';
                 div.dataset.commentId = c.commentId;
 
-                // Kiểm tra có phải người đăng hoặc Admin không
-                const currentUser = getCurrentUser(); // bạn đã có hàm này trong auth.js
+                const currentUser = getCurrentUser();
                 const isOwner = currentUser && (currentUser.id === c.userId);
                 const isAdmin = currentUser && currentUser.role === 'ADMIN';
 
@@ -354,19 +344,17 @@ async function deleteComment(commentId, button) {
             setTimeout(() => {
                 button.closest('.comment-item').remove();
                 showToast('Đã xóa bình luận!','success');
-                // Cập nhật lại số lượng
                 const count = parseInt(document.getElementById('commentCount').textContent.match(/\d+/)?.[0] || '0');
                 document.getElementById('commentCount').textContent = `(${count - 1})`;
             }, 400);
         } else {
-            showToast(data.message || 'Không thể xóa bình luận','error');
+            showToast('Bạn không thể xóa bình luận này!','error');
         }
     } catch (err) {
         showToast('Bạn không thể xóa bình luận này!','error');
     }
 }
 
-// Thêm animation fadeOut
 if (!document.getElementById('fade-anim')) {
     const style = document.createElement('style');
     style.id = 'fade-anim';
@@ -394,7 +382,7 @@ document.getElementById('commentForm').addEventListener('submit', async function
 
     const isLoggedIn = await checkLoginStatus();
     if (!isLoggedIn) {
-        showToast('Vui lòng đăng nhập để bình luận!');
+        showToast('Vui lòng đăng nhập để bình luận!','error');
         return;
     }
 

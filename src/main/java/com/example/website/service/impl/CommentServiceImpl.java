@@ -112,7 +112,7 @@ public class CommentServiceImpl implements CommentService {
 
         if (auth == null || !(auth.getPrincipal() instanceof CustomUserDetails userDetails)) {
             throw new org.springframework.security.authentication.AuthenticationCredentialsNotFoundException(
-                    "Vui lòng đăng nhập để xóa bình luận"
+                    "Vui lòng đăng nhập để xóa bình luận!"
             );
         }
 

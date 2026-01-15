@@ -720,6 +720,17 @@ tr:hover {
     }
 }
 
+@media (min-width: 1200px) {
+    .filter-group input {
+        padding: 10px 14px;
+        font-size: 0.95rem;
+    }
+
+    .filter-group label {
+        font-size: 0.9rem;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 992px) {
     .sidebar {

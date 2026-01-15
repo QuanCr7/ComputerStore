@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chi tiêt tài khoản</title>
+    <title>Chi tiết Sản phẩm</title>
     <link rel="stylesheet" href="/css/admin/common.css">
     <link rel="stylesheet" href="/css/admin/hide.css">
-    <link rel="stylesheet" href="/css/admin/detailuser-admin.css">
-    <link rel="icon" type="image/png" sizes="32x32" href="/images/icon/computer.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/admin/detailproduct-admin.css">
     <style>
         :root {
             --primary: #4361ee;
@@ -732,6 +730,17 @@
             }
         }
 
+        @media (min-width: 1200px) {
+            .filter-group input {
+                padding: 10px 14px;
+                font-size: 0.95rem;
+            }
+
+            .filter-group label {
+                font-size: 0.9rem;
+            }
+        }
+
         /* Responsive Design */
         @media (max-width: 992px) {
             .sidebar {
@@ -900,170 +909,177 @@
             background: #a8a8a8;
         }
 
-        /*tet*/
-
-        /* ===== USER DETAIL CARD MODERN ===== */
-
-        .user-detail-card.modern {
-            max-width: 900px;
-            margin: auto;
-            background: #fff;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
-
-        /* Header */
-        .user-header-modern {
-            display: flex;
-            align-items: center;
-            gap: 24px;
+        /*main*/
+        .content-wrapper {
             padding: 30px;
-            background: linear-gradient(135deg, #4361ee, #3f37c9);
-            color: #fff;
         }
 
-        .avatar-wrap img {
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            border: 4px solid rgba(255,255,255,0.6);
-            background: #fff;
+        #product-detail-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
+            overflow: hidden;
+            max-width: 1050px;
+            margin: 0 auto;
         }
 
-        .user-main-info h2 {
+        .product-detail-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .product-detail-header h1 {
+            font-size: 1.8rem;
             margin: 0;
-            font-size: 1.6rem;
         }
 
-        .user-main-info .username {
-            opacity: 0.85;
-            margin: 4px 0 8px;
+        .product-detail-body {
+            padding: 20px;
         }
 
-        /* Role */
-        .role-badge.admin {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(255,255,255,0.15);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        /* Section */
-        .user-info-section {
-            padding: 26px 30px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .user-info-section h3 {
-            margin-bottom: 18px;
-            font-size: 1.15rem;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Info grid */
-        .info-grid.modern {
+        .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 16px;
+            grid-template-columns: 0.85fr 1.15fr;
+            gap: 22px;
+            align-items: start;
         }
 
-        .info-item {
-            display: flex;
-            gap: 14px;
-            background: #f9fafc;
-            padding: 16px;
+        .product-images {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .main-image {
+            width: 100%;
+            max-height: 380px;
+            object-fit: contain;
             border-radius: 12px;
-            border: 1px solid #eef1f6;
-            transition: 0.25s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
-        .info-item i {
+        .thumbnails {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .thumbnails img {
+            width: 64px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 3px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+
+        .thumbnails img:hover, .thumbnails img.active {
+            border-color: #667eea;
+            transform: scale(1.1);
+        }
+
+        .product-info-section {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .info-block {
+            background: #f8fafc;
+            padding: 24px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-block h3 {
+            margin: 0 0 16px 0;
+            color: #667eea;
             font-size: 1.3rem;
-            color: var(--primary);
-            margin-top: 4px;
         }
 
-        .info-item:hover {
-            background: #fff;
-            border-color: var(--primary);
-            box-shadow: 0 6px 16px rgba(67,97,238,0.15);
+        .price-block {
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+            border-left-color: #10b981;
         }
 
-        .info-item label {
-            font-size: 0.8rem;
-            color: #777;
-            display: block;
+        .price-block div {
+            font-size: 1.6rem !important;
         }
 
-        .info-item span {
-            font-weight: 500;
-            color: #333;
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        /* Address */
-        .address-box {
-            background: #f9fafc;
-            padding: 16px 18px;
-            border-radius: 12px;
-            line-height: 1.6;
-            color: #444;
-            border: 1px solid #eef1f6;
+        .specs-table td {
+            padding: 12px 0;
+            border-bottom: 1px dashed #e2e8f0;
         }
 
-        /* Actions */
-        .user-actions.modern {
-            padding: 24px 30px;
+        .specs-table td:first-child {
+            width: 40%;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .specs-table td:last-child {
+            color: #1f2937;
+        }
+
+        .action-bar {
             display: flex;
-            gap: 16px;
-            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
         }
 
+        .btn-large {
+            text-decoration: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            min-width: 160px;
+            border-radius: 50px;
+            flex: 1;
+        }
 
+        /* Responsive */
+        @media (max-width: 992px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+            .product-images {
+                order: 2;
+            }
+        }
     </style>
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icon/computer.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-
-<input type="hidden" id="userId" th:value="${userId}">
-
-<div class="admin-wrapper" id="adminContent">
-    <aside class="sidebar" th:fragment="common">
+<div class="admin-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
         <div class="sidebar-header">
-            <a href="/manage/admin">
-                <h2><i class="fas fa-cogs"></i> Admin Home</h2>
-            </a>
+            <h2><i class="fas fa-cogs"></i> Admin Panel</h2>
         </div>
         <nav class="sidebar-menu">
-            <a href="/manage/p" class="menu-item">
-                <i class="fas fa-box"></i>
-                <span>Quản lý Sản phẩm</span>
-            </a>
-            <a href="/manage/u" class="menu-item">
-                <i class="fas fa-users"></i>
-                <span>Quản lý Người dùng</span>
-            </a>
-            <a href="/manage/o" class="menu-item">
-                <i class="fas fa-shopping-cart"></i>
-                <span>Quản lý Đơn hàng</span>
-            </a>
-            <a href="/manage/statistics" class="menu-item">
-                <i class="fas fa-chart-line"></i>
-                <span>Thống kê Doanh thu</span>
-            </a>
+            <a href="/manage/p" class="menu-item"><i class="fas fa-box"></i> Quản lý Sản phẩm</a>
+            <a href="/manage/u" class="menu-item"><i class="fas fa-users"></i> Quản lý Người dùng</a>
+            <a href="/manage/o" class="menu-item"><i class="fas fa-shopping-cart"></i> Quản lý Đơn hàng</a>
+            <a href="/manage/statistics" class="menu-item"><i class="fas fa-chart-line"></i> Thống kê Doanh thu</a>
         </nav>
     </aside>
 
-    <!-- Nội dung chính -->
+    <!-- Main Content -->
     <main class="main-content">
         <header class="topbar">
-            <h1>Quản lý Người dùng</h1>
+            <h1>Chi tiết Sản phẩm <span id="productIdDisplay">-</span></h1>
             <div class="user-info">
                 <span>Xin chào, <strong id="admin-username"></strong></span>
                 <button id="admin-logout-btn" class="logout-small">
@@ -1073,90 +1089,157 @@
         </header>
 
         <div class="content-wrapper">
-            <div class="user-detail-card modern">
-                <!-- Header -->
-                <div class="user-header-modern">
-                    <div class="avatar-wrap">
-                        <img src="/images/user/default.jpg" alt="Avatar">
-                    </div>
+            <div id="product-detail-container">
 
-                    <div class="user-main-info">
-                        <h2>Nguyễn Văn A</h2>
-                        <p class="username">@nguyenvana</p>
-                        <span class="role-badge admin">
-                <i class="fas fa-shield-alt"></i> ADMIN
-            </span>
-                    </div>
-                </div>
-
-                <!-- Thông tin -->
-                <div class="user-info-section">
-                    <h3><i class="fas fa-id-card"></i> Thông tin cơ bản</h3>
-
-                    <div class="info-grid modern">
-                        <div class="info-item">
-                            <i class="fas fa-envelope"></i>
-                            <div>
-                                <label>Email</label>
-                                <span>vana@gmail.com</span>
-                            </div>
-                        </div>
-
-                        <div class="info-item">
-                            <i class="fas fa-phone"></i>
-                            <div>
-                                <label>Số điện thoại</label>
-                                <span>0123 456 789</span>
-                            </div>
-                        </div>
-
-                        <div class="info-item">
-                            <i class="fas fa-birthday-cake"></i>
-                            <div>
-                                <label>Ngày sinh</label>
-                                <span>20/08/1999</span>
-                            </div>
-                        </div>
-
-                        <div class="info-item">
-                            <i class="fas fa-calendar-check"></i>
-                            <div>
-                                <label>Ngày đăng ký</label>
-                                <span>01/05/2024</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Địa chỉ -->
-                <div class="user-info-section">
-                    <h3><i class="fas fa-map-marker-alt"></i> Địa chỉ</h3>
-                    <div class="address-box">
-                        123 Nguyễn Trãi, Phường 7, Quận 5<br>
-                        TP. Hồ Chí Minh
-                    </div>
-                </div>
-
-                <!-- Actions -->
-                <div class="user-actions modern">
-                    <button class="btn btn-danger">
-                        <i class="fas fa-trash"></i> Xóa tài khoản
-                    </button>
-                    <button class="btn btn-secondary" onclick="history.back()">
-                        <i class="fas fa-arrow-left"></i> Quay lại
-                    </button>
-                </div>
             </div>
         </div>
-
     </main>
 </div>
 
-<!-- Notification -->
-<div class="notification" id="notification">
-    <i class="fas fa-check-circle"></i>
-    <span id="notification-message"></span>
+<!-- Toast Notification -->
+<div class="notification-toast" id="notificationToast">
+    <div class="toast-icon"><i class="fas fa-check-circle"></i></div>
+    <div class="toast-message" id="toastMessage"></div>
+    <button class="toast-close" onclick="closeToast()">×</button>
 </div>
+
+<script>
+    /* ================= MOCK PRODUCT DATA ================= */
+    const MOCK_PRODUCT = {
+        productId: 101,
+        name: "CPU Intel Core i7-13700K",
+        brand: "Intel",
+        category: "CPU",
+        price: 10500000,
+        discount: 10,
+        stockQuantity: 24,
+        warranty: 36,
+        description: "Intel Core i7-13700K mang lại hiệu năng vượt trội cho gaming, đồ họa và công việc chuyên sâu.",
+        images: [
+            "https://placehold.co/600x600/667eea/ffffff?text=CPU+Front",
+            "https://placehold.co/600x600/764ba2/ffffff?text=CPU+Box",
+            "https://placehold.co/600x600/4f46e5/ffffff?text=CPU+Detail"
+        ],
+        attributes: [
+            { key: "cpu", value: "Intel Core i7-13700K" },
+            { key: "socket", value: "LGA 1700" },
+            { key: "series", value: "Raptor Lake" },
+            { key: "cache", value: "30MB" },
+            { key: "tốc_độ_xử_lý", value: "5.4GHz" }
+        ]
+    };
+
+    /* ================= INIT ================= */
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("productIdDisplay").textContent = MOCK_PRODUCT.productId;
+        renderProductDetail(MOCK_PRODUCT);
+    });
+
+    /* ================= RENDER ================= */
+    function renderProductDetail(p) {
+        const container = document.getElementById("product-detail-container");
+
+        const price = Number(p.price);
+        const discount = Number(p.discount || 0);
+        const finalPrice = discount > 0 ? Math.round(price * (1 - discount / 100)) : price;
+
+        const imagesHtml = `
+        <img src="${p.images[0]}" class="main-image" id="mainImage">
+        <div class="thumbnails">
+            ${p.images.map((img, i) => `
+                <img src="${img}" class="${i === 0 ? 'active' : ''}" onclick="changeMainImage('${img}', this)">
+            `).join("")}
+        </div>
+    `;
+
+        const specsHtml = p.attributes.map(a => `
+        <tr>
+            <td>${formatKey(a.key)}</td>
+            <td>${a.value}</td>
+        </tr>
+    `).join("");
+
+        container.innerHTML = `
+        <div class="product-detail-header">
+            <h1>${p.name}</h1>
+            <p>Thương hiệu: <strong>${p.brand}</strong> | Danh mục: <strong>${p.category}</strong></p>
+        </div>
+
+        <div class="product-detail-body">
+            <div class="product-grid">
+                <div class="product-images">
+                    ${imagesHtml}
+                </div>
+
+                <div class="product-info-section">
+                    <div class="info-block price-block">
+                        <h3>Giá bán</h3>
+                        ${
+            discount > 0
+                ? `
+                                <div style="font-size:1.6rem;font-weight:700;color:#dc3545">
+                                    ${finalPrice.toLocaleString("vi-VN")}đ
+                                </div>
+                                <del>${price.toLocaleString("vi-VN")}đ</del>
+                                <span style="margin-left:8px;background:#dc3545;color:white;padding:4px 8px;border-radius:6px">
+                                    -${discount}%
+                                </span>
+                                `
+                : `
+                                <div style="font-size:1.8rem;font-weight:700;color:#28a745">
+                                    ${price.toLocaleString("vi-VN")}đ
+                                </div>
+                                `
+        }
+                        <p>Tồn kho: <strong>${p.stockQuantity}</strong></p>
+                        <p>Bảo hành: <strong>${p.warranty} tháng</strong></p>
+                    </div>
+
+                    <div class="info-block">
+                        <h3>Mô tả sản phẩm</h3>
+                        <p>${p.description}</p>
+                    </div>
+
+                    <div class="info-block">
+                        <h3>Thông số kỹ thuật</h3>
+                        <table class="specs-table">
+                            ${specsHtml}
+                        </table>
+                    </div>
+
+                    <div class="action-bar">
+                        <a href="#" class="btn btn-primary btn-large">
+                            <i class="fas fa-edit"></i> Chỉnh sửa
+                        </a>
+                        <button onclick="history.back()" class="btn btn-secondary btn-large">
+                            <i class="fas fa-arrow-left"></i> Quay lại
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    }
+
+    /* ================= IMAGE SWITCH ================= */
+    function changeMainImage(src, el) {
+        document.getElementById("mainImage").src = src;
+        document.querySelectorAll(".thumbnails img").forEach(img => img.classList.remove("active"));
+        el.classList.add("active");
+    }
+
+    /* ================= FORMAT KEY ================= */
+    function formatKey(key) {
+        const map = {
+            cpu: "CPU",
+            socket: "Socket",
+            series: "Series",
+            cache: "Cache",
+            "tốc_độ_xử_lý": "Tốc độ xử lý"
+        };
+        return map[key] || key.replace(/_/g, " ").toUpperCase();
+    }
+</script>
 
 </body>
 </html>
