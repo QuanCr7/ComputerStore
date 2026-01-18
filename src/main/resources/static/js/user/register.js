@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // DOM Elements
+
     const registerForm = document.getElementById('registerForm');
     const passwordInput = document.getElementById('password');
     const togglePasswordBtn = document.querySelector('.toggle-password');
@@ -18,9 +18,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalContent = document.getElementById('modalContent');
     const closeBtn = document.querySelector('.close-modal');
 
-    // Initialize date picker
     flatpickr(dateOfBirthInput, {
-        dateFormat: "Y-m-d", // Định dạng phù hợp với backend
+        dateFormat: "Y-m-d",
         locale: "vn",
         maxDate: "today",
         defaultDate: "2000-01-01"
@@ -345,18 +344,15 @@ document.addEventListener('DOMContentLoaded', function() {
         showModal('Chính sách bảo mật', policyContents.privacy);
     });
 
-    // Close buttons
     document.querySelector('.close-modal').addEventListener('click', closeModal);
     document.querySelector('.btn-agree').addEventListener('click', closeModal);
 
-    // Close when clicking outside
     modal.addEventListener('click', function(e) {
         if (e.target === modal) {
             closeModal();
         }
     });
 
-    // Close with ESC key
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && modal.style.display === 'block') {
             closeModal();

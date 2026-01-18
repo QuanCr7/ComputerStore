@@ -1,8 +1,7 @@
 let currentPage = 1;
 
-// Gọi khi trang được tải
+
 document.addEventListener('DOMContentLoaded', function () {
-    // Kiểm tra trạng thái đăng nhập trước khi tải nội dung (từ auth.js)
     if (typeof checkLoginStatus === 'function') {
         checkLoginStatus();
     }
@@ -16,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('popstate', loadFromUrl);
 });
 
-// Hàm lấy danh sách từ API
 function fetchProducts(page = 1, updateUrlFlag = true) {
     currentPage = page;
 
@@ -48,7 +46,6 @@ function fetchProducts(page = 1, updateUrlFlag = true) {
         .catch(error => handleError(error, loadingElement, errorElement));
 }
 
-// Hàm hiển thị danh sách dưới dạng grid
 function renderProducts(products) {
     const productsGrid = document.getElementById('productsGrid');
     productsGrid.innerHTML = '';
@@ -60,7 +57,6 @@ function renderProducts(products) {
         const postDate = new Date(product.post_date);
         const formattedDate = postDate.toLocaleDateString('vi-VN');
 
-        // Tạo URL ảnh - sử dụng ảnh đầu tiên nếu có, nếu không dùng placeholder
         let imageUrl = '/images/product/noimage.jpg';
 
         // Kiểm tra nếu có ảnh
@@ -69,7 +65,6 @@ function renderProducts(products) {
             const timestamp = new Date().getTime();
             imageUrl = `/images/product/${product.images[0]}?t=${timestamp}`;
         } else if (product.image_url) {
-            // Nếu có image_url từ API
             imageUrl = product.image_url;
         }
 
@@ -93,7 +88,6 @@ function renderProducts(products) {
                     `}
                 </div>
         
-                <!-- NÚT HÀNH ĐỘNG LUÔN Ở DƯỚI CÙNG -->
                 <div class="product-actions">
                     <button class="action-btn view-btn" onclick="viewProductDetail(${product.productId})">
                         <i class="fas fa-eye"></i> Xem
@@ -115,7 +109,6 @@ function renderProducts(products) {
     });
 }
 
-// Hàm tạo phân trang
 function renderPagination(currentPage, totalPages) {
     const paginationElement = document.getElementById('pagination');
     paginationElement.innerHTML = '';
@@ -130,11 +123,9 @@ function renderPagination(currentPage, totalPages) {
         paginationElement.appendChild(prevButton);
     }
 
-    // Hiển thị các trang gần currentPage
     const startPage = Math.max(1, currentPage - 2);
     const endPage = Math.min(totalPages, currentPage + 2);
 
-    // Nút trang đầu tiên
     if (startPage > 1) {
         const firstPageButton = document.createElement('button');
         firstPageButton.textContent = '1';
@@ -151,7 +142,6 @@ function renderPagination(currentPage, totalPages) {
         }
     }
 
-    // Các trang chính
     for (let i = startPage; i <= endPage; i++) {
         const pageButton = document.createElement('button');
         pageButton.textContent = i;
@@ -164,7 +154,6 @@ function renderPagination(currentPage, totalPages) {
         paginationElement.appendChild(pageButton);
     }
 
-    // Nút trang cuối cùng
     if (endPage < totalPages) {
         if (endPage < totalPages - 1) {
             const ellipsis = document.createElement('span');
@@ -181,7 +170,6 @@ function renderPagination(currentPage, totalPages) {
         paginationElement.appendChild(lastPageButton);
     }
 
-    // Tạo nút Next
     if (currentPage < totalPages) {
         const nextButton = document.createElement('button');
         nextButton.innerHTML = '&raquo;';
@@ -192,12 +180,10 @@ function renderPagination(currentPage, totalPages) {
     }
 }
 
-// Hàm chứa đường dẫn xem chi tiết
 function viewProductDetail(productId) {
     window.location.href = `/detail?id=${productId}`;
 }
 
-// Hàm hiển thị thông báo
 function showNotification(message, type) {
     const notification = document.createElement('div');
     notification.style.position = 'fixed';
@@ -224,16 +210,13 @@ function showNotification(message, type) {
     }, 3000);
 }
 
-// Hàm cập nhật URL
 function updateUrl(params) {
     const url = new URL(window.location.href);
 
-    // Xóa tất cả các params liên quan trước khi thêm mới
     ['page'].forEach(param => {
         url.searchParams.delete(param);
     });
 
-    // Chỉ thêm page nếu khác 1
     if (params.page && params.page !== 1) {
         url.searchParams.set('page', params.page);
     }
@@ -241,7 +224,6 @@ function updateUrl(params) {
     window.history.pushState({}, '', url.toString());
 }
 
-// Hàm tải dữ liệu từ URL
 function loadFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     const page = urlParams.get('page') || 1;

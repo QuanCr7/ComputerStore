@@ -2,7 +2,6 @@
 let categoriesMap = {};
 let currentDeleteId = null;
 
-// Format
 function formatDate(dateString) {
     if (!dateString) return 'N/A';
     try { return new Date(dateString).toLocaleDateString('vi-VN'); }
@@ -33,67 +32,6 @@ function loadCategories() {
             });
         })
         .catch(() => {});
-}
-
-function updateAdminHeader() {
-    const usernameEl = document.getElementById('admin-username');
-    const logoutBtn = document.getElementById('admin-logout-btn');
-
-    if (!usernameEl) return;
-
-    const user = getCurrentUser(); // từ auth.js
-
-    if (user && user.username) {
-        usernameEl.textContent = user.username;
-
-        // Gán sự kiện logout cho cả 2 nút (sidebar + topbar)
-        const logoutLinks = document.querySelectorAll('#admin-logout-btn, .sidebar-menu a.logout');
-        logoutLinks.forEach(link => {
-            link.onclick = (e) => {
-                e.preventDefault();
-                logout(); // hàm từ auth.js
-            };
-        });
-    } else {
-        // Không có user → chuyển về login
-        usernameEl.textContent = 'Khách';
-    }
-}
-
-// Phân trang
-function renderPagination(currentPage, totalPages, fetchFunction, keyword = '') {
-    const container = document.getElementById('pagination') || document.querySelector('.pagination');
-    if (!container) return;
-    container.innerHTML = '';
-
-    const createBtn = (text, page, active = false) => {
-        const btn = document.createElement('button');
-        btn.textContent = text;
-        if (active) btn.classList.add('active');
-        btn.onclick = () => fetchFunction(page, keyword);
-        container.appendChild(btn);
-    };
-
-    if (currentPage > 1) createBtn('<<', currentPage - 1);
-
-    const start = Math.max(1, currentPage - 2);
-    const end = Math.min(totalPages, currentPage + 2);
-
-    if (start > 1) {
-        createBtn('1', 1);
-        if (start > 2) container.innerHTML += '<span>...</span>';
-    }
-
-    for (let i = start; i <= end; i++) {
-        createBtn(i, i, i === currentPage);
-    }
-
-    if (end < totalPages) {
-        if (end < totalPages - 1) container.innerHTML += '<span>...</span>';
-        createBtn(totalPages, totalPages);
-    }
-
-    if (currentPage < totalPages) createBtn('>>', currentPage + 1);
 }
 
 // Modal xóa

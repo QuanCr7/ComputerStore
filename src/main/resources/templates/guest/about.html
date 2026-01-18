@@ -12,12 +12,9 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/images/icon/computer.png">
 </head>
 <body>
-<!-- Header -->
 <div th:replace="~{guest/common/header :: header}"></div>
 
-<!-- Main Content -->
 <main class="main-content">
-    <!-- Hero Section -->
     <section class="about-hero">
         <div class="container">
             <h1>Giới thiệu về ComputerStore</h1>
@@ -26,7 +23,6 @@
     </section>
 
     <div class="container">
-        <!-- About Section -->
         <section class="about-section">
             <h2 class="section-title">Về chúng tôi</h2>
             <div class="about-content">
@@ -34,7 +30,6 @@
                 <p>Với hơn 8 năm kinh nghiệm trong lĩnh vực công nghệ, chúng tôi tự hào là một trong những nhà cung cấp linh kiện máy tính hàng đầu Việt Nam, với hơn 10.000 sản phẩm đa dạng từ các thương hiệu uy tín toàn cầu.</p>
             </div>
 
-            <!-- Stats -->
             <div class="stats-container">
                 <div class="stat-item">
                     <div class="stat-number">10,000+</div>
@@ -55,7 +50,6 @@
             </div>
         </section>
 
-        <!-- Features Section -->
         <section class="about-section">
             <h2 class="section-title">Tại sao chọn ComputerStore?</h2>
             <div class="features-grid">
@@ -83,7 +77,6 @@
             </div>
         </section>
 
-        <!-- Categories Section -->
         <section class="about-section">
             <h2 class="section-title">Danh mục sản phẩm</h2>
             <div class="categories-grid">
@@ -132,7 +125,6 @@
             </div>
         </section>
 
-        <!-- Team Section -->
         <section class="about-section">
             <h2 class="section-title">Đội ngũ chuyên gia</h2>
             <div class="team-grid">
@@ -171,7 +163,6 @@
             </div>
         </section>
 
-        <!-- Testimonials Section -->
         <section class="about-section">
             <h2 class="section-title">Khách hàng nói gì về chúng tôi</h2>
             <div class="testimonials-container">
@@ -221,54 +212,7 @@
     </div>
 </main>
 
-<!-- Footer -->
-<footer class="main-footer">
-    <div class="container">
-        <div class="footer-grid">
-            <div class="footer-col">
-                <h3 class="footer-title">Về ComputerStore</h3>
-                <p>Nhà cung cấp linh kiện máy tính chính hãng hàng đầu Việt Nam với hơn 10.000 sản phẩm chất lượng.</p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
-                    <a href="#"><i class="fab fa-tiktok"></i></a>
-                </div>
-            </div>
-
-            <div class="footer-col">
-                <h3 class="footer-title">Danh mục</h3>
-                <ul class="footer-links">
-                    <li><a href="/cpu">CPU & Mainboard</a></li>
-                    <li><a href="/vga">Card đồ họa</a></li>
-                    <li><a href="/ram">RAM & Ổ cứng</a></li>
-                    <li><a href="/psu">Nguồn & Case</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-col">
-                <h3 class="footer-title">Hỗ trợ</h3>
-                <ul class="footer-links">
-                    <li><a href="/warranty">Chính sách bảo hành</a></li>
-                    <li><a href="/shipping">Vận chuyển & Lắp đặt</a></li>
-                    <li><a href="/contact">Liên hệ kỹ thuật</a></li>
-                    <li><a href="/faq">Hỏi đáp</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-col">
-                <h3 class="footer-title">Liên hệ</h3>
-                <p><i class="fas fa-map-marker-alt"></i> 456 Đường Công Nghệ, Q. Thanh Xuân, Hà Nội</p>
-                <p><i class="fas fa-phone"></i> Hotline: 1800 1234</p>
-                <p><i class="fas fa-envelope"></i> support@computerstore.vn</p>
-                <p><i class="fas fa-clock"></i> Mở cửa: 8:00 - 22:00 hàng ngày</p>
-            </div>
-        </div>
-
-        <div class="footer-bottom">
-            <p>&copy; 2023 ComputerStore. All rights reserved. GPKD: 0101234567</p>
-        </div>
-    </div>
-</footer>
+<div th:replace="~{guest/common/footer :: footer}"></div>
 
 <script src="/js/shopping.js" defer></script>
 <script src="/js/user/auth.js" defer></script>

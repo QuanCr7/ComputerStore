@@ -125,7 +125,6 @@ public class AuthController extends BaseController {
             // Xóa refresh token cookie
             Cookie cookie = new Cookie("refreshToken", null);
             cookie.setHttpOnly(true);
-//            cookie.setSecure(true); // Chỉ gửi qua HTTPS trong production
             cookie.setSecure(false); // Tạm thời false để test trên localhost
             cookie.setPath("/");
             cookie.setMaxAge(0); // Xóa cookie

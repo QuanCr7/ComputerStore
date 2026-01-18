@@ -10,10 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-<!-- Header -->
 <div th:replace="~{guest/common/header :: header}"></div>
 
-<!-- Main Content -->
 <main class="main-content">
     <div class="container">
         <h1 class="checkout-title">
@@ -21,9 +19,7 @@
         </h1>
 
         <div class="checkout-container">
-            <!-- Left Column - Customer Info & Payment -->
             <div class="checkout-left">
-                <!-- Customer Information -->
                 <div class="checkout-card">
                     <h2 class="card-title">
                         <i class="fas fa-user"></i> Thông tin khách hàng
@@ -55,7 +51,6 @@
                     </form>
                 </div>
 
-                <!-- Payment Method -->
                 <div class="checkout-card">
                     <h2 class="card-title">
                         <i class="fas fa-credit-card"></i> Phương thức thanh toán
@@ -83,19 +78,16 @@
                 </div>
             </div>
 
-            <!-- Right Column - Order Summary -->
             <div class="checkout-right">
                 <div class="checkout-card order-summary">
                     <h2 class="card-title">
                         <i class="fas fa-receipt"></i> Đơn hàng của bạn
                     </h2>
 
-                    <!-- Product Items -->
                     <div class="product-items" id="productItemsContainer">
-                        <!-- Nội dung sẽ được thêm bằng JavaScript -->
+                        <!-- noi dung dc them bang js -->
                     </div>
 
-                    <!-- Order Summary -->
                     <div class="summary">
                         <div class="summary-item">
                             <span>Tạm tính:</span>
@@ -127,7 +119,6 @@
     </div>
 </main>
 
-<!-- Footer -->
 <div th:replace="~{guest/common/footer :: footer}"></div>
 
 <script src="/js/user/auth.js" defer></script>

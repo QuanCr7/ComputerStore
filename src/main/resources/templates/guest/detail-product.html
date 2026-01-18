@@ -12,7 +12,6 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/images/icon/computer.png">
 </head>
 <body>
-<!-- Header -->
 <div th:replace="~{guest/common/header :: header}"></div>
 
 <main class="main-content">
@@ -21,7 +20,6 @@
             <div id="loading" class="loading">Đang tải thông tin ...</div>
 
             <div id="product-detail" style="display: none;">
-                <!-- Product Header Section -->
                 <div class="product-header">
                     <div class="product-images">
                         <div class="main-image-container">
@@ -66,7 +64,6 @@
                     </div>
                 </div>
 
-                <!-- Specifications Section -->
                 <div class="specs-section">
                     <h2 class="section-title">
                         <i class="fas fa-list-alt"></i> Thông số kỹ thuật
@@ -76,7 +73,6 @@
 
             </div>
 
-            <!-- Phần Comment Section -->
             <div class="comment-section">
                 <div class="section-header">
                     <h2 class="section-title">
@@ -85,7 +81,7 @@
                     </h2>
                 </div>
 
-                <!-- Form thêm comment -->
+                <!-- form them comment -->
                 <div class="comment-form-container" id="commentFormContainer">
                     <form id="commentForm" class="comment-form">
                 <textarea
@@ -101,10 +97,9 @@
                     </form>
                 </div>
 
-                <!-- Danh sách comment -->
+                <!-- lit comment -->
                 <div id="commentsList" class="comments-list"></div>
 
-                <!-- Load more -->
                 <div id="commentPagination" class="comment-pagination" style="display: none;">
                     <button id="loadMoreBtn" class="btn btn-outline">
                         Xem thêm đánh giá
@@ -115,7 +110,6 @@
     </section>
 </main>
 
-<!-- Footer -->
 <div th:replace="~{guest/common/footer :: footer}"></div>
 
 <script src="/js/shopping.js" defer></script>

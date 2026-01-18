@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Validation email format
             if (username.includes('@')) {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(username)) {

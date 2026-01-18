@@ -1,4 +1,3 @@
-// JavaScript để tải danh sách thể loại từ API
 document.addEventListener('DOMContentLoaded', function() {
     loadCategories();
 
@@ -12,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function loadCategories() {
-    // Gọi API thực tế để lấy danh sách thể loại
     fetch('/categories')
         .then(response => {
             if (!response.ok) {
@@ -31,14 +29,13 @@ function loadCategories() {
 
 function renderCategories(categories) {
     const dropdown = document.querySelector('.categories-container');
-    dropdown.innerHTML = ''; // Xóa nội dung cũ
+    dropdown.innerHTML = '';
 
     if (categories.length === 0) {
         dropdown.innerHTML = '<div class="category-item">Không có thể loại nào</div>';
         return;
     }
 
-    // Chia danh sách thể loại thành 3 cột
     const itemsPerColumn = Math.ceil(categories.length / 3);
     const columns = [[], [], []];
 
@@ -50,7 +47,6 @@ function renderCategories(categories) {
         columns[columnIndex].push({name: categoryName, id: categoryId});
     });
 
-    // Tạo các cột và mục thể loại
     columns.forEach(columnCategories => {
         const columnDiv = document.createElement('div');
         columnDiv.className = 'category-column';
@@ -60,7 +56,6 @@ function renderCategories(categories) {
             categoryItem.className = 'category-item';
 
             const categoryLink = document.createElement('a');
-            // SỬA: Sử dụng encodeURIComponent nhưng thay thế %20 bằng +
             const encodedCategory = encodeURIComponent(category.name).replace(/%20/g, '+');
             categoryLink.href = `/search?category=${encodedCategory}`;
             categoryLink.className = 'category-link';
@@ -87,6 +82,5 @@ function filterByCategory(categoryName, categoryId) {
     const encodedCategory = encodeURIComponent(categoryName).replace(/%20/g, '+');
     const searchUrl = `/search?category=${encodedCategory}`;
 
-    // Chuyển hướng đến trang search với category đã chọn
     window.location.href = searchUrl;
 }
