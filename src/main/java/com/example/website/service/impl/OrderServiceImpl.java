@@ -15,6 +15,7 @@ import com.example.website.response.OrderResponse;
 import com.example.website.response.PageOrderResponse;
 import com.example.website.service.OrderService;
 import com.example.website.utils.OrderStatus;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -108,6 +109,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderResponse create(OrderRequest request, List<OrderDetailRequest> orderDetailRequests) {
         // Lấy userId từ SecurityContext
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -136,6 +138,18 @@ public class OrderServiceImpl implements OrderService {
             ProductEntity product = productRepository.findById(detailReq.getProductId())
                     .orElseThrow(() -> new RuntimeException("Product not found with ID: " + detailReq.getProductId()));
 
+            if (product.getStockQuantity() < detailReq.getQuantity()) {
+                throw new RuntimeException(
+                        "Sản phẩm " + product.getName() + " không đủ hàng"
+                );
+            }
+
+            product.setStockQuantity(
+                    product.getStockQuantity() - detailReq.getQuantity()
+            );
+
+            productRepository.save(product);
+
             OrderDetailEntity detail = OrderDetailEntity.builder()
                     .order(order)
                     .product(product)
@@ -146,8 +160,6 @@ public class OrderServiceImpl implements OrderService {
             order.getOrderDetails().add(detail);
         }
 
-        // Gán orderDetails và lưu lại
-//        order.setOrderDetails(orderDetails);
         orderRepository.save(order);
 
         return response(order);
