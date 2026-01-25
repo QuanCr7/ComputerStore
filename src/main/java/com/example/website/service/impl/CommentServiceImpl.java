@@ -122,7 +122,6 @@ public class CommentServiceImpl implements CommentService {
         CommentEntity comment = commentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Comment not found with id: " + id));
 
-        // chỉ cho phép xoá nếu là chính chủ hoặc ADMIN
         if (!currentUserId.equals(comment.getUser().getUserId())
                 && currentUserRole != Role.ADMIN) {
             throw new AccessDeniedException("Bạn không có quyền xoá bình luận này");

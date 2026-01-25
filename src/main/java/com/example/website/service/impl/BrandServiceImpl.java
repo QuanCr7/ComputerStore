@@ -84,8 +84,6 @@ public class BrandServiceImpl implements BrandService {
 
                 return fileName;
             } catch (IOException e) {
-//                e.printStackTrace();
-//                throw new RuntimeException("Failed to save image file: " + e.getMessage(), e);
                 log.error("Failed to save image file: {}", e.getMessage(), e);
                 throw new RuntimeException("Failed to save image file", e);
             }
@@ -103,7 +101,7 @@ public class BrandServiceImpl implements BrandService {
 
     public List<BrandResponse> responses(List<BrandEntity> responses) {
         return responses.stream()
-                .map(this::response) // Sử dụng phương thức response hiện có cho từng BrandEntity
+                .map(this::response)
                 .toList();
     }
 }

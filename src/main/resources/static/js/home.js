@@ -1,6 +1,5 @@
 let currentPage = 1;
 
-
 document.addEventListener('DOMContentLoaded', function () {
     if (typeof checkLoginStatus === 'function') {
         checkLoginStatus();

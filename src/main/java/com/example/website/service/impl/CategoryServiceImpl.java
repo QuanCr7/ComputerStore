@@ -29,11 +29,6 @@ public class CategoryServiceImpl implements CategoryService {
         return responses(categoryRepository.findAll());
     }
 
-//    @Override
-//    public List<CategoryEntity> getByBook(int bookId) {
-//        return categoryRepository.findAllByBookId(bookId);
-//    }
-
     @Override
     public CategoryResponse get(int id) {
         return response(categoryRepository.findById(id).orElseThrow(()-> new RuntimeException("Category Not Found")));

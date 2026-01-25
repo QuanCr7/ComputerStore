@@ -61,7 +61,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 
     public List<OrderDetailResponse> responses(List<OrderDetailEntity> orderDetails) {
         return orderDetails.stream()
-                .map(this::response) // Sử dụng phương thức response hiện có cho từng UserEntity
+                .map(this::response)
                 .toList();
     }
 }

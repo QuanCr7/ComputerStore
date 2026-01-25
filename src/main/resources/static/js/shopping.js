@@ -11,7 +11,6 @@ class ShoppingCart {
     }
 
     createCartIcon() {
-        // Tạo icon giỏ hàng nếu chưa tồn tại
         if (!document.getElementById('cartIcon')) {
             const cartHtml = `
                 <div class="cart-icon-container">

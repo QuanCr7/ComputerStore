@@ -184,8 +184,6 @@ public class UserServiceImpl implements UserService {
 
                 return fileName;
             } catch (IOException e) {
-//                e.printStackTrace();
-//                throw new RuntimeException("Failed to save image file: " + e.getMessage(), e);
                 log.error("Failed to save image file: {}", e.getMessage(), e);
                 throw new RuntimeException("Failed to save image file", e);
             }
@@ -210,7 +208,7 @@ public class UserServiceImpl implements UserService {
 
     public List<UserResponse> responses(List<UserEntity> responses) {
         return responses.stream()
-                .map(this::response) // Sử dụng phương thức response hiện có cho từng UserEntity
+                .map(this::response)
                 .toList();
     }
 }

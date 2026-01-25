@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         return;
     }
 
-    // Tải danh sách đơn hàng từ URL hoặc trang đầu tiên
     if (window.location.search !== '') {
         loadFromUrl();
     } else {
@@ -31,7 +30,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     window.addEventListener('popstate', loadFromUrl);
 
-    // Gán sự kiện cho nút phân trang
     document.getElementById('prevPage')?.addEventListener('click', () => {
         if (currentPage > 1) {
             currentPage--;
@@ -133,7 +131,6 @@ function renderPagination(currentPage, totalPages) {
     const paginationElement = document.getElementById('pagination');
     paginationElement.innerHTML = '';
 
-    // Tạo nút Previous
     if (currentPage > 1) {
         const prevButton = document.createElement('button');
         prevButton.innerHTML = '&laquo;';
@@ -143,11 +140,9 @@ function renderPagination(currentPage, totalPages) {
         paginationElement.appendChild(prevButton);
     }
 
-    // Hiển thị các trang gần currentPage
     const startPage = Math.max(1, currentPage - 2);
     const endPage = Math.min(totalPages, currentPage + 2);
 
-    // Nút trang đầu tiên
     if (startPage > 1) {
         const firstPageButton = document.createElement('button');
         firstPageButton.textContent = '1';
@@ -164,7 +159,6 @@ function renderPagination(currentPage, totalPages) {
         }
     }
 
-    // Các trang chính
     for (let i = startPage; i <= endPage; i++) {
         const pageButton = document.createElement('button');
         pageButton.textContent = i;
@@ -177,7 +171,6 @@ function renderPagination(currentPage, totalPages) {
         paginationElement.appendChild(pageButton);
     }
 
-    // Nút trang cuối cùng
     if (endPage < totalPages) {
         if (endPage < totalPages - 1) {
             const ellipsis = document.createElement('span');
@@ -194,7 +187,6 @@ function renderPagination(currentPage, totalPages) {
         paginationElement.appendChild(lastPageButton);
     }
 
-    // Tạo nút Next
     if (currentPage < totalPages) {
         const nextButton = document.createElement('button');
         nextButton.innerHTML = '&raquo;';

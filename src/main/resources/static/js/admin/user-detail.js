@@ -21,8 +21,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     loadUserDetail(userIdInput.value);
+
+    document.getElementById('confirmDelete')?.addEventListener('click', () => {
+        if (userIdToDelete) deleteUser(userIdToDelete);
+    });
+
+    document.getElementById('cancelDelete')?.addEventListener('click', closeDeleteModal);
+    document.getElementById('closeModal')?.addEventListener('click', closeDeleteModal);
 });
 
+let userIdToDelete = null;
 
 async function loadUserDetail(userId) {
     try {
@@ -53,8 +61,7 @@ function displayUser(user) {
     document.getElementById('phone').textContent = user.phone || 'Chưa cập nhật';
     document.getElementById('address').textContent = user.address || 'Chưa cập nhật';
 
-    document.getElementById('userRole').textContent =
-        user.role || 'USER';
+    document.getElementById('userRole').textContent = user.role || 'USER';
 
     document.getElementById('dateOfBirth').textContent =
         user.dateOfBirth ? formatDate(user.dateOfBirth) : 'Chưa cập nhật';
@@ -64,15 +71,27 @@ function displayUser(user) {
 
     const avatar = document.getElementById('userAvatar');
     avatar.src = user.image
-        ? `/images/user/${user.image}` : '/images/user/default.jpg';
+        ? `/images/user/${user.image}`
+        : '/images/user/default.jpg';
 }
 
-async function deleteUser() {
+function openDeleteModal() {
     const userId = document.getElementById('userId').value;
+    const username = document.getElementById('username').textContent;
+
     if (!userId) return;
 
-    if (!confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) return;
+    userIdToDelete = userId;
+    document.getElementById('deleteUsername').textContent = username;
+    document.getElementById('deleteModal').classList.add('active');
+}
 
+function closeDeleteModal() {
+    userIdToDelete = null;
+    document.getElementById('deleteModal').classList.remove('active');
+}
+
+async function deleteUser(userId) {
     try {
         const response = await fetch(`/account/deleteUser/${userId}`, {
             method: 'DELETE',
@@ -85,10 +104,11 @@ async function deleteUser() {
         const res = await response.json();
 
         if (!response.ok) {
-            throw new Error(res.message || 'Xóa nguời dùng thất bại');
+            throw new Error(res.message || 'Xóa người dùng thất bại');
         }
 
-        showNotification('Xóa nguời dùng thành công!', 'success');
+        showNotification('Xóa người dùng thành công!', 'success');
+        closeDeleteModal();
 
         setTimeout(() => {
             window.location.href = '/manage/u';
@@ -98,7 +118,6 @@ async function deleteUser() {
         showNotification(err.message, 'error');
     }
 }
-
 
 function formatDate(date) {
     return new Date(date).toLocaleDateString('vi-VN');

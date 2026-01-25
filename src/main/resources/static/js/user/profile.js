@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         return;
     }
 
-    // Nếu đã đăng nhập, tải profile và số lần đặt hàng
     loadUserProfile();
     loadOrderCount();
 });

@@ -21,7 +21,6 @@
 <div class="admin-wrapper" id="adminContent">
     <div th:replace="~{admin/common :: common}"></div>
 
-    <!-- Nội dung chính -->
     <main class="main-content">
         <header class="topbar">
             <h1>Quản lý Người dùng</h1>
@@ -52,7 +51,6 @@
                     </div>
                 </div>
 
-                <!-- Thông tin cơ bản -->
                 <div class="user-info-section">
                     <h3><i class="fas fa-id-card"></i> Thông tin cơ bản</h3>
 
@@ -93,7 +91,6 @@
                     </div>
                 </div>
 
-                <!-- Địa chỉ -->
                 <div class="user-info-section">
                     <h3><i class="fas fa-map-marker-alt"></i> Địa chỉ</h3>
                     <div class="address-box" id="address">
@@ -101,9 +98,8 @@
                     </div>
                 </div>
 
-                <!-- Actions -->
                 <div class="user-actions modern">
-                    <button class="btn btn-danger" onclick="deleteUser()">
+                    <button class="btn btn-danger" onclick="openDeleteModal()">
                         <i class="fas fa-trash"></i> Xóa tài khoản
                     </button>
                     <button class="btn btn-secondary" onclick="history.back()">
@@ -118,7 +114,23 @@
     </main>
 </div>
 
-<!-- Notification -->
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3><i class="fas fa-exclamation-triangle"></i> Xác nhận xóa</h3>
+            <button class="modal-close" id="closeModal">×</button>
+        </div>
+        <div class="modal-body">
+            <p>Xóa tài khoản <strong id="deleteUsername"></strong>?</p>
+            <p class="warning-text">Tất cả dữ liệu liên quan sẽ bị xóa vĩnh viễn!</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" id="cancelDelete">Hủy</button>
+            <button class="btn btn-danger" id="confirmDelete">Xóa tài khoản</button>
+        </div>
+    </div>
+</div>
+
 <div class="notification" id="notification">
     <i class="fas fa-check-circle"></i>
     <span id="notification-message"></span>

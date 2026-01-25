@@ -2,17 +2,14 @@
 let checkoutCart = [];
 
 document.addEventListener('DOMContentLoaded', async function() {
-    // Kiểm tra auth.js đã tải chưa
     if (typeof checkLoginStatus === 'undefined' || typeof getAccessToken === 'undefined') {
         showToast('Lỗi hệ thống: Không thể tải thư viện xác thực', 'error');
         return;
     }
 
-    // Kiểm tra trạng thái đăng nhập
     const isLoggedIn = await checkLoginStatus();
     const infoSourceSelect = document.getElementById('infoSource');
 
-    // Nếu chưa đăng nhập, ẩn tùy chọn "Sử dụng thông tin tài khoản"
     if (!isLoggedIn) {
         if (infoSourceSelect) {
             infoSourceSelect.innerHTML = `
@@ -21,7 +18,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    // Đồng bộ giỏ hàng từ sessionStorage và localStorage
     checkoutCart = JSON.parse(sessionStorage.getItem('checkoutCart')) || JSON.parse(localStorage.getItem('cart')) || [];
     if (checkoutCart.length === 0) {
         showToast('Giỏ hàng của bạn đang trống', 'error');
@@ -29,21 +25,17 @@ document.addEventListener('DOMContentLoaded', async function() {
         return;
     }
 
-    // Lưu giỏ hàng vào sessionStorage để đảm bảo không mất khi reload
     sessionStorage.setItem('checkoutCart', JSON.stringify(checkoutCart));
 
-    // Hiển thị sách từ giỏ hàng
     renderCartItems(checkoutCart);
     calculateTotal(checkoutCart);
 
-    // Các trường nhập liệu
     const fields = {
         name: document.getElementById('name'),
         phone: document.getElementById('phone'),
         address: document.getElementById('address')
     };
 
-    // Xử lý dropdown nguồn thông tin
     if (infoSourceSelect) {
         infoSourceSelect.addEventListener('change', async function() {
             const value = this.value;
@@ -88,7 +80,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                     });
                 }
             } else {
-                // Xóa các trường để người dùng nhập mới
                 Object.values(fields).forEach(field => {
                     if (field) field.value = '';
                 });
@@ -96,7 +87,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
-    // Gán sự kiện cho nút thanh toán
     const completeOrderBtn = document.getElementById('completeOrderBtn');
     if (completeOrderBtn) {
         completeOrderBtn.addEventListener('click', completeOrder);
@@ -157,21 +147,18 @@ function formatPrice(price) {
 async function completeOrder(e) {
     e.preventDefault();
 
-    // Kiểm tra đăng nhập
     const isLoggedIn = await checkLoginStatus();
     if (!isLoggedIn) {
         showToast('Bạn cần đăng nhập để đặt hàng', 'error');
         return;
     }
 
-    // Basic form validation
     const fields = {
         name: document.getElementById('name'),
         phone: document.getElementById('phone'),
         address: document.getElementById('address')
     };
 
-    // Kiểm tra các trường bắt buộc
     const missingFields = [];
     if (!fields.name || !fields.name.value.trim()) missingFields.push('họ tên');
     if (!fields.phone || !fields.phone.value.trim()) missingFields.push('số điện thoại');
@@ -187,7 +174,6 @@ async function completeOrder(e) {
         return;
     }
 
-    // Tạo đối tượng đơn hàng
     const order = {
         shippingAddress: fields.address.value.trim(),
         name: fields.name.value.trim(),
@@ -201,11 +187,9 @@ async function completeOrder(e) {
         }))
     };
 
-    // Hiển thị loading
     const loadingElement = document.getElementById('loading');
     if (loadingElement) loadingElement.style.display = 'flex';
 
-    // Gửi đơn hàng đến server
     try {
         const response = await fetch('http://localhost:8080/order/pay', {
             method: 'POST',
@@ -226,7 +210,6 @@ async function completeOrder(e) {
             localStorage.removeItem('cart');
             sessionStorage.removeItem('checkoutCart');
 
-            // Chuyển hướng về trang chủ sau 2 giây
             setTimeout(() => {
                 window.location.href = '/';
             }, 2000);

@@ -50,7 +50,7 @@ public class ProductAttributeServiceImpl implements ProductAttributeService {
 
     public List<ProductAttributeResponse> responses(List<ProductAttributeEntity> productAttributes) {
         return productAttributes.stream()
-                .map(this::response) // Sử dụng phương thức response hiện có cho từng ProductAttribute
+                .map(this::response)
                 .toList();
     }
 }

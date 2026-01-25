@@ -1,6 +1,4 @@
-// JavaScript giống như trong mã HTML tôi đã cung cấp trước đó
 document.addEventListener('DOMContentLoaded', function() {
-    // Xử lý modal chỉnh sửa
     const editModal = document.getElementById('editModal');
     const closeEditModal = document.getElementById('closeEditModal');
     const cancelEdit = document.getElementById('cancelEdit');
@@ -18,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
         updateAccount();
     });
 
-    // Xử lý modal xóa
     const deleteModal = document.getElementById('deleteModal');
     const closeDeleteModal = document.getElementById('closeDeleteModal');
     const cancelDelete = document.getElementById('cancelDelete');
@@ -37,7 +34,6 @@ document.addEventListener('DOMContentLoaded', function() {
         deleteAccount(userId);
     });
 
-    // Đóng modal khi click bên ngoài
     editModal.addEventListener('click', (e) => {
         if (e.target === editModal) {
             editModal.classList.remove('active');
@@ -162,11 +158,9 @@ function showNotification(message, type) {
     const notification = document.getElementById('notification');
     const messageElement = document.getElementById('notification-message');
 
-    // Đặt nội dung và kiểu thông báo
     messageElement.textContent = message;
     notification.className = 'notification';
 
-    // Thêm lớp tương ứng với loại thông báo
     if (type === 'success') {
         notification.classList.add('success');
     } else if (type === 'error') {
@@ -175,10 +169,8 @@ function showNotification(message, type) {
         notification.classList.add('warning');
     }
 
-    // Hiển thị thông báo
     notification.classList.add('show');
 
-    // Ẩn thông báo sau 3 giây
     setTimeout(() => {
         notification.classList.remove('show');
     }, 3000);

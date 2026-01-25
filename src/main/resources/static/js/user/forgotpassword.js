@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            // Hiển thị loading
             if (loading) loading.style.display = "block";
 
             try {

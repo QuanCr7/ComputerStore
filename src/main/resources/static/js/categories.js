@@ -1,13 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
     loadCategories();
-
-    // Xử lý menu mobile
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const navList = document.querySelector('.nav-list');
-
-    mobileMenuBtn.addEventListener('click', function() {
-        navList.classList.toggle('active');
-    });
 });
 
 function loadCategories() {
@@ -75,10 +67,7 @@ function renderCategories(categories) {
     });
 }
 
-function filterByCategory(categoryName, categoryId) {
-    console.log(`Lọc sản phẩm theo thể loại: ${categoryName} (ID: ${categoryId})`);
-
-    // SỬA: Sử dụng cùng encoding với form (thay %20 bằng +)
+function filterByCategory(categoryName) {
     const encodedCategory = encodeURIComponent(categoryName).replace(/%20/g, '+');
     const searchUrl = `/search?category=${encodedCategory}`;
 

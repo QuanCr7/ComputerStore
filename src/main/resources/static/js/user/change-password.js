@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     document.querySelectorAll('.toggle-password').forEach(button => {
         button.addEventListener('click', function () {
-            const input = this.previousElementSibling; // input ngay trước button
+            const input = this.previousElementSibling;
             if (!input) return;
 
             const isPassword = input.type === 'password';
@@ -38,7 +38,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         const newPassword = document.getElementById('newPassword').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
 
-        // Kiểm tra mật khẩu mới có khớp không
         if (newPassword !== confirmPassword) {
             showToast('Mật khẩu mới không trùng khớp!', 'error');
             return;
@@ -47,7 +46,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         loading.style.display = 'flex';
 
         try {
-            // Kiểm tra token trước khi gọi API
             if (!getAccessToken()) {
                 const refreshed = await checkLoginStatus();
                 if (!refreshed) {
@@ -84,7 +82,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
     });
 
-    // Kiểm tra 2 mật khẩu khớp nhau ngay khi gõ
     function checkPasswordMatch() {
         const newPass = document.getElementById('newPassword').value;
         const confirmPass = document.getElementById('confirmPassword').value;
@@ -104,7 +101,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
     }
 
-    // Xác thực mật khẩu khi blur
     document.getElementById('confirmPassword').addEventListener('blur', function() {
         const newPass = document.getElementById('newPassword').value;
         const confirmPass = this.value;

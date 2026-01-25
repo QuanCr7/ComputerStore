@@ -7,13 +7,11 @@ let currentFilters = {
     page: 1
 };
 
-// Mapping hình ảnh danh mục
 const categoryImageMap = {
     1: 'cpu.jpg', 2: 'card.jpg', 3: 'mainboard.jpg', 4: 'ram.jpg',
     5: 'ocung.jpg', 6: 'case.jpg', 7: 'tannhiet.jpg', 8: 'nguonmaytinh.png'
 };
 
-// Biến lưu trữ danh mục và thương hiệu để mapping
 let categoryList = [];
 let brandList = [];
 
@@ -22,12 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
     loadBrandsForAdmin();
     applyFiltersFromUrl();
 
-    // Cho phép nhấn Enter trong ô tìm tên
     document.getElementById('adminSearchName')?.addEventListener('keyup', e => {
         if (e.key === 'Enter') adminApplyFilters();
     });
 
-    // Đóng modal khi click nút hủy hoặc đóng
     document.getElementById('closeModal')?.addEventListener('click', () => {
         closeDeleteModal();
     });
@@ -36,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
         closeDeleteModal();
     });
 
-    // Đóng modal khi click ra ngoài
     document.getElementById('deleteModal')?.addEventListener('click', (e) => {
         if (e.target === document.getElementById('deleteModal')) {
             closeDeleteModal();
@@ -63,8 +58,8 @@ function loadCategoriesForAdmin() {
                 const imgFile = categoryImageMap[cat.categoryId] || 'computer.jpg';
                 const div = document.createElement('div');
                 div.className = 'option';
-                div.dataset.value = cat.name;  // Lưu tên
-                div.dataset.id = cat.categoryId; // Lưu ID cho mapping
+                div.dataset.value = cat.name;
+                div.dataset.id = cat.categoryId;
                 div.innerHTML = `
                     <img src="/images/category/${imgFile}" alt="${cat.name}" onerror="this.src='/images/category/computer.jpg'">
                     <span class="name">${cat.name}</span>
@@ -73,7 +68,6 @@ function loadCategoriesForAdmin() {
                 container.appendChild(div);
             });
 
-            // Khôi phục lựa chọn từ URL nếu có
             setTimeout(() => {
                 const params = new URLSearchParams(location.search);
                 const category = params.get('category');
@@ -113,7 +107,6 @@ function loadBrandsForAdmin() {
                 container.appendChild(div);
             });
 
-            // Khôi phục lựa chọn từ URL nếu có
             setTimeout(() => {
                 const params = new URLSearchParams(location.search);
                 const brand = params.get('brand');
@@ -160,13 +153,11 @@ function adminApplyFilters(page = 1) {
 function adminResetFilters() {
     document.getElementById('adminSearchName').value = '';
 
-    // Reset dropdown danh mục
     const catSpan = document.querySelector('#adminCategorySelect .selected-option span');
     catSpan.textContent = 'Tất cả danh mục';
     catSpan.classList.add('placeholder');
     catSpan.classList.remove('value');
 
-    // Reset dropdown thương hiệu
     const brandSpan = document.querySelector('#adminBrandSelect .selected-option span');
     brandSpan.textContent = 'Tất cả thương hiệu';
     brandSpan.classList.add('placeholder');
@@ -200,7 +191,6 @@ function applyFiltersFromUrl() {
     currentFilters = { name, category, brand, page };
     currentPage = page;
 
-    // Gọi ngay để tải sản phẩm
     fetchFilteredProducts();
 }
 
@@ -212,8 +202,8 @@ function fetchFilteredProducts() {
     const params = new URLSearchParams();
     params.append('page', page);
     if (name) params.append('name', name);
-    if (category) params.append('category', category);   // Gửi tên
-    if (brand) params.append('brand', brand);           // Gửi tên
+    if (category) params.append('category', category);
+    if (brand) params.append('brand', brand);
 
     fetch(`/p/search?${params.toString()}`)
         .then(r => {
@@ -254,7 +244,6 @@ function renderProducts(products) {
                <div style="text-decoration:line-through;color:#666;font-size:0.9em;">${price.toLocaleString('vi-VN')}₫</div>`
             : `<div style="font-weight:600;">${price.toLocaleString('vi-VN')}₫</div>`;
 
-        // Hiển thị tên danh mục thay vì ID
         const catName = p.categoryName || p.category || 'Không có danh mục';
 
         const tr = document.createElement('tr');
@@ -383,7 +372,6 @@ function confirmDeleteProduct(id, name) {
     window.currentDeleteId = id;
     document.getElementById('deleteModal').classList.add('active');
 
-    // Xử lý khi confirm delete
     document.getElementById('confirmDelete').onclick = function() {
         if (window.currentDeleteId) {
             performDelete(window.currentDeleteId);
@@ -420,7 +408,6 @@ function performDelete(id) {
         });
 }
 
-// Hàm escape HTML để tránh XSS
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
@@ -432,24 +419,19 @@ function showToast(message, type = 'success') {
     const msgEl = document.getElementById('toastMessage');
     const icon = toast.querySelector('.toast-icon i');
 
-    // Cập nhật nội dung
     msgEl.textContent = message;
 
-    // Đổi icon theo loại
     if (type === 'error') {
         icon.className = 'fas fa-exclamation-circle';
     } else {
         icon.className = 'fas fa-check-circle';
     }
 
-    // Reset class
     toast.className = 'notification-toast';
-    void toast.offsetWidth; // Trigger reflow
+    void toast.offsetWidth;
 
-    // Hiển thị
     toast.classList.add('show', type);
 
-    // Tự ẩn sau 4 giây
     setTimeout(() => {
         toast.classList.remove('show');
     }, 4000);
@@ -458,17 +440,6 @@ function showToast(message, type = 'success') {
 function closeToast() {
     document.getElementById('notificationToast').classList.remove('show');
 }
-
-// Xử lý click ngoài để đóng dropdown
-document.addEventListener('click', e => {
-    document.querySelectorAll('.custom-select').forEach(select => {
-        if (!select.contains(e.target)) {
-            select.classList.remove('open');
-        } else if (e.target.closest('.selected-option')) {
-            select.classList.toggle('open');
-        }
-    });
-});
 
 // Thêm hàm xử lý dropdown cho các option
 document.querySelectorAll('.custom-select .option').forEach(option => {
@@ -479,12 +450,22 @@ document.querySelectorAll('.custom-select .option').forEach(option => {
         display.classList.remove('placeholder');
         display.classList.add('value');
 
-        // Cập nhật filter tương ứng
         const selectId = this.closest('.custom-select').id;
         if (selectId === 'adminCategorySelect') {
             currentFilters.category = value;
         } else if (selectId === 'adminBrandSelect') {
             currentFilters.brand = value;
+        }
+    });
+});
+
+// Xử lý click ngoài để đóng dropdown
+document.addEventListener('click', e => {
+    document.querySelectorAll('.custom-select').forEach(select => {
+        if (!select.contains(e.target)) {
+            select.classList.remove('open');
+        } else if (e.target.closest('.selected-option')) {
+            select.classList.toggle('open');
         }
     });
 });

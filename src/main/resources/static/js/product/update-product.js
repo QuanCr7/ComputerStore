@@ -533,7 +533,6 @@ function showSpecificForm(key) {
     const container = document.getElementById('specificFields');
     container.innerHTML = specificForms[key] || '<p>Không có thông số chi tiết</p>';
 
-    // Điền lại thuộc tính cũ
     if (currentProduct && currentProduct.attributes) {
         currentProduct.attributes.forEach(attr => {
             const el = container.querySelector(`[name="${attr.key}"]`);
@@ -561,12 +560,10 @@ function handleSubmit(e) {
     const formData = new FormData();
     const id = document.getElementById('productId').value;
 
-    // Trường cơ bản
     ['name','price','description','stockQuantity','warranty','discount'].forEach(field => {
         formData.append(field, document.getElementById(field).value.trim());
     });
 
-    // Danh mục & thương hiệu
     const cat = document.querySelector('input[name="categoryId"]:checked');
     const brand = document.querySelector('input[name="brandId"]:checked');
     if (!cat || !brand) {
@@ -576,7 +573,7 @@ function handleSubmit(e) {
     formData.append('categoryId', cat.value);
     formData.append('brandId', brand.value);
 
-    // Thuộc tính động
+    // form thuộc tính theo danh mục
     const attrs = [];
     document.querySelectorAll('#specificFields input, #specificFields textarea').forEach(el => {
         if (el.value.trim()) {
@@ -588,15 +585,12 @@ function handleSubmit(e) {
         formData.append(`attributes[${i}].value`, a.value);
     });
 
-    // Ảnh mới
     const newImages = document.getElementById('images').files;
     for (let file of newImages) formData.append('images', file);
 
-    // Ẩn loading cũ nếu có
     const oldLoading = document.getElementById('loading');
     if (oldLoading) oldLoading.style.display = 'none';
 
-    // Gửi request
     fetch(`/product/update/${id}`, {
         method: 'PUT',
         headers: {
@@ -629,12 +623,10 @@ function showToast(message, type = 'success') {
     msgEl.textContent = message;
     toast.className = `notification-toast ${type}`;
 
-    // Force reflow + show
     toast.classList.remove('show');
     void toast.offsetWidth;
     toast.classList.add('show');
 
-    // Tự ẩn sau 4 giây
     setTimeout(() => {
         toast.classList.remove('show');
     }, 4000);

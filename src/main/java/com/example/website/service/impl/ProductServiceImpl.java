@@ -102,7 +102,6 @@ public class ProductServiceImpl implements ProductService {
                 .brand(brand)
                 .category(category)
                 .build();
-
         productRepository.save(product);
 
         if (attributes != null && !attributes.isEmpty()) {
@@ -113,11 +112,11 @@ public class ProductServiceImpl implements ProductService {
                         .key(attrReq.getKey())
                         .value(attrReq.getValue())
                         .build();
-                productAttributeRepository.save(attr); // LƯU TỪNG CÁI
+                productAttributeRepository.save(attr);
                 attributeEntities.add(attr);
             }
             product.setAttributes(attributeEntities);
-            productRepository.save(product); // CẬP NHẬT LẠI
+            productRepository.save(product);
         }
 
         return response(product);
@@ -159,7 +158,6 @@ public class ProductServiceImpl implements ProductService {
         CategoryEntity category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
-        // Cập nhật các trường cơ bản
         product.setName(request.getName());
         product.setPrice(request.getPrice());
         product.setDescription(request.getDescription());
@@ -169,20 +167,17 @@ public class ProductServiceImpl implements ProductService {
         product.setBrand(brand);
         product.setCategory(category);
 
-        // Xử lý ảnh mới (nếu có)
+        // Xử lý ảnh mới
         if (request.getImages() != null && request.getImages().length > 0) {
             List<String> newImages = saveImages(request.getImages());
-            // Giữ ảnh cũ + thêm ảnh mới (hoặc thay thế toàn bộ nếu muốn)
             List<String> allImages = new ArrayList<>(product.getImages());
             allImages.addAll(newImages);
             product.setImages(allImages);
         }
 
-        // XÓA THUỘC TÍNH CŨ
         productAttributeRepository.deleteAll(product.getAttributes());
         product.getAttributes().clear();
 
-        // THÊM THUỘC TÍNH MỚI
         if (attributes != null && !attributes.isEmpty()) {
             List<ProductAttributeEntity> newAttrs = new ArrayList<>();
             for (ProductAttributeRequest attrReq : attributes) {
