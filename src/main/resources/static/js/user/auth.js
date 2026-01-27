@@ -195,12 +195,12 @@ async function fetchCurrentUser() {
         if (result.code === 200 && result.data) {
             const user = result.data;
             // ko can thiet
-            // localStorage.setItem('currentUser', JSON.stringify({
-            //     username: user.username,
-            //     fullName: user.fullName || user.username,
-            //     role: user.role,
-            //     userId: user.userId
-            // }));
+            localStorage.setItem('currentUser', JSON.stringify({
+                username: user.username,
+                fullName: user.fullName || user.username,
+                role: user.role,
+                userId: user.userId
+            }));
             return user;
         }
     } catch (err) {

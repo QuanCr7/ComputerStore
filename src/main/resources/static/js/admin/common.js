@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     })();
 
-    // Modal xóa (giữ nguyên)
+    // Modal xóa
     const modal = document.getElementById('deleteModal');
     const closeBtn = document.getElementById('closeModal');
     const cancelBtn = document.getElementById('cancelDelete');

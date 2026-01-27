@@ -283,15 +283,13 @@ function loadComments(productId, page = 1, append = false) {
                 div.className = 'comment-item';
                 div.dataset.commentId = c.commentId;
 
-                const currentUser = getCurrentUser();
-                const isOwner = currentUser && (currentUser.id === c.userId);
-                const isAdmin = currentUser && currentUser.role === 'ADMIN';
-
-                const deleteBtn = (isOwner || isAdmin) ? `
-                    <button class="btn-delete-comment" title="Xóa bình luận" onclick="deleteComment(${c.commentId}, this)">
+                const deleteBtn = `
+                    <button class="btn-delete-comment"
+                            title="Xóa bình luận"
+                            onclick="deleteComment(${c.commentId}, this)">
                         <i class="fas fa-trash-alt"></i>
                     </button>
-                ` : '';
+                `;
 
                 div.innerHTML = `
                     <div class="comment-avatar">

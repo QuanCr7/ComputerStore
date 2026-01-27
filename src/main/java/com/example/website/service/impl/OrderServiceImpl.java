@@ -170,13 +170,31 @@ public class OrderServiceImpl implements OrderService {
         OrderEntity order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found with ID: " + orderId));
 
-        OrderStatus status = OrderStatus.valueOf(newStatus.toUpperCase());
-        order.setStatus(status);
+
+        OrderStatus oldStatus = order.getStatus();
+        OrderStatus newOrderStatus = OrderStatus.valueOf(newStatus.toUpperCase());
+
+        if (oldStatus == OrderStatus.CANCELLED) {
+            throw new RuntimeException("Đơn hàng đã bị hủy trước đó");
+        }
+
+        if (newOrderStatus == OrderStatus.CANCELLED) {
+            for (OrderDetailEntity detail : order.getOrderDetails()) {
+                ProductEntity product = detail.getProduct();
+                product.setStockQuantity(
+                        product.getStockQuantity() + detail.getQuantity()
+                );
+                productRepository.save(product);
+            }
+        }
+
+        order.setStatus(newOrderStatus);
 
         return response(orderRepository.save(order));
     }
 
     @Override
+    @Transactional
     public OrderResponse cancelOrder(int orderId) {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
@@ -190,12 +208,20 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException("Bạn không có quyền hủy đơn hàng này");
         }
 
-        // Chỉ cho phép hủy khi đang ở trạng thái PENDING hoặc PROCESSING (tùy bạn điều chỉnh)
+        // Chỉ cho phép hủy khi đang ở trạng thái PENDING hoặc PROCESSING
         if (order.getStatus() == OrderStatus.CANCELLED) {
             throw new RuntimeException("Đơn hàng đã được hủy trước đó");
         }
         if (order.getStatus() == OrderStatus.SHIPPING || order.getStatus() == OrderStatus.COMPLETED) {
             throw new RuntimeException("Không thể hủy đơn hàng đã giao hoặc đang giao");
+        }
+
+        for (OrderDetailEntity detail : order.getOrderDetails()) {
+            ProductEntity product = detail.getProduct();
+            product.setStockQuantity(
+                    product.getStockQuantity() + detail.getQuantity()
+            );
+            productRepository.save(product);
         }
 
         order.setStatus(OrderStatus.CANCELLED);
