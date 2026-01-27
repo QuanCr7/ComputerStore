@@ -168,14 +168,21 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponse updateStatus(int orderId, String newStatus) {
         OrderEntity order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found with ID: " + orderId));
-
+                .orElseThrow(() -> new RuntimeException("Order not found"));
 
         OrderStatus oldStatus = order.getStatus();
         OrderStatus newOrderStatus = OrderStatus.valueOf(newStatus.toUpperCase());
 
-        if (oldStatus == OrderStatus.CANCELLED) {
-            throw new RuntimeException("Đơn hàng đã bị hủy trước đó");
+        if (oldStatus == OrderStatus.CANCELLED || oldStatus == OrderStatus.COMPLETED) {
+            throw new RuntimeException("Đơn hàng đã kết thúc, không thể cập nhật");
+        }
+
+        if (
+                (oldStatus == OrderStatus.PROCESSING && newOrderStatus == OrderStatus.PENDING)
+                        || (oldStatus == OrderStatus.SHIPPING &&
+                        (newOrderStatus == OrderStatus.PENDING || newOrderStatus == OrderStatus.PROCESSING))
+        ) {
+            throw new RuntimeException("Không thể quay lại trạng thái trước đó");
         }
 
         if (newOrderStatus == OrderStatus.CANCELLED) {

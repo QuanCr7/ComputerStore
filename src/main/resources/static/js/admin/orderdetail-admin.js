@@ -106,10 +106,24 @@ function renderOrderStatus(order) {
     if (isAdmin && !['CANCELLED', 'COMPLETED'].includes(currentStatus)) {
         statusActions.style.display = 'flex';
         statusSelect.value = currentStatus;
+
+        const statusFlow = ['PENDING', 'PROCESSING', 'SHIPPING', 'COMPLETED'];
+        const currentIndex = statusFlow.indexOf(currentStatus);
+
+        [...statusSelect.options].forEach(option => {
+            option.disabled = false;
+
+            const optionIndex = statusFlow.indexOf(option.value);
+
+            if (optionIndex !== -1 && optionIndex < currentIndex) {
+                option.disabled = true;
+            }
+        });
     } else {
         statusActions.style.display = 'none';
         return;
     }
+
 
     updateBtn.replaceWith(updateBtn.cloneNode(true));
     const newBtn = document.getElementById('updateStatusBtn');
