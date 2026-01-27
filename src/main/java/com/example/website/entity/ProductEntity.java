@@ -44,7 +44,7 @@ public class ProductEntity {
     @Column(nullable = false)
     private List<String> images;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ProductAttributeEntity> attributes;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)

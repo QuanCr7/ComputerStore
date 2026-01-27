@@ -17,6 +17,7 @@ import com.example.website.response.ProductAttributeResponse;
 import com.example.website.response.ProductResponse;
 import com.example.website.service.ProductAttributeService;
 import com.example.website.service.ProductService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -143,7 +144,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse update(int id,ProductRequest request,List<ProductAttributeRequest> attributes) {
+    @Transactional
+    public ProductResponse update(int id, ProductRequest request, List<ProductAttributeRequest> attributes) {
+
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product Not Found"));
 
@@ -167,7 +170,6 @@ public class ProductServiceImpl implements ProductService {
         product.setBrand(brand);
         product.setCategory(category);
 
-        // Xử lý ảnh mới
         if (request.getImages() != null && request.getImages().length > 0) {
             List<String> newImages = saveImages(request.getImages());
             List<String> allImages = new ArrayList<>(product.getImages());
@@ -175,26 +177,25 @@ public class ProductServiceImpl implements ProductService {
             product.setImages(allImages);
         }
 
-        productAttributeRepository.deleteAll(product.getAttributes());
         product.getAttributes().clear();
 
         if (attributes != null && !attributes.isEmpty()) {
-            List<ProductAttributeEntity> newAttrs = new ArrayList<>();
             for (ProductAttributeRequest attrReq : attributes) {
-                ProductAttributeEntity attr = ProductAttributeEntity.builder()
-                        .product(product)
-                        .key(attrReq.getKey())
-                        .value(attrReq.getValue())
-                        .build();
-                productAttributeRepository.save(attr);
-                newAttrs.add(attr);
+                product.getAttributes().add(
+                        ProductAttributeEntity.builder()
+                                .product(product)
+                                .key(attrReq.getKey())
+                                .value(attrReq.getValue())
+                                .build()
+                );
             }
-            product.setAttributes(newAttrs);
         }
 
         productRepository.save(product);
+
         return response(product);
     }
+
 
     @Override
     public void delete(int id) {
