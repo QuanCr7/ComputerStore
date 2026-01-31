@@ -42,15 +42,15 @@ INSERT INTO users (username, password, role, full_name, image, email, phone, add
 ('admin2', '$2a$10$OcwT6NHGWnd8Tu3dxQW3Q.m5oW6hGHJ7sZYp7dZo5d8Kxl37n1U/y','ADMIN', 'Admin Second', 'default.jpg', 'admin2@gmail.com','0901111111', 'Ha Noi', '1992-03-10', '2025-11-27'),
 ('quancr', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.', 'CUSTOMER', 'Bien Quan', 'ronaldo.jpg', 'bienanhquan7@gmail.com', '0336684254', 'Viet Nam', '2002-01-02', '2025-11-27'),
 ('ronaldo', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.', 'CUSTOMER', 'Cristiano Ronaldo', 'ronaldo.jpg', 'ronaldo@gmail.com', '0965427504', 'Protugal', '1985-02-05', '2025-11-27'),
-('user01', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.','CUSTOMER', 'Nguyen Van A', 'default.jpg', 'user01@gmail.com','0902000001', 'Ha Noi', '1998-05-12', '2025-11-27'),
-('user02', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.','CUSTOMER', 'Tran Thi B', 'default.jpg', 'user02@gmail.com','0902000002', 'Hai Phong', '1999-07-20', '2025-11-28'),
-('user03', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.','CUSTOMER', 'Le Van C', 'default.jpg', 'user03@gmail.com','0902000003', 'Da Nang', '2000-09-15', '2025-11-29'),
-('user04', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.','CUSTOMER', 'Pham Thi D', 'default.jpg', 'user04@gmail.com','0902000004', 'Hue', '1997-11-22', '2025-12-01'),
-('user05', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.','CUSTOMER', 'Hoang Van E', 'default.jpg', 'user05@gmail.com','0902000005', 'Quang Nam', '1996-04-08', '2025-12-01'),
-('user06', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.','CUSTOMER', 'Do Thi F', 'default.jpg', 'user06@gmail.com','0902000006', 'Can Tho', '2001-01-30', '2025-12-03'),
-('user07', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.','CUSTOMER', 'Vu Van G', 'default.jpg', 'user07@gmail.com','0902000007', 'Vung Tau', '1995-06-18', '2025-12-09'),
-('user08', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.','CUSTOMER', 'Bui Thi H', 'default.jpg', 'user08@gmail.com','0902000008', 'Dong Nai', '1994-12-25', '2025-12-10'),
-('user09', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.','CUSTOMER', 'Dang Van I', 'default.jpg', 'user09@gmail.com','0902000009', 'Binh Duong', '2002-02-14', '2025-12-11');
+('user1', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.','CUSTOMER', 'Nguyen Van A', 'default.jpg', 'user01@gmail.com','0902000001', 'Ha Noi', '1998-05-12', '2025-11-27'),
+('user2', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.','CUSTOMER', 'Tran Thi B', 'default.jpg', 'user02@gmail.com','0902000002', 'Hai Phong', '1999-07-20', '2025-11-28'),
+('user3', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.','CUSTOMER', 'Le Van C', 'default.jpg', 'user03@gmail.com','0902000003', 'Da Nang', '2000-09-15', '2025-11-29'),
+('user4', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.','CUSTOMER', 'Pham Thi D', 'default.jpg', 'user04@gmail.com','0902000004', 'Hue', '1997-11-22', '2025-12-01'),
+('user5', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.','CUSTOMER', 'Hoang Van E', 'default.jpg', 'user05@gmail.com','0902000005', 'Quang Nam', '1996-04-08', '2025-12-01'),
+('user6', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.','CUSTOMER', 'Do Thi F', 'default.jpg', 'user06@gmail.com','0902000006', 'Can Tho', '2001-01-30', '2025-12-03'),
+('user7', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.','CUSTOMER', 'Vu Van G', 'default.jpg', 'user07@gmail.com','0902000007', 'Vung Tau', '1995-06-18', '2025-12-09'),
+('user8', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.','CUSTOMER', 'Bui Thi H', 'default.jpg', 'user08@gmail.com','0902000008', 'Dong Nai', '1994-12-25', '2025-12-10'),
+('user9', '$2a$10$PbmoJYTNMLfxiMFIp4.xFulY.hALgpqTkTAYayZByboZ7sigXDg1.','CUSTOMER', 'Dang Van I', 'default.jpg', 'user09@gmail.com','0902000009', 'Binh Duong', '2002-02-14', '2025-12-11');
 
 -- CPU (15 sản phẩm)
 INSERT INTO products (name, price, description, stock_quantity, warranty, discount, create_date, category_id, brand_id) VALUES
@@ -2090,26 +2090,26 @@ INSERT INTO `product-attributes` (product_id, attribute_key, attribute_value) VA
 INSERT INTO orders
 (order_date, name, phone, total_amount, shipping_address, status, user_id)
 VALUES
-('2025-11-27 09:10:00', 'Bien Quan', '0336684254', 12480000, 'Viet Nam', 'COMPLETED', 3),
-('2025-11-27 10:20:00', 'Cristiano Ronaldo', '0965427504', 42990000, 'Portugal', 'SHIPPING', 4),
-('2025-11-29 11:30:00', 'Nguyen Van A', '0902000001', 7990000, 'Ha Noi', 'PROCESSING', 5),
-('2025-12-01 12:15:00', 'Tran Thi B', '0902000002', 2490000, 'Hai Phong', 'COMPLETED', 6),
-('2025-12-01 13:00:00', 'Le Van C', '0902000003', 1890000, 'Da Nang', 'CANCELLED', 7),
-('2025-12-06 14:40:00', 'Pham Thi D', '0902000004', 5990000, 'Hue', 'COMPLETED', 8),
-('2025-12-10 15:25:00', 'Hoang Van E', '0902000005', 10490000, 'Quang Nam', 'SHIPPING', 9),
-('2025-12-11 16:00:00', 'Do Thi F', '0902000006', 3490000, 'Can Tho', 'PROCESSING', 10),
-('2025-12-15 17:10:00', 'Vu Van G', '0902000007', 27990000, 'Vung Tau', 'PENDING', 11),
-('2025-12-19 18:30:00', 'Bui Thi H', '0902000008', 2490000, 'Dong Nai', 'COMPLETED', 12),
-('2025-12-20 09:00:00', 'Dang Van I', '0902000009', 4990000, 'Binh Duong', 'SHIPPING', 13),
-('2025-12-20 10:45:00', 'Bien Quan', '0336684254', 14990000, 'Viet Nam', 'PROCESSING', 3),
-('2025-12-24 11:20:00', 'Cristiano Ronaldo', '0965427504', 12990000, 'Portugal', 'COMPLETED', 4),
-('2025-12-25 12:10:00', 'Nguyen Van A', '0902000001', 2990000, 'Ha Noi', 'PENDING', 5),
-('2025-12-25 13:35:00', 'Tran Thi B', '0902000002', 16990000, 'Hai Phong', 'COMPLETED', 6),
-('2025-12-25 14:50:00', 'Le Van C', '0902000003', 890000, 'Da Nang', 'CANCELLED', 7),
-('2025-12-27 15:40:00', 'Pham Thi D', '0902000004', 3290000, 'Hue', 'PROCESSING', 8),
-('2025-12-28 16:25:00', 'Hoang Van E', '0902000005', 5990000, 'Quang Nam', 'SHIPPING', 9),
-('2025-12-29 17:15:00', 'Do Thi F', '0902000006', 2190000, 'Can Tho', 'COMPLETED', 10),
-('2025-12-29 18:45:00', 'Vu Van G', '0902000007', 4490000, 'Vung Tau', 'PENDING', 11);
+('2025-12-12 09:10:00', 'Bien Quan', '0336684254', 12480000, 'Viet Nam', 'COMPLETED', 3),
+('2025-12-12 10:20:00', 'Cristiano Ronaldo', '0965427504', 42990000, 'Portugal', 'SHIPPING', 4),
+('2025-12-14 11:30:00', 'Nguyen Van A', '0902000001', 7990000, 'Ha Noi', 'PROCESSING', 5),
+('2026-01-03 12:15:00', 'Tran Thi B', '0902000002', 2490000, 'Hai Phong', 'COMPLETED', 6),
+('2026-01-04 13:00:00', 'Le Van C', '0902000003', 1890000, 'Da Nang', 'CANCELLED', 7),
+('2026-01-07 14:40:00', 'Pham Thi D', '0902000004', 5990000, 'Hue', 'COMPLETED', 8),
+('2026-01-09 15:25:00', 'Hoang Van E', '0902000005', 10490000, 'Quang Nam', 'SHIPPING', 9),
+('2026-01-11 16:00:00', 'Do Thi F', '0902000006', 3490000, 'Can Tho', 'PROCESSING', 10),
+('2026-01-15 17:10:00', 'Vu Van G', '0902000007', 27990000, 'Vung Tau', 'PENDING', 11),
+('2026-01-19 18:30:00', 'Bui Thi H', '0902000008', 2490000, 'Dong Nai', 'COMPLETED', 12),
+('2026-01-20 09:00:00', 'Dang Van I', '0902000009', 4990000, 'Binh Duong', 'SHIPPING', 13),
+('2026-01-20 10:45:00', 'Bien Quan', '0336684254', 14990000, 'Viet Nam', 'PROCESSING', 3),
+('2026-01-24 11:20:00', 'Cristiano Ronaldo', '0965427504', 12990000, 'Portugal', 'COMPLETED', 4),
+('2026-01-25 12:10:00', 'Nguyen Van A', '0902000001', 2990000, 'Ha Noi', 'PENDING', 5),
+('2026-01-25 13:35:00', 'Tran Thi B', '0902000002', 16990000, 'Hai Phong', 'COMPLETED', 6),
+('2026-01-25 14:50:00', 'Le Van C', '0902000003', 890000, 'Da Nang', 'CANCELLED', 7),
+('2026-01-27 15:40:00', 'Pham Thi D', '0902000004', 3290000, 'Hue', 'PROCESSING', 8),
+('2026-01-28 16:25:00', 'Hoang Van E', '0902000005', 5990000, 'Quang Nam', 'SHIPPING', 9),
+('2026-01-29 17:15:00', 'Do Thi F', '0902000006', 2190000, 'Can Tho', 'COMPLETED', 10),
+('2026-01-29 18:45:00', 'Vu Van G', '0902000007', 4490000, 'Vung Tau', 'PENDING', 11);
 
 INSERT INTO order_details (quantity, price_at_purchase, order_id, product_id) VALUES
 (1, 3490000, 1, 1),
